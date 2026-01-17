@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohammed Bilal | The Galaxy Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Raleway:wght@500&family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Global Background -->
+    <div id="global-stars"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none;"></div>
+
+
+
+    <!-- Navigation -->
+    <!-- Brand Logo -->
+    <a href="#home" class="brand-logo">
+        <div class="logo-box">
+            <span class="logo-terminal">&gt;<span class="blink-underscore">_</span></span>
+        </div>
+        <span class="logo-text">DVLPR</span>
+    </a>
+
+    <!-- Top Right Contact Button -->
+    <a href="#contact" class="nav-contact-btn">Contact</a>
+
+    <!-- Navigation replaced with Scroll Tracker -->
+    <div class="scroll-tracker">
+        <ul class="scroll-nav">
+            <li data-target="#home" data-label="Home" class="active">00</li>
+            <li data-target="#about" data-label="About">01</li>
+            <li data-target="#skills" data-label="Skills">02</li>
+            <li data-target="#projects" data-label="Projects">03</li>
+            <li data-target="#journey" data-label="Journey">04</li>
+            <li data-target="#contact" data-label="Contact">05</li>
+        </ul>
+        <div class="scroll-label" id="scrollLabel" style="cursor: pointer;">
+            <span>Scroll Down</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Toggle -->
+    <div class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <!-- Mobile Screen Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNav">
+        <div class="close-menu-btn" onclick="toggleMobileMenu()"><i class="fas fa-times"></i></div>
+        <div class="mobile-nav-links">
+            <a href="#home" onclick="toggleMobileMenu()">Home</a>
+            <a href="#about" onclick="toggleMobileMenu()">About</a>
+            <a href="#skills" onclick="toggleMobileMenu()">Skills</a>
+            <a href="#projects" onclick="toggleMobileMenu()">Projects</a>
+            <a href="#journey" onclick="toggleMobileMenu()">Journey</a>
+            <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
+        </div>
+    </div>
+
+    <!-- 1. HERO SECTION -->
+    <section id="home">
+        <div id="star-container-hero" class="star-container"></div>
+        <div class="nebula"></div>
+
+        <div class="scene-container">
+            <div class="solar-system">
+
+                <div class="orbit orbit-1"></div>
+                <div class="orbit orbit-2"></div>
+                <div class="orbit orbit-3"></div>
+
+                <div class="sun-wrapper">
+                    <div class="sun"></div>
+                    <div class="sun-text">
+                        <h1>Mohammed Bilal</h1>
+                        <p class="hero-role">Junior Web<br>Developer</p>
+                        <p class="hero-desc">Crafting modern, accessible, and secure web experiences. I build elegant
+                            interfaces, solve complex design challenges, and bring ideas to life through clean, scalable
+                            code.</p>
+
+                    </div>
+                </div>
+
+                <!-- Track 1 -->
+                <div class="track track-1">
+                    <div class="p-wrapper p-node">
+                        <div class="planet-body style-node counter-rot-1"><i class="fab fa-node-js"></i></div>
+                    </div>
+                    <div class="p-wrapper p-react">
+                        <div class="planet-body style-react counter-rot-1"><i class="fab fa-react"></i></div>
+                    </div>
+                </div>
+
+                <!-- Track 2 -->
+                <div class="track track-2">
+                    <div class="p-wrapper p-html-mid">
+                        <div class="planet-body style-html counter-rot-2"><i class="fab fa-html5"></i></div>
+                    </div>
+                    <div class="p-wrapper p-db">
+                        <div class="planet-body style-db counter-rot-2"><i class="fas fa-database"></i></div>
+                    </div>
+                </div>
+
+                <!-- Track 3 -->
+                <div class="track track-3">
+                    <div class="p-wrapper p-python">
+                        <div class="planet-body style-python counter-rot-3"><i class="fab fa-python"></i></div>
+                    </div>
+                    <div class="p-wrapper p-html-out">
+                        <div class="planet-body style-html counter-rot-3"><i class="fab fa-html5"></i></div>
+                    </div>
+                    <div class="p-wrapper p-css">
+                        <div class="planet-body style-css counter-rot-3"><i class="fab fa-css3-alt"></i></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="cta-container">
+            <a href="#projects" class="cta-btn">Explore My Universe</a>
+        </div>
+    </section>
+
+    <!-- 2. ABOUT SECTION -->
+    <section id="about">
+        <div class="container fade-up">
+            <h2 class="section-title">About - The Astronaut</h2>
+            <h3 class="subsection-title">The Astronaut's Profile</h3>
+
+            <div class="top-section">
+                <div class="astronaut-container fade-right">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2026/2026521.png" alt="Astronaut"
+                        class="astronaut-img">
+                </div>
+
+                <div class="profile-card holograph-card fade-left">
+                    <h3>Who You Are</h3>
+                    <div class="card-line"></div>
+                    <p>
+                        I am Mohammed Bilal, a passionate Web Developer and Full Stack Learner.
+                        With a strong foundation in computer applications, I explore the universe of technology,
+                        constantly expanding my skills to build innovative solutions.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid-section">
+                <div class="info-card holograph-card zoom-in">
+                    <div class="icon-box"><i class="fas fa-rocket"></i></div>
+                    <div class="card-title">My MCA + Self-Learning Journey</div>
+                    <div class="card-content">
+                        <p>Master of Computer Applications (MCA) graduate.</p>
+                        <p style="margin-top:10px;">Self-taught in modern web technologies through online courses and
+                            hands-on practice projects.</p>
+                    </div>
+                </div>
+
+                <div class="info-card holograph-card zoom-in">
+                    <div class="icon-box"><i class="fas fa-heart-pulse"></i></div>
+                    <div class="card-title">Why I Love Tech</div>
+                    <div class="card-content">
+                        <p>Technology is my fuel. I am driven by the endless possibilities to create, solve complex
+                            problems, and the continuous evolution of the digital landscape.</p>
+                    </div>
+                </div>
+
+                <div class="info-card holograph-card zoom-in">
+                    <div class="icon-box"><i class="fas fa-bullseye"></i></div>
+                    <div class="card-title">My Goals</div>
+                    <div class="card-content">
+                        <ul class="no-bullet">
+                            <li>- Secure a full-time Developer role.</li>
+                            <li>- Build impactful freelance projects.</li>
+                            <li>- Achieve continuous growth by mastering new tech stacks.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-card holograph-card zoom-in">
+                    <div class="icon-box"><i class="fas fa-headset"></i></div>
+                    <div class="card-title">Soft Skills</div>
+                    <div class="card-content">
+                        <ul class="bullet-list">
+                            <li>Communication</li>
+                            <li>Problem-Solving</li>
+                            <li>Teamwork</li>
+                            <li>Adaptability</li>
+                            <li>Time Management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- 3. SKILLS SECTION -->
+    <section id="skills">
+        <div class="container fade-up" id="skills-layout-container">
+
+            <div class="skills-left">
+                <div class="universe-container zoom-in">
+                    <div class="orbit-ring ring-1"></div>
+                    <div class="orbit-ring ring-2"></div>
+                    <div class="orbit-ring ring-3"></div>
+
+                    <!-- Central Logo -->
+                    <div class="central-sun-logo">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+
+                    <div class="skill-info-card" id="skill-info-card">
+                        <div class="close-btn" onclick="closeSkillCard()"><i class="fas fa-times"></i></div>
+
+                        <i id="skill-icon" class="fab fa-react tech-icon-large"></i>
+                        <h3 id="skill-title" style="font-family:'Montserrat'; margin:10px 0; color:white;">React</h3>
+
+                        <div class="skill-card-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Tools Used:</span>
+                                <span id="skill-tools" style="color:white;">...</span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Experience Level:</span>
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom:5px;">
+                                    <span id="skill-level" style="font-size: 0.8rem;">...</span>
+                                    <span id="skill-percent" style="font-size: 0.8rem;">...</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar" id="skill-progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Capabilities:</span>
+                                <span id="skill-desc" style="color:#dbe4ff;">...</span>
+                            </div>
+                        </div>
+
+                        <a href="#projects" class="skill-cta-btn" onclick="closeSkillCard()">View Projects</a>
+                    </div>
+
+                    <!-- Track 1: Horizontal -->
+                    <div class="planet-track track-1">
+                        <div class="planet-spinner">
+                            <div class="planet-pos" style="--start-angle: 0deg;">
+                                <div class="planet p-react" onclick="openSkill('react')"><i class="fab fa-react"></i>
+                                </div>
+                            </div>
+                            <div class="planet-pos" style="--start-angle: 180deg;">
+                                <div class="planet p-node" onclick="openSkill('node')"><i class="fab fa-node-js"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Track 2: Tilted Positive -->
+                    <div class="planet-track track-2">
+                        <div class="planet-spinner">
+                            <div class="planet-pos" style="--start-angle: 0deg;">
+                                <div class="planet p-html" onclick="openSkill('html')"><i class="fab fa-html5"></i>
+                                </div>
+                            </div>
+                            <div class="planet-pos" style="--start-angle: 120deg;">
+                                <div class="planet p-sql" onclick="openSkill('sql')"><i class="fas fa-database"></i>
+                                </div>
+                            </div>
+                            <div class="planet-pos" style="--start-angle: 240deg;">
+                                <div class="planet p-git" onclick="openSkill('git')"><i class="fab fa-git-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Track 3: Tilted Negative -->
+                    <div class="planet-track track-3">
+                        <div class="planet-spinner">
+                            <div class="planet-pos" style="--start-angle: 0deg;">
+                                <div class="planet p-css" onclick="openSkill('css')"><i class="fab fa-css3-alt"></i>
+                                </div>
+                            </div>
+                            <div class="planet-pos" style="--start-angle: 120deg;">
+                                <div class="planet p-js" onclick="openSkill('js')"><i class="fab fa-js"></i></div>
+                            </div>
+                            <div class="planet-pos" style="--start-angle: 240deg;">
+                                <div class="planet p-python" onclick="openSkill('python')"><i class="fab fa-python"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skills-right fade-left">
+                <div class="quote-box">
+                    <p class="quote-text">"A problem is an opportunity to do your best."</p>
+                </div>
+                <h2 class="skills-heading">Skills & Experience</h2>
+                <p class="skills-subtext-highlight">I specialize in crafting engaging and high-quality client-side web
+                    applications.</p>
+                <p class="skills-body-text">
+                    My experience includes HTML, CSS, and JavaScript, building projects with React and Vue, developing
+                    custom features and plugins, creating animations, and coding interactive layouts. I also have
+                    full-stack experience, including working with WordPress, Node.js, and C.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 4. PROJECTS SECTION -->
+    <section id="projects">
+        <div class="container fade-up">
+            <h2 class="section-title" style="text-align:center;">Missions Log</h2>
+
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterProjects('all', this)">All Missions</button>
+                <button class="filter-btn" onclick="filterProjects('react', this)">React</button>
+                <button class="filter-btn" onclick="filterProjects('node', this)">Node</button>
+                <button class="filter-btn" onclick="filterProjects('python', this)">Python</button>
+                <button class="filter-btn" onclick="filterProjects('web', this)">Web</button>
+            </div>
+
+            <div class="projects-grid" id="projects-grid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. JOURNEY SECTION -->
+    <section id="journey">
+        <div class="container fade-up">
+            <h2 class="section-title" style="text-align:center; margin-bottom:40px;">The Path Traveled</h2>
+
+            <div class="journey-container">
+                <div class="path-column fade-up">
+                    <svg class="path-svg" preserveAspectRatio="none" viewBox="0 0 100 100">
+                        <path d="M 80,10 C 80,25 40,20 40,36 C 40,50 70,50 70,63 C 70,80 30,75 30,90"
+                            class="dashed-path" vector-effect="non-scaling-stroke"></path>
+                    </svg>
+                    <div class="star-node node-1"><i class="fas fa-star"></i></div>
+                    <div class="star-node node-2"><i class="fas fa-star"></i></div>
+                    <div class="star-node node-3"><i class="fas fa-star"></i></div>
+                    <div class="star-node node-4"><i class="fas fa-star"></i></div>
+                </div>
+
+                <div class="cards-column fade-left">
+                    <div class="info-card">
+                        <div style="font-size:2rem; color:white;"><i class="fas fa-rocket"></i></div>
+                        <div>
+                            <div style="color:var(--neon-blue); font-size:0.8rem; letter-spacing:1px;">CURRENT</div>
+                            <h3 style="color:white;">Freelance & Self-Learning</h3>
+                            <p style="color:#aaa;">Building full-stack projects and exploring new tech stacks.</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div style="font-size:2rem; color:white;"><i class="fas fa-trophy"></i></div>
+                        <div>
+                            <div style="color:var(--neon-blue); font-size:0.8rem; letter-spacing:1px;">2024 - 2025</div>
+                            <h3 style="color:white;">Key Tech Certifications</h3>
+                            <p style="color:#aaa;">Full Stack Development & Data Science Certifications.</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div style="font-size:2rem; color:white;"><i class="fas fa-laptop-code"></i></div>
+                        <div>
+                            <div style="color:var(--neon-blue); font-size:0.8rem; letter-spacing:1px;">2023 - 2024</div>
+                            <h3 style="color:white;">Major Projects Phase</h3>
+                            <p style="color:#aaa;">Executed multiple academic and personal projects involving React and
+                                Python.</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div style="font-size:2rem; color:white;"><i class="fas fa-graduation-cap"></i></div>
+                        <div>
+                            <div style="color:var(--neon-blue); font-size:0.8rem; letter-spacing:1px;">2021 - 2023</div>
+                            <h3 style="color:white;">MCA Graduate</h3>
+                            <p style="color:#aaa;">Completed Master of Computer Applications with distinction.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="contact">
+        <div class="container fade-up">
+            <h2 class="section-title" style="text-align:center; margin-bottom:40px;">Mission Control</h2>
+
+            <div class="mission-control-container">
+
+                <div class="contact-text-panel fade-right">
+                    <h3 class="contact-heading">What would you do if a software expert was just a click away?</h3>
+                    <p class="contact-subtext">Whether you want to start a new project or just say hello, I’d love to
+                        hear from you. You can also follow me on <a href="#" class="text-highlight">Instagram</a>.</p>
+                    <a href="mailto:bilal@example.com" class="main-email">bilal@example.com</a>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-envelope" style="font-size:1.5rem; color:var(--neon-purple);"></i>
+                    <div>
+                        <div style="color:var(--neon-blue); font-size:0.8rem;">EMAIL</div>
+                        <div style="color:white;">bilal@example.com</div>
+                    </div>
+                </div>
+                <div class="contact-card">
+                    <i class="fab fa-linkedin" style="font-size:1.5rem; color:var(--neon-purple);"></i>
+                    <div>
+                        <div style="color:var(--neon-blue); font-size:0.8rem;">LINKEDIN</div>
+                        <a href="#" style="color:white; text-decoration:none;">linkedin.com/in/bilal</a>
+                    </div>
+                </div>
+                <div class="contact-card">
+                    <i class="fab fa-github" style="font-size:1.5rem; color:var(--neon-purple);"></i>
+                    <div>
+                        <div style="color:var(--neon-blue); font-size:0.8rem;">GITHUB</div>
+                        <a href="#" style="color:white; text-decoration:none;">github.com/bilal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; Billu@004.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

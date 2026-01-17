@@ -1,0 +1,2055 @@
+/* --- GLOBAL & RESET --- */
+:root {
+    --bg-color: #05070a;
+    --neon-blue: #00d2ff;
+    --neon-purple: #bd00ff;
+    --sun-color: #ffd700;
+    --text-main: #ffffff;
+    --text-secondary: #b3c5ef;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(0, 210, 255, 0.3);
+    --card-bg: rgba(10, 20, 40, 0.6);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+    line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: white;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+body {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+section {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    padding-top: 80px;
+    /* Offset for fixed header */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* --- NAVIGATION --- */
+.brand-logo {
+    position: fixed;
+    top: 55px;
+    /* Reference: 55px */
+    left: 50px;
+    /* Reference: 50px */
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Visual gap approximation or slight buffer */
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.brand-logo:hover {
+    transform: scale(1.05);
+}
+
+.logo-box {
+    background: #f0f8ff;
+    color: #000;
+    width: 40px;
+    /* Reference: 40px */
+    height: 23px;
+    /* Reference: 23px */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 900;
+    font-size: 1rem;
+    /* Proportional to box height */
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+.logo-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    /* Reference: 700 */
+    font-size: 2rem;
+    /* Reference: 32px */
+    letter-spacing: 5px;
+    /* Reference: 5px */
+    color: white;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.blink-underscore {
+    animation: blinkCursor 2s infinite;
+}
+
+@keyframes blinkCursor {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+.nav-contact-btn {
+    position: fixed;
+    top: 55px;
+    /* Mirrored top pos */
+    right: 50px;
+    /* Mirrored offset */
+    z-index: 1000;
+    color: white;
+    text-decoration: none;
+    border: 1px solid white;
+    padding: 8px 25px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.nav-contact-btn:hover {
+    background: white;
+    color: black;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes blinkCursor {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* --- SCROLL TRACKER (Sidebar) --- */
+.scroll-tracker {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    /* Reduced from 40px */
+    transform: translateY(-50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    /* Reduced from 30px */
+    font-family: 'Share Tech Mono', monospace;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.scroll-nav {
+    list-style: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    /* Reduced from 20px */
+    padding-right: 15px;
+    /* Reduced padding */
+    /* Space for the line */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Moving marker line */
+/* Marker Line / Dot Container */
+/* Moving Rocket Indicator */
+.scroll-nav::after {
+    content: '\f135';
+    /* FontAwesome Rocket Icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    top: var(--active-pos, 0px);
+    right: -8px;
+    /* Adjusted spacing */
+    /* Center relative to border */
+    font-size: 0.8rem;
+    /* Reduced from 1.2rem */
+    color: var(--neon-blue);
+    transform: translateY(-50%) rotate(-45deg);
+    /* Default: Pointing Up-Left (Up) */
+    transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s ease;
+    filter: drop-shadow(0 0 5px var(--neon-blue));
+    z-index: 10;
+}
+
+/* Scroll Down State: Flip Rocket */
+body.scroll-down .scroll-nav::after {
+    transform: translateY(-50%) rotate(135deg);
+    /* Pointing Down-Right (Down) */
+}
+
+/* Rocket Smoke Effect */
+.scroll-nav::before {
+    content: '';
+    position: absolute;
+    top: var(--active-pos, 0px);
+    right: -5px;
+    width: 6px;
+    height: 30px;
+    background: linear-gradient(to bottom, rgba(0, 210, 255, 0.8), transparent);
+    filter: blur(4px);
+    /* Default (Up): Smoke is below rocket */
+    transform: translateY(10px);
+    opacity: 0.6;
+    transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s ease;
+    animation: thrusterPulse 0.2s infinite alternate;
+}
+
+/* Scroll Down State: Smoke moves ABOVE rocket */
+body.scroll-down .scroll-nav::before {
+    /* Move up and rotate 180deg so the gradient flushes upwards */
+    transform: translateY(-35px) rotate(180deg);
+}
+
+@keyframes thrusterPulse {
+    from {
+        height: 20px;
+        opacity: 0.8;
+    }
+
+    to {
+        height: 35px;
+        opacity: 0.4;
+    }
+}
+
+/* Active Section Indicator Logic (via class) */
+.scroll-nav li {
+    font-size: 0.75rem;
+    /* Reduced from 1rem */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 5px 0;
+}
+
+.scroll-nav li::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -25px;
+    /* On the line */
+    width: 8px;
+    height: 8px;
+    background: transparent;
+    /* Dot removed, using line instead per ref image? Ref has dots maybe. */
+    /* Let's replicate Ref: Number gap Line. */
+    border-radius: 50%;
+    transform: translateY(-50%);
+    transition: background 0.3s;
+}
+
+/* Page Label Tooltip on Hover */
+.scroll-nav li::before {
+    content: attr(data-label);
+    position: absolute;
+    right: 35px;
+    /* Position to the left of the number */
+    top: 50%;
+    transform: translateY(-50%) translateX(10px);
+    opacity: 0;
+    pointer-events: none;
+
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    color: var(--neon-blue);
+    background: rgba(5, 7, 10, 0.9);
+    padding: 4px 8px;
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+    transition: all 0.3s ease;
+}
+
+.scroll-nav li:hover::before {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+.scroll-nav li:hover,
+.scroll-nav li.active {
+    color: var(--text-main);
+    transform: scale(1.1);
+}
+
+.scroll-nav li.active::after {
+    background: var(--neon-blue);
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+.scroll-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Reduced from 10px */
+    font-size: 0.7rem;
+    /* Reduced from 0.8rem */
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 15px;
+    /* Reduced from 20px */
+}
+
+.scroll-label i {
+    animation: bounce 2s infinite;
+    font-size: 0.8rem;
+    /* Explicitly reduce icon too */
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(5px);
+    }
+
+    60% {
+        transform: translateY(3px);
+    }
+}
+
+/* Hide Tracker on Mobile */
+@media (max-width: 768px) {
+    .scroll-tracker {
+        display: none;
+    }
+}
+
+/* --- SCROLL ANIMATIONS --- */
+.fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.zoom-in {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-up.visible,
+.fade-left.visible,
+.fade-right.visible,
+.zoom-in.visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* --- SECTION 1: HERO (#home) --- */
+#home {
+    /* Hero specific overrides */
+    padding-top: 0;
+    /* Full screen hero */
+    height: 100vh;
+}
+
+#home .star-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+#home .nebula {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(0, 89, 255, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(119, 0, 255, 0.15) 0%, transparent 40%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* 3D Scene Container */
+#home .scene-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    /* Default safer scale */
+    width: 100vh;
+    /* Use viewport relative sizing for container base if needed, or keep fixed and scale */
+    height: 100vh;
+    max-width: 1000px;
+    max-height: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    perspective: 1000px;
+}
+
+#home .solar-system {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateX(60deg);
+}
+
+/* Sun */
+#home .sun-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotateX(-60deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+#home .sun {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #fff5d6 0%, #ffaa00 40%, #ff5e00 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 60px #ffaa00, 0 0 120px rgba(255, 100, 0, 0.6);
+    opacity: 0.9;
+    /* Slight transparency for text readability if needed */
+}
+
+/* Hero Text Content (Restyled) */
+/* Hero Text Content (Restyled) */
+#home .sun-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Centered positioning */
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 800px;
+    /* Increased width for center layout */
+    z-index: 250;
+    /* Bring above orbits/CTA */
+    pointer-events: auto;
+    /* Allow interactions with buttons */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Align flex children to center */
+}
+
+/* Hide Name - or utilize as subtle eyebrow, but user asked for THIS style */
+#home .sun-text h1 {
+    font-size: 1rem;
+    color: var(--neon-purple);
+    /* As a subtle accent or remove */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    display: none;
+    /* Reference image doesn't show name prominently, just Role */
+}
+
+#home .hero-role {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 4rem;
+    /* Massive bold text */
+    line-height: 1.1;
+    color: white;
+    text-transform: none;
+    /* Reference is Title Case/Sentence Case mix but visually Standard */
+    margin-bottom: 30px;
+    text-shadow: none;
+    letter-spacing: -1px;
+}
+
+#home .hero-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    color: #cbd5e1;
+    /* White-ish grey */
+    line-height: 1.6;
+    font-weight: 400;
+    text-shadow: none;
+    margin: 0;
+    max-width: 500px;
+}
+
+#home .hero-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+    font-size: 1.2rem;
+    color: var(--neon-purple);
+    font-weight: 700;
+    text-decoration: none;
+    font-family: 'Raleway', sans-serif;
+    transition: gap 0.3s;
+}
+
+#home .hero-link:hover {
+    gap: 15px;
+    text-shadow: 0 0 10px var(--neon-purple);
+}
+
+/* Orbits */
+#home .orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+#home .orbit-1 {
+    width: 350px;
+    height: 350px;
+    border-color: rgba(0, 255, 200, 0.4);
+    box-shadow: 0 0 5px rgba(0, 255, 200, 0.2);
+}
+
+#home .orbit-2 {
+    width: 600px;
+    height: 600px;
+    border-color: rgba(0, 150, 255, 0.4);
+    box-shadow: 0 0 5px rgba(0, 150, 255, 0.2);
+}
+
+#home .orbit-3 {
+    width: 900px;
+    height: 900px;
+    border-color: rgba(255, 50, 100, 0.4);
+    box-shadow: 0 0 5px rgba(255, 50, 100, 0.2);
+}
+
+/* Tracks & Planets */
+#home .track {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+}
+
+#home .track-1 {
+    width: 350px;
+    height: 350px;
+    animation: rotate 15s linear infinite;
+}
+
+#home .track-2 {
+    width: 600px;
+    height: 600px;
+    animation: rotate 25s linear infinite reverse;
+}
+
+#home .track-3 {
+    width: 900px;
+    height: 900px;
+    animation: rotate 40s linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: translate(-50%, -50%) rotateZ(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotateZ(360deg);
+    }
+}
+
+#home .p-wrapper {
+    position: absolute;
+    transform-style: preserve-3d;
+}
+
+#home .p-node {
+    transform: rotateZ(45deg) translate(175px);
+}
+
+#home .p-react {
+    transform: rotateZ(225deg) translate(175px);
+}
+
+#home .p-html-mid {
+    transform: rotateZ(0deg) translate(300px);
+}
+
+#home .p-db {
+    transform: rotateZ(180deg) translate(300px);
+}
+
+#home .p-python {
+    transform: rotateZ(300deg) translate(450px);
+}
+
+#home .p-html-out {
+    transform: rotateZ(120deg) translate(450px);
+}
+
+#home .p-css {
+    transform: rotateZ(210deg) translate(450px);
+}
+
+#home .planet-body {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 30px;
+    transform: rotateX(-60deg);
+    /* Initial Counter-Tilt */
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Planet Specifics */
+#home .style-node {
+    background: radial-gradient(circle at 30% 30%, #6cc24a, #3e6e2a);
+    box-shadow: 0 0 20px #6cc24a;
+}
+
+#home .style-react {
+    background: radial-gradient(circle at 30% 30%, #61dafb, #2d6675);
+    box-shadow: 0 0 20px #61dafb;
+}
+
+#home .style-html {
+    background: radial-gradient(circle at 30% 30%, #e34f26, #8a2be2);
+    box-shadow: 0 0 20px #e34f26;
+}
+
+#home .style-db {
+    background: radial-gradient(circle at 30% 30%, #d93856, #801f30);
+    box-shadow: 0 0 20px #d93856;
+}
+
+#home .style-python {
+    background: radial-gradient(circle at 30% 30%, #3776ab, #ffd343);
+    box-shadow: 0 0 20px #3776ab;
+}
+
+#home .style-css {
+    background: radial-gradient(circle at 30% 30%, #2965f1, #102d6e);
+    box-shadow: 0 0 20px #2965f1;
+}
+
+/* Counter Rotation Animation */
+#home .counter-rot-1 {
+    animation: anti-spin 15s linear infinite reverse;
+}
+
+#home .counter-rot-2 {
+    animation: anti-spin 25s linear infinite;
+}
+
+#home .counter-rot-3 {
+    animation: anti-spin 40s linear infinite reverse;
+}
+
+@keyframes anti-spin {
+    0% {
+        transform: rotateX(-60deg) rotateZ(0deg);
+    }
+
+    100% {
+        transform: rotateX(-60deg) rotateZ(360deg);
+    }
+}
+
+#home .cta-container {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+}
+
+#home .cta-btn {
+    display: inline-block;
+    white-space: nowrap;
+    padding: 12px 35px;
+    background: rgba(5, 10, 20, 0.9);
+    border: 2px solid #00d2ff;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+}
+
+#home .cta-btn:hover {
+    background: rgba(0, 210, 255, 0.15);
+    color: white;
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
+}
+
+/* --- SECTION 2: ABOUT (#about) --- */
+#about {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#about .container {
+    max-width: 1400px;
+    /* Wider container for 4 columns */
+    margin: 0 auto;
+    padding: 40px 20px;
+    width: 100%;
+}
+
+/* Global Section Title Style (Overrides specific if needed, or matches ref) */
+.section-title,
+#about .section-title {
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 3rem;
+    /* Make it big like the ref image */
+    margin-bottom: 20px;
+    color: white;
+    background: none;
+    -webkit-text-fill-color: initial;
+    text-shadow: none;
+    /* Clean look or subtle shadow? Ref looks clean. */
+}
+
+#about .subsection-title {
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: #b3c5ef;
+    margin-bottom: 50px;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+}
+
+#about .top-section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    /* Center verically */
+    justify-content: center;
+    gap: 50px;
+    margin-bottom: 50px;
+}
+
+#about .astronaut-container {
+    flex: 0 0 300px;
+    /* Fixed width for astronaut */
+    display: flex;
+    justify-content: center;
+    animation: float 6s ease-in-out infinite;
+}
+
+#about .astronaut-img {
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 30px rgba(0, 210, 255, 0.2));
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Holographic Card Designs */
+.holograph-card {
+    background: rgba(10, 20, 40, 0.6);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 30px;
+    position: relative;
+    border: 1px solid rgba(0, 210, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.1), inset 0 0 20px rgba(0, 210, 255, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    /* Outer Line effect */
+    outline: 2px solid transparent;
+}
+
+/* Double border/glow effect simulation */
+.holograph-card::before {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 25px;
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.holograph-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+}
+
+#about .profile-card {
+    flex: 1;
+    min-width: 350px;
+    padding: 40px;
+    /* Special styling for the main profile */
+    border: 2px solid rgba(0, 210, 255, 0.6);
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.15);
+}
+
+#about .profile-card h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    color: var(--neon-blue);
+    margin-bottom: 5px;
+}
+
+.card-line {
+    width: 60px;
+    height: 3px;
+    background: var(--neon-blue);
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+#about .profile-card p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #dbe4ff;
+}
+
+#about .grid-section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+#about .info-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+#about .icon-box {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    color: var(--neon-blue);
+    font-size: 2rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+#about .card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    min-height: 2.4rem;
+    /* For alignment */
+    display: flex;
+    align-items: center;
+}
+
+#about .card-content {
+    font-size: 0.95rem;
+    color: #b3c5ef;
+    line-height: 1.6;
+}
+
+#about .card-content ul.no-bullet {
+    list-style: none;
+    padding: 0;
+}
+
+#about .card-content ul.bullet-list {
+    list-style: none;
+    /* Custom bullets */
+    padding-left: 10px;
+}
+
+#about .card-content ul.bullet-list li::before {
+    content: '•';
+    color: var(--neon-blue);
+    margin-right: 8px;
+    font-size: 1.2rem;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* --- SECTION 3: SKILLS (#skills) --- */
+#skills {
+    overflow: hidden;
+}
+
+#skills-layout-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    height: 100%;
+    min-height: 80vh;
+}
+
+.skills-left {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 600px;
+}
+
+.skills-right {
+    flex: 1;
+    color: white;
+    padding: 20px;
+    max-width: 600px;
+}
+
+.quote-box {
+    border-left: 3px solid var(--neon-blue);
+    padding-left: 15px;
+    margin-bottom: 30px;
+}
+
+.quote-text {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #ffd700;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+}
+
+.skills-heading {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.skills-subtext-highlight {
+    font-size: 1.1rem;
+    color: var(--neon-blue);
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.skills-body-text {
+    font-size: 1rem;
+    color: #dbe4ff;
+    line-height: 1.8;
+}
+
+/* Responsive Stacking for Skills */
+@media (max-width: 1024px) {
+    #skills-layout-container {
+        flex-direction: column-reverse;
+        /* Text on top, or bottom? User asked left/right. Mobile usually stack vertical. Let's put text below solar system or above. Usually text above is good context, but visual first is nice. Let's stick to standard column */
+        flex-direction: column;
+        justify-content: center;
+        height: auto;
+    }
+
+    .skills-left {
+        width: 100%;
+        height: 500px;
+        /* Reduced height for mobile */
+    }
+
+    .skills-right {
+        width: 100%;
+        text-align: center;
+        padding-top: 0;
+    }
+}
+
+#skills .universe-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+    transform: scale(0.8);
+    transform-style: preserve-3d;
+}
+
+/* Scale down 3D system on shorter screens to fit frame */
+@media (max-height: 800px) and (min-width: 900px) {
+    #skills .universe-container {
+        transform: scale(0.6);
+    }
+}
+
+#skills .orbit-ring {
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    /* Base center, specific rotations in subclasses */
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+#skills .ring-1 {
+    width: 700px;
+    height: 700px;
+    /* Main Planet Path */
+    transform: translate(-50%, -50%) rotateX(75deg);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+#skills .ring-2 {
+    width: 700px;
+    height: 700px;
+    /* Cross Orbit 1 */
+    transform: translate(-50%, -50%) rotateZ(60deg) rotateX(75deg);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+#skills .ring-3 {
+    width: 700px;
+    height: 700px;
+    /* Cross Orbit 2 */
+    transform: translate(-50%, -50%) rotateZ(-60deg) rotateX(75deg);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+#skills .central-sun-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at 30% 30%, #ff5e00, #ff0000);
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(255, 50, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 2rem;
+    z-index: 5;
+    animation: pulseSun 3s infinite alternate;
+}
+
+@keyframes pulseSun {
+    from {
+        box-shadow: 0 0 20px rgba(255, 50, 0, 0.5);
+    }
+
+    to {
+        box-shadow: 0 0 50px rgba(255, 50, 0, 0.8);
+    }
+}
+
+#skills .skill-info-card {
+    width: 350px;
+    /* Compromise between 320 and 380 */
+    background: rgba(20, 30, 50, 0.85);
+    /* Slightly lighter/bluer per reference */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 210, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    z-index: 20;
+    position: relative;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+#skills .skill-info-card.open {
+    opacity: 1;
+    /* Bring clearly in front of the ~360px radius orbit */
+    transform: translateZ(300px) scale(0.9);
+    pointer-events: all;
+    z-index: 1000;
+}
+
+#skills .skill-card-details {
+    text-align: left;
+    font-size: 0.9rem;
+    color: #b3c5ef;
+    /* var(--text-secondary) */
+    line-height: 1.6;
+    margin-top: 15px;
+    /* Removed custom font for cleaner look per reference */
+}
+
+#skills .detail-row {
+    margin-bottom: 12px;
+}
+
+#skills .detail-label {
+    color: var(--neon-blue);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 3px;
+    font-size: 0.9rem;
+    text-transform: none;
+    /* Reference doesn't use massive uppercase */
+    text-shadow: none;
+    letter-spacing: normal;
+    font-family: inherit;
+}
+
+#skills .progress-container {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    height: 8px;
+    border-radius: 10px;
+    margin: 8px 0 0 0;
+    overflow: hidden;
+}
+
+#skills .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    width: 0%;
+    transition: width 1s ease-out;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+}
+
+#skills .skill-cta-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 12px 35px;
+    border: 1px solid var(--neon-blue);
+    border-radius: 50px;
+    color: var(--neon-blue);
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    background: transparent;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
+}
+
+#skills .skill-cta-btn:hover {
+    background: var(--neon-blue);
+    color: #05070a;
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.6);
+    transform: translateY(-2px) scale(1.05);
+}
+
+#skills .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+#skills .close-btn:hover {
+    color: var(--neon-blue);
+}
+
+/* New Planet Track System */
+#skills .planet-track {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 700px;
+    height: 700px;
+    pointer-events: none;
+    transform-style: preserve-3d;
+}
+
+#skills .track-1 {
+    transform: translate(-50%, -50%) rotateX(75deg);
+}
+
+#skills .track-2 {
+    transform: translate(-50%, -50%) rotateZ(60deg) rotateX(75deg);
+}
+
+#skills .track-3 {
+    transform: translate(-50%, -50%) rotateZ(-60deg) rotateX(75deg);
+}
+
+#skills .planet-spinner {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transform-style: preserve-3d;
+    animation: orbitSpin 40s linear infinite;
+}
+
+@keyframes orbitSpin {
+    from {
+        transform: rotateZ(0deg);
+    }
+
+    to {
+        transform: rotateZ(360deg);
+    }
+}
+
+/* Planet Holder for Positioning */
+#skills .planet-pos {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    /* Static static position */
+    transform: rotateZ(var(--start-angle, 0deg)) translate(350px);
+}
+
+#skills .planet {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* Center the 90px planet on the point */
+    width: 90px;
+    height: 90px;
+    margin-top: -45px;
+    margin-left: -45px;
+
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    color: white;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+
+    /* Deep 3D Sphere Effect */
+    background-color: #000;
+    box-shadow:
+        inset -10px -10px 20px rgba(0, 0, 0, 0.8),
+        inset 5px 5px 15px rgba(255, 255, 255, 0.4),
+        0 0 20px rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Remove old specific transforms */
+#skills .track-1 .p-react,
+#skills .track-1 .p-node,
+#skills .track-2 .p-html,
+#skills .track-2 .p-sql,
+#skills .track-2 .p-git,
+#skills .track-3 .p-css,
+#skills .track-3 .p-js,
+#skills .track-3 .p-python {
+    transform: none;
+    /* Handled by wrapper now */
+}
+
+/* Counter Rotations per Track */
+#skills .track-1 .planet {
+    animation: antiSpin1 40s linear infinite;
+}
+
+#skills .track-2 .planet {
+    animation: antiSpin2 40s linear infinite;
+}
+
+#skills .track-3 .planet {
+    animation: antiSpin3 40s linear infinite;
+}
+
+/* 
+   Logic: 
+   To face camera (Identity), we must undo:
+   Translate(350) -> RotZ(Start) -> RotZ(Time) -> TrackRotation
+   Order of application is usually Right-to-Left in matrix math, or Parent-to-Child in CSS.
+   The Planet is inside Position inside Spinner inside Track.
+   Effect on Planet Point: TrackRot * SpinnerRot * PosRot * Translate
+   Effect on Planet Orientation: TrackRot * SpinnerRot * PosRot * LocalRot
+   We want Orientation = Identity.
+   LocalRot = PosRot^-1 * SpinnerRot^-1 * TrackRot^-1
+*/
+
+@keyframes antiSpin1 {
+    from {
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(0deg) rotateX(-75deg);
+    }
+
+    to {
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(-360deg) rotateX(-75deg);
+    }
+}
+
+@keyframes antiSpin2 {
+    from {
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(0deg) rotateX(-75deg) rotateZ(-60deg);
+    }
+
+    to {
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(-360deg) rotateX(-75deg) rotateZ(-60deg);
+    }
+}
+
+@keyframes antiSpin3 {
+    from {
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(0deg) rotateX(-75deg) rotateZ(60deg);
+    }
+
+    to {
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(-360deg) rotateX(-75deg) rotateZ(60deg);
+    }
+}
+
+#skills .p-html {
+    top: 18%;
+    left: 82%;
+    background: radial-gradient(circle at 30% 30%, #e34f26, #7a2008);
+}
+
+#skills .p-css {
+    top: 50%;
+    left: 95%;
+    background: radial-gradient(circle at 30% 30%, #2965f1, #0a2e7a);
+}
+
+#skills .p-js {
+    top: 82%;
+    left: 82%;
+    background: radial-gradient(circle at 30% 30%, #f7df1e, #8f7f00);
+}
+
+#skills .p-node {
+    top: 95%;
+    left: 50%;
+    background: radial-gradient(circle at 30% 30%, #6cc24a, #2e5e1a);
+}
+
+#skills .p-python {
+    top: 82%;
+    left: 18%;
+    background: radial-gradient(circle at 30% 30%, #3776ab, #133a5e);
+}
+
+#skills .p-sql {
+    top: 50%;
+    left: 5%;
+    background: radial-gradient(circle at 30% 30%, #bd00ff, #57007a);
+}
+
+#skills .p-git {
+    top: 18%;
+    left: 18%;
+    background: radial-gradient(circle at 30% 30%, #f05032, #7a2211);
+}
+
+/* --- SECTION 4: PROJECTS (#projects) --- */
+#projects .filter-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+#projects .filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: #ccc;
+    padding: 10px 25px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.3s ease;
+}
+
+#projects .filter-btn.active,
+#projects .filter-btn:hover {
+    background: rgba(0, 210, 255, 0.2);
+    border-color: var(--neon-blue);
+    color: white;
+}
+
+#projects .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+    padding: 0 10%;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+#projects .project-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 20px;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+#projects .project-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.2);
+}
+
+#projects .card-img-container {
+    height: 180px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+#projects .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+#projects .project-card:hover .card-img {
+    transform: scale(1.1);
+}
+
+#projects .project-title {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 10px;
+}
+
+#projects .tech-icons {
+    display: flex;
+    gap: 10px;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+#projects .card-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: auto;
+}
+
+#projects .btn-card {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+#projects .btn-card:hover {
+    background: var(--neon-blue);
+    color: black;
+}
+
+/* --- SECTION 5: JOURNEY (#journey) --- */
+#journey .journey-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    padding: 20px;
+}
+
+#journey .path-column {
+    width: 30%;
+    position: relative;
+    min-height: 75vh;
+    /* Increased for better spacing */
+}
+
+#journey .cards-column {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 30px;
+    /* Essential gap */
+    padding-top: 20px;
+    padding-bottom: 20px;
+    position: relative;
+    z-index: 5;
+}
+
+#journey .path-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#journey .dashed-path {
+    fill: none;
+    stroke: var(--neon-blue);
+    stroke-width: 3;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 5px var(--neon-blue));
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawPath 3s ease-out forwards;
+    opacity: 0.8;
+}
+
+@keyframes drawPath {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes growLine {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+#journey .star-node {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    color: var(--neon-blue);
+    font-size: 1.2rem;
+    transform: translate(-50%, -50%);
+    background: #02050a;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--neon-blue);
+    z-index: 2;
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+/* Connector Lines */
+#journey .star-node::after {
+    content: '';
+    position: absolute;
+    height: 1px;
+    background: var(--neon-blue);
+    top: 50%;
+    left: 100%;
+    /* Start from right side of node */
+    box-shadow: 0 0 5px var(--neon-blue);
+    transform: scaleX(0);
+    transform-origin: left;
+}
+
+/* Triggered when .path-column has .visible class */
+.path-column.visible .star-node::after {
+    animation: growLine 0.5s forwards;
+}
+
+#journey .node-1 {
+    top: 12%;
+    left: 80%;
+}
+
+#journey .node-1::after {
+    width: calc(150px);
+    /* Reach to card overlay */
+}
+
+.path-column.visible .node-1::after {
+    animation-delay: 0.3s;
+}
+
+#journey .node-2 {
+    top: 38%;
+    left: 40%;
+}
+
+#journey .node-2::after {
+    width: calc(250px);
+    /* Longer line */
+}
+
+.path-column.visible .node-2::after {
+    animation-delay: 0.9s;
+}
+
+#journey .node-3 {
+    top: 64%;
+    left: 70%;
+}
+
+#journey .node-3::after {
+    width: calc(180px);
+}
+
+.path-column.visible .node-3::after {
+    animation-delay: 1.6s;
+}
+
+#journey .node-4 {
+    top: 90%;
+    left: 30%;
+}
+
+#journey .node-4::after {
+    width: calc(280px);
+}
+
+.path-column.visible .node-4::after {
+    animation-delay: 2.2s;
+}
+
+
+
+#journey .info-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    transition: transform 0.3s;
+}
+
+#journey .info-card:hover {
+    transform: translateX(10px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+
+
+/* Make path lines responsive-ish */
+@media (max-width: 900px) {
+    #journey .star-node::after {
+        display: none;
+        /* Hide connectors on mobile stack */
+    }
+}
+
+/* --- SECTION 7: CONTACT (#contact) --- */
+#contact .mission-control-container {
+    display: flex;
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    justify-content: center;
+    align-items: center;
+    /* Vertically align text and cards */
+}
+
+#contact .contact-text-panel {
+    flex: 1;
+    min-width: 300px;
+    color: white;
+}
+
+#contact .contact-heading {
+    font-size: 2rem;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    margin-bottom: 20px;
+    line-height: 1.3;
+}
+
+#contact .contact-subtext {
+    font-size: 1.1rem;
+    color: #ccc;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+#contact .text-highlight {
+    color: #ffaa00;
+    /* Golden/Orange highlight from image */
+    text-decoration: none;
+    font-weight: 600;
+}
+
+#contact .main-email {
+    font-size: 2.5rem;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+#contact .main-email:hover {
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+    transform: scale(1.05);
+}
+
+
+
+#contact .info-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#contact .contact-card {
+    background: rgba(189, 0, 255, 0.1);
+    border: 1px solid var(--neon-purple);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-radius: 10px;
+}
+
+/* --- FOOTER --- */
+footer {
+    text-align: center;
+    padding: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: #020305;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* RESPONSIVE */
+/* --- MOBILE NAVIGATION --- */
+.mobile-menu-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    /* Changed from left: 20px to right for standard placement */
+    z-index: 2000;
+    font-size: 1.8rem;
+    color: var(--neon-blue);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    display: none;
+    /* Hidden on desktop */
+}
+
+.mobile-nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(5, 7, 10, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 2001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.mobile-nav-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.close-menu-btn {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+}
+
+.mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    text-align: center;
+}
+
+.mobile-nav-links a {
+    text-decoration: none;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    transition: 0.3s;
+}
+
+.mobile-nav-links a:hover {
+    color: var(--neon-blue);
+    letter-spacing: 2px;
+}
+
+/* --- RESPONSIVE ADAPTATION --- */
+
+/* Large Tablets & Small Laptops (1024px - 1200px) */
+@media (max-width: 1200px) {
+    #home .scene-container {
+        transform: translate(-50%, -50%) scale(0.85);
+        /* Slightly smaller 3D scene */
+    }
+
+    #about .container,
+    #projects .projects-grid,
+    #resume .blueprint-container {
+        padding: 0 40px;
+        /* Increase side padding */
+    }
+
+    #about .grid-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Fix for shorter screens (e.g. Laptops) for Hero Section */
+@media (max-height: 800px) {
+    #home .scene-container {
+        transform: translate(-50%, -50%) scale(0.65);
+    }
+}
+
+/* Tablets (Portrait) & Large Phones (768px - 900px) */
+@media (max-width: 900px) {
+
+    /* Existing Logic maintained: Mobile Menu ON, Tracker OFF */
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .scroll-tracker {
+        display: none;
+    }
+
+    /* Scaling */
+    #home .scene-container {
+        transform: translate(-50%, -50%) scale(0.65);
+        /* Reduced scale */
+    }
+
+    #skills .universe-container {
+        transform: scale(0.65);
+    }
+
+    /* Layout Changes */
+    #about .grid-section {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 Columns for cards */
+    }
+
+    #about .top-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    #about .profile-card {
+        width: 100%;
+    }
+
+    #journey .journey-container {
+        flex-direction: column;
+        padding-top: 50px;
+    }
+
+    #journey .path-column {
+        display: none;
+    }
+
+    #journey .cards-column {
+        width: 100%;
+        border-left: 2px dashed rgba(0, 210, 255, 0.3);
+        padding-left: 30px;
+    }
+
+    #contact .mission-control-container {
+        flex-direction: column;
+    }
+
+    #contact .form-panel,
+    #contact .info-panel {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+/* Small Tablets & Large Phones (600px - 768px) */
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 2rem;
+        /* Smaller headings */
+    }
+
+    #projects .projects-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        /* Smaller cards */
+        padding: 0 20px;
+    }
+}
+
+/* Mobile Phones (< 600px) */
+@media (max-width: 600px) {
+
+    /* Hero Scaling */
+    #home .scene-container {
+        transform: translate(-50%, -50%) scale(0.40);
+    }
+
+    #home .sun-text h1 {
+        font-size: 2.5rem;
+        /* Readable on small screens */
+    }
+
+    /* Skills Scaling */
+    #skills .universe-container {
+        transform: scale(0.45);
+        margin-top: -50px;
+        /* Pull up to center */
+    }
+
+    #skills .skill-info-card {
+        width: 85vw !important;
+        padding: 20px;
+    }
+
+    /* Stack Everything */
+    #about .grid-section {
+        grid-template-columns: 1fr;
+        /* 1 Column */
+    }
+
+    #projects .projects-grid {
+        grid-template-columns: 1fr;
+        padding: 0 15px;
+    }
+
+    /* Resume Compact */
+    #resume .blueprint-card {
+        padding: 20px;
+    }
+
+    /* Footer Spacing */
+    footer {
+        padding-bottom: 80px;
+    }
+}
+
+/* Small Mobile (< 380px) */
+@media (max-width: 380px) {
+    #home .scene-container {
+        transform: translate(-50%, -50%) scale(0.32);
+    }
+
+    .mobile-menu-btn {
+        top: 15px;
+        right: 15px;
+        padding: 8px 12px;
+        font-size: 1.5rem;
+    }
+}
+
+/* --- TOP HERO NAVIGATION --- */

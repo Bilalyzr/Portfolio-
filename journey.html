@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey - The Path</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #102a43; /* Deep Blue from image */
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.8);
+            --text-main: #ffffff;
+            --text-secondary: #d9e2ec;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Background Stars --- */
+        .bg-stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Navigation (Placeholder) --- */
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        nav a { color: #ccc; text-decoration: none; margin: 0 15px; }
+        nav a:hover, nav a.active { color: #fff; }
+
+        /* --- Header --- */
+        .header-section {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* --- Main Journey Layout --- */
+        .journey-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            display: flex;
+            /* Creates two areas: Path (Left) and Content (Right) */
+        }
+
+        /* Left Column: The Winding Path */
+        .path-column {
+            width: 30%;
+            position: relative;
+            min-height: 800px; /* Ensure enough height for the curve */
+        }
+
+        /* Right Column: The Cards */
+        .cards-column {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Distribute cards vertically */
+            padding-bottom: 50px;
+            padding-top: 20px;
+        }
+
+        /* SVG Path Styling */
+        .path-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: visible;
+        }
+
+        .dashed-path {
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-dasharray: 8, 8; /* Creates the dashed effect */
+            opacity: 0.7;
+        }
+
+        /* --- The Stars (Nodes) --- */
+        /* We position these absolutely within the path-column to match the SVG curve */
+        .star-node {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            color: white;
+            font-size: 1.5rem;
+            transform: translate(-50%, -50%); /* Center on coordinate */
+            z-index: 2;
+            text-shadow: 0 0 10px #fff;
+        }
+        
+        /* Positions (Must match the SVG curve points) */
+        .node-1 { top: 10%; left: 80%; }
+        .node-2 { top: 36%; left: 40%; }
+        .node-3 { top: 63%; left: 70%; }
+        .node-4 { top: 90%; left: 30%; }
+
+        /* --- Connector Lines (Star to Card) --- */
+        .connector {
+            position: absolute;
+            height: 1px;
+            background: white;
+            z-index: 1;
+        }
+        
+        /* Calculated geometry to connect the Star (in Left Col) 
+           to the Card (in Right Col).
+           We anchor them to the stars and extend width to reach the card area.
+        */
+        .conn-1 { top: 10%; left: 80%; width: 25%; } /* From left:80% to edge */
+        .conn-2 { top: 36%; left: 40%; width: 65%; }
+        .conn-3 { top: 63%; left: 70%; width: 35%; }
+        .conn-4 { top: 90%; left: 30%; width: 75%; }
+
+        /* --- The Cards --- */
+        .info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin-bottom: 40px;
+            position: relative;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease;
+            /* Ensure cards align with the vertical positions of stars */
+            min-height: 140px; 
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .info-card:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            color: #fff;
+            margin-top: 5px;
+            width: 50px;
+            text-align: center;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-meta {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            font-family: 'Orbitron', sans-serif;
+            color: #bdc3c7;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .journey-container { flex-direction: column; }
+            .path-column { display: none; } /* Hide complex path on mobile */
+            .cards-column { width: 100%; padding-left: 20px; border-left: 2px dashed rgba(255,255,255,0.3); }
+            .info-card { margin-left: 20px; }
+            .info-card::before {
+                content: ''; position: absolute; left: -42px; top: 50%; width: 20px; height: 1px; background: white;
+            }
+            .info-card::after {
+                content: '\f005'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+                position: absolute; left: -50px; top: 50%; transform: translateY(-50%); color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-stars" id="star-container"></div>
+
+    <nav>
+        <a href="#">Home</a> | 
+        <a href="#">About</a> | 
+        <a href="#">Skills</a> | 
+        <a href="#">Projects</a> | 
+        <a href="#" class="active">Journey (Active)</a> | 
+        <a href="#">...</a>
+    </nav>
+
+    <div class="header-section">
+        <h1 class="section-title">Journey - "The Path"</h1>
+        <p class="section-subtitle">Tracing my growth trajectory through the tech cosmos.</p>
+    </div>
+
+    <div class="journey-container">
+        
+        <div class="path-column">
+            <svg class="path-svg" preserveAspectRatio="none">
+                <path d="M 80,10 
+                         C 80,25 40,20 40,36 
+                         C 40,50 70,50 70,63 
+                         C 70,80 30,75 30,90" 
+                      vector-effect="non-scaling-stroke" 
+                      class="dashed-path" />
+            </svg>
+
+            <div class="star-node node-1"><i class="fas fa-certificate"></i></div>
+            <div class="star-node node-2"><i class="fas fa-certificate"></i></div>
+            <div class="star-node node-3"><i class="fas fa-certificate"></i></div>
+            <div class="star-node node-4"><i class="fas fa-certificate"></i></div>
+
+            <div class="connector conn-1"></div>
+            <div class="connector conn-2"></div>
+            <div class="connector conn-3"></div>
+            <div class="connector conn-4"></div>
+        </div>
+
+        <div class="cards-column">
+            
+            <div class="info-card">
+                <div class="card-icon"><i class="fas fa-rocket"></i></div>
+                <div class="card-content">
+                    <div class="card-meta">CURRENT / RECENT WORK | YEAR/DATE</div>
+                    <div class="card-title">Internships or Self-Work</div>
+                    <div class="card-desc">Description of current role, freelancing activities, or active learning sprints.</div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="card-icon"><i class="fas fa-trophy"></i></div>
+                <div class="card-content">
+                    <div class="card-meta">CERTIFICATIONS | YEAR/DATE</div>
+                    <div class="card-title">Key Tech Certifications</div>
+                    <div class="card-desc">List of relevant certifications completed (e.g., AWS, Full Stack, Python).</div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="card-icon"><i class="fas fa-cogs"></i></div>
+                <div class="card-content">
+                    <div class="card-meta">PRACTICE PROJECTS & MILESTONES | YEAR/DATE</div>
+                    <div class="card-title">Significant Practice Projects</div>
+                    <div class="card-desc">Key projects built during learning phase that demonstrate practical application of skills.</div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="card-icon"><i class="fas fa-graduation-cap"></i></div>
+                <div class="card-content">
+                    <div class="card-meta">EDUCATION FOUNDATION | YEAR - YEAR</div>
+                    <div class="card-title">Master of Computer Applications (MCA)</div>
+                    <div class="card-desc">
+                        University Name<br>
+                        Relevant Courses: Data Structures, Web Dev, OOP.<br>
+                        Key coursework achievements.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        Standard links and copyright info
+    </footer>
+
+    <script>
+        // Simple Star Generator for Background
+        document.addEventListener('DOMContentLoaded', () => {
+            const starContainer = document.getElementById('star-container');
+            const starCount = 100;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                
+                // Styles for individual stars
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.background = 'rgba(255, 255, 255, 0.5)';
+                star.style.position = 'absolute';
+                star.style.borderRadius = '50%';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.opacity = Math.random();
+                
+                // Animation
+                star.style.animation = `twinkle ${Math.random() * 3 + 2}s infinite ease-in-out`;
+
+                starContainer.appendChild(star);
+            }
+        });
+
+        // Add CSS for twinkle animation dynamically
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes twinkle {
+                0%, 100% { opacity: 0.3; }
+                50% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
