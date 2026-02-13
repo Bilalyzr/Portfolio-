@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Section - Holographic HUD Style</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #05070a;
+            --holo-cyan: #00f3ff;
+            --holo-blue: #0066ff;
+            --alert-red: #ff3333;
+            --hud-bg: rgba(0, 10, 20, 0.85);
+            /* Slightly darker for readability */
+            --glass-border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--holo-cyan);
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(0, 102, 255, 0.1) 0%, transparent 60%),
+                linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(5, 10, 20, 1) 100%);
+        }
+
+        /* --- HUD CONTAINER --- */
+        .hud-interface {
+            display: flex;
+            width: 90%;
+            max-width: 1400px;
+            height: 85vh;
+            /* Increased height for content */
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            position: relative;
+            background:
+                linear-gradient(90deg, var(--holo-cyan) 0%, transparent 5%, transparent 95%, var(--holo-cyan) 100%) top/100% 2px no-repeat,
+                linear-gradient(90deg, var(--holo-cyan) 0%, transparent 5%, transparent 95%, var(--holo-cyan) 100%) bottom/100% 2px no-repeat;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.1);
+            overflow: hidden;
+        }
+
+        /* Corner Accents */
+        .hud-corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--holo-cyan);
+            box-shadow: 0 0 10px var(--holo-cyan);
+            z-index: 10;
+        }
+
+        .tl {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .tr {
+            top: 0;
+            right: 0;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .bl {
+            bottom: 0;
+            left: 0;
+            border-right: none;
+            border-top: none;
+        }
+
+        .br {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* --- LEFT PANEL: VISUALIZER (Astronaut) --- */
+        .hud-visualizer {
+            flex: 1;
+            position: relative;
+            border-right: 1px solid rgba(0, 243, 255, 0.2);
+            background: repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 243, 255, 0.03) 3px,
+                    rgba(0, 243, 255, 0.03) 4px);
+        }
+
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--holo-cyan);
+            box-shadow: 0 0 20px var(--holo-cyan);
+            opacity: 0.5;
+            animation: scan 4s linear infinite;
+            z-index: 5;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0;
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        .model-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* 3D Floating Circle Data behind Astro */
+        .holo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            border: 1px dashed rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotateRing 20s linear infinite;
+        }
+
+        .holo-ring::before {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            border-radius: 50%;
+            border-left: transparent;
+            border-right: transparent;
+        }
+
+        @keyframes rotateRing {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* --- RIGHT PANEL: DATA LOGS --- */
+        .hud-data-panel {
+            flex: 1.5;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            background: var(--hud-bg);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+
+        /* Custom Scrollbar for HUD */
+        .hud-data-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .hud-data-panel::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .hud-data-panel::-webkit-scrollbar-thumb {
+            background: var(--holo-blue);
+            border-radius: 4px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--holo-blue);
+            padding-bottom: 10px;
+        }
+
+        .hud-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: white;
+            text-shadow: 0 0 10px var(--holo-blue);
+        }
+
+        .status-badge {
+            font-family: 'Share Tech Mono';
+            background: rgba(0, 243, 255, 0.1);
+            padding: 5px 15px;
+            border: 1px solid var(--holo-cyan);
+            font-size: 0.8rem;
+            color: var(--holo-cyan);
+            animation: blinkBadge 2s infinite;
+        }
+
+        @keyframes blinkBadge {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Content Blocks */
+        .data-block {
+            position: relative;
+        }
+
+        .block-label {
+            font-family: 'Share Tech Mono';
+            color: var(--holo-blue);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .block-label::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--holo-blue);
+            display: block;
+            box-shadow: 0 0 5px var(--holo-blue);
+        }
+
+        .text-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #dbe4ff;
+            border-left: 2px solid rgba(0, 243, 255, 0.3);
+            padding-left: 15px;
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.05), transparent);
+            margin-bottom: 10px;
+        }
+
+        /* Two columns for Goals/Skills */
+        .cols-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .list-box h5 {
+            color: var(--holo-cyan);
+            margin: 0 0 10px 0;
+            font-family: 'Orbitron';
+            font-size: 0.9rem;
+        }
+
+        .holo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .holo-list li {
+            position: relative;
+            padding-left: 15px;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .holo-list li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--holo-blue);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 900px) {
+            .hud-interface {
+                flex-direction: column;
+                height: auto;
+                width: 95%;
+                overflow-y: visible;
+            }
+
+            .hud-visualizer {
+                height: 400px;
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            }
+
+            .cols-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hud-interface">
+        <!-- Decoration Corners -->
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+
+        <!-- Left: 3D Visualizer -->
+        <div class="hud-visualizer">
+            <div class="scanner-line"></div>
+            <div class="holo-ring"></div>
+
+            <div class="model-wrapper">
+                <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+                    alt="A 3D model of an astronaut" auto-rotate camera-controls shadow-intensity="1"
+                    style="width: 100%; height: 100%; background-color: transparent;" disable-zoom disable-pan
+                    interaction-prompt="none">
+                </model-viewer>
+            </div>
+
+            <!-- Overlay Data Points on Model -->
+            <div
+                style="position: absolute; top: 15%; left: 10%; color: white; font-family: 'Share Tech Mono'; font-size: 0.8rem; opacity: 0.7;">
+                PLOT_ID: MOHAMMED_BILAL<br>
+                STATUS: ACTIVE
+            </div>
+            <div
+                style="position: absolute; bottom: 10%; right: 10%; color: white; font-family: 'Share Tech Mono'; font-size: 0.8rem; opacity: 0.7; text-align: right;">
+                SYS_CHECK: OK<br>
+                MOTIVATION: 100%
+            </div>
+        </div>
+
+        <!-- Right: Data Logs -->
+        <div class="hud-data-panel">
+
+            <div class="panel-header">
+                <div class="hud-title">The Astronaut</div>
+                <div class="status-badge">● PROFILE_LOADED</div>
+            </div>
+
+            <!-- 1. Who You Are -->
+            <div class="data-block">
+                <div class="block-label">IDENTITY_LOG [WHO YOU ARE]</div>
+                <div class="text-content">
+                    I am Mohammed Bilal, a passionate Web Developer and Full Stack Learner. With a strong foundation in
+                    computer applications, I explore the universe of technology, constantly expanding my skills to build
+                    innovative solutions.
+                </div>
+            </div>
+
+            <!-- 2. MCA + Journey -->
+            <div class="data-block">
+                <div class="block-label">EDUCATION_SEQUENCE</div>
+                <div class="text-content">
+                    Master of Computer Applications (MCA) graduate. My journey is fueled by self-taught mastery in
+                    modern web technologies, bridging the gap between theory and practical application through hands-on
+                    projects.
+                </div>
+            </div>
+
+            <!-- 3. Why I Love Tech -->
+            <div class="data-block">
+                <div class="block-label">CORE_DRIVE [WHY TECH?]</div>
+                <div class="text-content">
+                    Technology is my fuel. I am driven by the endless possibilities to create, the challenge of solving
+                    complex problems, and the continuous evolution of the digital landscape.
+                </div>
+            </div>
+
+            <!-- 4. Goals & Skills Split -->
+            <div class="data-block">
+                <div class="block-label">MISSION_PARAMETERS</div>
+                <div class="cols-2">
+                    <!-- Goals -->
+                    <div class="list-box">
+                        <h5>> TARGET_OBJECTIVES:</h5>
+                        <ul class="holo-list">
+                            <li>Secure a full-time Developer role</li>
+                            <li>Build impactful freelance projects</li>
+                            <li>Achieve continuous growth</li>
+                        </ul>
+                    </div>
+                    <!-- Soft Skills -->
+                    <div class="list-box">
+                        <h5>> CREW_ATTRIBUTES:</h5>
+                        <ul class="holo-list">
+                            <li>Communication</li>
+                            <li>Problem-Solving</li>
+                            <li>Teamwork & Adaptability</li>
+                            <li>Time Management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

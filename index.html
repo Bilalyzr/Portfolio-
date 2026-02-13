@@ -10,13 +10,20 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Raleway:wght@500&family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap"
         rel="stylesheet">
+    <!-- Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </head>
 
 <body>
 
     <!-- Global Background -->
-    <div id="global-stars"
-        style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none;"></div>
+    <!-- Global Parallax Backgrounds -->
+    <div id="bg-base"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-10; background-color: var(--bg-color);">
+    </div>
+    <div id="p-layer-1" class="parallax-layer" data-speed="0.05"></div>
+    <div id="p-layer-2" class="parallax-layer" data-speed="0.15"></div>
+    <div id="p-layer-3" class="parallax-layer" data-speed="0.3"></div>
 
 
 
@@ -69,14 +76,20 @@
     <!-- 1. HERO SECTION -->
     <section id="home">
         <div id="star-container-hero" class="star-container"></div>
+        <div id="shooting-stars-container"></div>
         <div class="nebula"></div>
 
         <div class="scene-container">
             <div class="solar-system">
 
+                <!-- 7 Orbits -->
                 <div class="orbit orbit-1"></div>
                 <div class="orbit orbit-2"></div>
                 <div class="orbit orbit-3"></div>
+                <div class="orbit orbit-4"></div>
+                <div class="orbit orbit-5"></div>
+                <div class="orbit orbit-6"></div>
+                <div class="orbit orbit-7"></div>
 
                 <div class="sun-wrapper">
                     <div class="sun"></div>
@@ -90,57 +103,107 @@
                     </div>
                 </div>
 
-                <!-- Track 1 -->
+                <!-- Tracks & Planets -->
                 <div class="track track-1">
-                    <div class="p-wrapper p-node">
+                    <div class="p-wrapper p-1">
                         <div class="planet-body style-node counter-rot-1"><i class="fab fa-node-js"></i></div>
                     </div>
-                    <div class="p-wrapper p-react">
-                        <div class="planet-body style-react counter-rot-1"><i class="fab fa-react"></i></div>
-                    </div>
                 </div>
 
-                <!-- Track 2 -->
                 <div class="track track-2">
-                    <div class="p-wrapper p-html-mid">
-                        <div class="planet-body style-html counter-rot-2"><i class="fab fa-html5"></i></div>
-                    </div>
-                    <div class="p-wrapper p-db">
-                        <div class="planet-body style-db counter-rot-2"><i class="fas fa-database"></i></div>
+                    <div class="p-wrapper p-2">
+                        <div class="planet-body style-react counter-rot-2"><i class="fab fa-react"></i></div>
                     </div>
                 </div>
 
-                <!-- Track 3 -->
                 <div class="track track-3">
-                    <div class="p-wrapper p-python">
-                        <div class="planet-body style-python counter-rot-3"><i class="fab fa-python"></i></div>
-                    </div>
-                    <div class="p-wrapper p-html-out">
+                    <div class="p-wrapper p-3">
                         <div class="planet-body style-html counter-rot-3"><i class="fab fa-html5"></i></div>
                     </div>
-                    <div class="p-wrapper p-css">
-                        <div class="planet-body style-css counter-rot-3"><i class="fab fa-css3-alt"></i></div>
+                </div>
+
+                <div class="track track-4">
+                    <div class="p-wrapper p-4">
+                        <div class="planet-body style-db counter-rot-4"><i class="fas fa-database"></i></div>
+                    </div>
+                </div>
+
+                <div class="track track-5">
+                    <div class="p-wrapper p-5">
+                        <div class="planet-body style-python counter-rot-5"><i class="fab fa-python"></i></div>
+                    </div>
+                </div>
+
+                <div class="track track-6">
+                    <div class="p-wrapper p-6">
+                        <div class="planet-body style-css counter-rot-6"><i class="fab fa-css3-alt"></i></div>
+                    </div>
+                </div>
+
+                <div class="track track-7">
+                    <div class="p-wrapper p-7">
+                        <div class="planet-body style-git counter-rot-7"><i class="fab fa-git-alt"></i></div>
                     </div>
                 </div>
 
             </div>
         </div>
 
+
+
         <div class="cta-container">
-            <a href="#projects" class="cta-btn">Explore My Universe</a>
+            <div class="cta-btn-wrapper" id="btnWrapper">
+                <a href="#projects" class="cta-btn" id="btn">
+
+                    <!-- Constellation Graphic -->
+                    <svg class="constellation-svg" viewBox="0 0 500 140" xmlns="http://www.w3.org/2000/svg"
+                        preserveAspectRatio="none">
+                        <path d="M 70 65 L 140 35 L 200 65 L 260 115 L 340 115 L 410 55" class="constellation-line"
+                            fill="none" />
+
+                        <circle cx="70" cy="65" r="4" class="star-dot" />
+                        <circle cx="140" cy="35" r="4" class="star-dot" style="animation-delay: 0.2s" />
+                        <circle cx="200" cy="65" r="4" class="star-dot" style="animation-delay: 0.4s" />
+                        <circle cx="260" cy="115" r="4" class="star-dot" style="animation-delay: 0.6s" />
+                        <circle cx="340" cy="115" r="4" class="star-dot" style="animation-delay: 0.8s" />
+                        <circle cx="410" cy="55" r="4" class="star-dot" style="animation-delay: 1.0s" />
+
+                        <circle cx="30" cy="20" r="1.5" fill="white" opacity="0.4" />
+                        <circle cx="460" cy="120" r="1.5" fill="white" opacity="0.4" />
+                        <circle cx="250" cy="20" r="1.5" fill="white" opacity="0.3" />
+                        <circle cx="100" cy="120" r="1.5" fill="white" opacity="0.3" />
+                    </svg>
+
+                    <div class="btn-text">Explore My Universe</div>
+
+                    <!-- Existing Realistic Saturn -->
+                    <div class="saturn-container">
+                        <div class="ring-back"></div>
+                        <div class="saturn-body"></div>
+                        <div class="ring-front"></div>
+                    </div>
+                </a>
+            </div>
         </div>
     </section>
 
     <!-- 2. ABOUT SECTION -->
     <section id="about">
+        <div class="section-bg bg-nebula"></div>
         <div class="container fade-up">
             <h2 class="section-title">About - The Astronaut</h2>
             <h3 class="subsection-title">The Astronaut's Profile</h3>
 
             <div class="top-section">
-                <div class="astronaut-container fade-right">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2026/2026521.png" alt="Astronaut"
-                        class="astronaut-img">
+                <div class="astronaut-container zoom-in">
+                    <!-- 3D Realistic Astronaut -->
+                    <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+                        alt="A 3D model of an astronaut" auto-rotate camera-controls shadow-intensity="1"
+                        style="width: 100%; height: 100%; background-color: transparent;" disable-zoom disable-pan>
+                    </model-viewer>
+
+                    <!-- Speech Bubble -->
+                    <div class="speech-bubble">Hello! I am Mohammed Bilal</div>
                 </div>
 
                 <div class="profile-card holograph-card fade-left">
@@ -207,8 +270,8 @@
 
     <!-- 3. SKILLS SECTION -->
     <section id="skills">
+        <div class="section-bg bg-grid"></div>
         <div class="container fade-up" id="skills-layout-container">
-
             <div class="skills-left">
                 <div class="universe-container zoom-in">
                     <div class="orbit-ring ring-1"></div>
@@ -224,7 +287,8 @@
                         <div class="close-btn" onclick="closeSkillCard()"><i class="fas fa-times"></i></div>
 
                         <i id="skill-icon" class="fab fa-react tech-icon-large"></i>
-                        <h3 id="skill-title" style="font-family:'Montserrat'; margin:10px 0; color:white;">React</h3>
+                        <h3 id="skill-title" style="font-family:'Montserrat'; margin:10px 0; color:white;">
+                            React</h3>
 
                         <div class="skill-card-details">
                             <div class="detail-row">
@@ -250,7 +314,8 @@
                             </div>
                         </div>
 
-                        <a href="#projects" class="skill-cta-btn" onclick="closeSkillCard()">View Projects</a>
+                        <a href="#projects" class="skill-cta-btn" onclick="closeSkillCard()">View
+                            Projects</a>
                     </div>
 
                     <!-- Track 1: Horizontal -->
@@ -293,7 +358,8 @@
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 120deg;">
-                                <div class="planet p-js" onclick="openSkill('js')"><i class="fab fa-js"></i></div>
+                                <div class="planet p-js" onclick="openSkill('js')"><i class="fab fa-js"></i>
+                                </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 240deg;">
                                 <div class="planet p-python" onclick="openSkill('python')"><i class="fab fa-python"></i>
@@ -309,20 +375,24 @@
                     <p class="quote-text">"A problem is an opportunity to do your best."</p>
                 </div>
                 <h2 class="skills-heading">Skills & Experience</h2>
-                <p class="skills-subtext-highlight">I specialize in crafting engaging and high-quality client-side web
+                <p class="skills-subtext-highlight">I specialize in crafting engaging and high-quality
+                    client-side web
                     applications.</p>
                 <p class="skills-body-text">
-                    My experience includes HTML, CSS, and JavaScript, building projects with React and Vue, developing
-                    custom features and plugins, creating animations, and coding interactive layouts. I also have
+                    My experience includes HTML, CSS, and JavaScript, building projects with React and Vue,
+                    developing
+                    custom features and plugins, creating animations, and coding interactive layouts. I also
+                    have
                     full-stack experience, including working with WordPress, Node.js, and C.
                 </p>
             </div>
-
         </div>
+
     </section>
 
     <!-- 4. PROJECTS SECTION -->
     <section id="projects">
+        <div class="section-bg bg-void"></div>
         <div class="container fade-up">
             <h2 class="section-title" style="text-align:center;">Missions Log</h2>
 
@@ -342,8 +412,9 @@
 
     <!-- 5. JOURNEY SECTION -->
     <section id="journey">
+        <div class="section-bg bg-signal"></div>
         <div class="container fade-up">
-            <h2 class="section-title" style="text-align:center; margin-bottom:40px;">The Path Traveled</h2>
+            <h2 class="section-title" style="text-align:center; margin-bottom:10px;">The Path Traveled</h2>
 
             <div class="journey-container">
                 <div class="path-column fade-up">
@@ -359,7 +430,7 @@
 
                 <div class="cards-column fade-left">
                     <div class="info-card">
-                        <div style="font-size:2rem; color:white;"><i class="fas fa-rocket"></i></div>
+                        <div style="font-size:1.5rem; color:white;"><i class="fas fa-rocket"></i></div>
                         <div>
                             <div style="color:var(--neon-blue); font-size:0.8rem; letter-spacing:1px;">CURRENT</div>
                             <h3 style="color:white;">Freelance & Self-Learning</h3>
@@ -367,7 +438,7 @@
                         </div>
                     </div>
                     <div class="info-card">
-                        <div style="font-size:2rem; color:white;"><i class="fas fa-trophy"></i></div>
+                        <div style="font-size:1.5rem; color:white;"><i class="fas fa-trophy"></i></div>
                         <div>
                             <div style="color:var(--neon-blue); font-size:0.8rem; letter-spacing:1px;">2024 - 2025</div>
                             <h3 style="color:white;">Key Tech Certifications</h3>
@@ -375,7 +446,7 @@
                         </div>
                     </div>
                     <div class="info-card">
-                        <div style="font-size:2rem; color:white;"><i class="fas fa-laptop-code"></i></div>
+                        <div style="font-size:1.5rem; color:white;"><i class="fas fa-laptop-code"></i></div>
                         <div>
                             <div style="color:var(--neon-blue); font-size:0.8rem; letter-spacing:1px;">2023 - 2024</div>
                             <h3 style="color:white;">Major Projects Phase</h3>
@@ -384,7 +455,7 @@
                         </div>
                     </div>
                     <div class="info-card">
-                        <div style="font-size:2rem; color:white;"><i class="fas fa-graduation-cap"></i></div>
+                        <div style="font-size:1.5rem; color:white;"><i class="fas fa-graduation-cap"></i></div>
                         <div>
                             <div style="color:var(--neon-blue); font-size:0.8rem; letter-spacing:1px;">2021 - 2023</div>
                             <h3 style="color:white;">MCA Graduate</h3>
@@ -398,46 +469,96 @@
 
 
     <section id="contact">
+        <div class="section-bg bg-signal"></div>
         <div class="container fade-up">
             <h2 class="section-title" style="text-align:center; margin-bottom:40px;">Mission Control</h2>
 
             <div class="mission-control-container">
 
-                <div class="contact-text-panel fade-right">
-                    <h3 class="contact-heading">What would you do if a software expert was just a click away?</h3>
-                    <p class="contact-subtext">Whether you want to start a new project or just say hello, I’d love to
-                        hear from you. You can also follow me on <a href="#" class="text-highlight">Instagram</a>.</p>
-                    <a href="mailto:bilal@example.com" class="main-email">bilal@example.com</a>
-                </div>
-                <div class="contact-card">
-                    <i class="fas fa-envelope" style="font-size:1.5rem; color:var(--neon-purple);"></i>
-                    <div>
-                        <div style="color:var(--neon-blue); font-size:0.8rem;">EMAIL</div>
-                        <div style="color:white;">bilal@example.com</div>
+                <div class="contact-upper-area">
+                    <div class="contact-text-panel fade-right">
+                        <h3 class="contact-heading">What would you do if a software expert was just a click away?</h3>
+                        <p class="contact-subtext">Whether you want to start a new project or just say hello, I’d love
+                            to
+                            hear from you. You can also follow me on <a
+                                href="https://www.instagram.com/_.bxnny_4?igsh=dndpNm1zdHIxMTE0"
+                                class="text-highlight">Instagram</a>.
+                        </p>
+
+                        <div class="contact-links-row">
+                            <div class="contact-card">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <div class="card-label">EMAIL</div>
+                                    <a href="mailto:althafbilal1968@gmail.com"
+                                        class="card-value">althafbilal1968@gmail.com</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <i class="fab fa-linkedin"></i>
+                                <div>
+                                    <div class="card-label">LINKEDIN</div>
+                                    <a href="https://www.linkedin.com/in/mohammed-bilal-a-5b5656254"
+                                        class="card-value">Mohammed Bilal A</a>
+                                </div>
+                            </div>
+                            <div class="contact-card">
+                                <i class="fab fa-github"></i>
+                                <div>
+                                    <div class="card-label">GITHUB</div>
+                                    <a href="https://github.com/yourprofile" class="card-value">View on GitHub</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-container fade-left">
+                        <div class="satellite">
+                            <div class="sat-body">
+                                <div class="sat-face front"></div>
+                                <div class="sat-face back"></div>
+                                <div class="sat-face top"></div>
+                                <div class="sat-face bottom"></div>
+                                <div class="sat-face left"></div>
+                                <div class="sat-face right"></div>
+                            </div>
+                            <div class="sat-panel-arm left-arm"></div>
+                            <div class="sat-panel-arm right-arm"></div>
+                            <div class="sat-panel panel-left">
+                                <div class="panel-face front"></div>
+                                <div class="panel-face back"></div>
+                            </div>
+                            <div class="sat-panel panel-right">
+                                <div class="panel-face front"></div>
+                                <div class="panel-face back"></div>
+                            </div>
+                            <div class="sat-dish-arm"></div>
+                            <div class="sat-dish"></div>
+                        </div>
+                        <!-- Signal Effect -->
+                        <div class="contact-signal">
+                            <div class="signal-ring"></div>
+                            <div class="signal-ring ring-2"></div>
+                            <span class="signal-text">Contact Us</span>
+                        </div>
                     </div>
                 </div>
-                <div class="contact-card">
-                    <i class="fab fa-linkedin" style="font-size:1.5rem; color:var(--neon-purple);"></i>
-                    <div>
-                        <div style="color:var(--neon-blue); font-size:0.8rem;">LINKEDIN</div>
-                        <a href="#" style="color:white; text-decoration:none;">linkedin.com/in/bilal</a>
-                    </div>
-                </div>
-                <div class="contact-card">
-                    <i class="fab fa-github" style="font-size:1.5rem; color:var(--neon-purple);"></i>
-                    <div>
-                        <div style="color:var(--neon-blue); font-size:0.8rem;">GITHUB</div>
-                        <a href="#" style="color:white; text-decoration:none;">github.com/bilal</a>
-                    </div>
-                </div>
+
             </div>
         </div>
         </div>
     </section>
 
-    <footer>
-        <p>&copy; Billu@004.</p>
-    </footer>
+
+
+
+
+    <!-- WARP SPEED TRANSITION OVERLAY -->
+    <div id="warp-transition" class="warp-container">
+        <div class="warp-stars"></div>
+        <div class="warp-stars-2"></div>
+        <div class="warp-flash"></div>
+    </div>
 
     <script src="script.js"></script>
 </body>
