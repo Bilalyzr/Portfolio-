@@ -19,12 +19,24 @@
 }
 
 body {
-    background-color: var(--bg-color);
+    /* background-color handled by #bg-base */
     color: var(--text-main);
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
     position: relative;
     line-height: 1.6;
+}
+
+.parallax-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 400vh;
+    /* Increased height for parallax scrolling range */
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform;
 }
 
 h1,
@@ -68,14 +80,11 @@ section {
 .brand-logo {
     position: fixed;
     top: 55px;
-    /* Reference: 55px */
     left: 50px;
-    /* Reference: 50px */
     z-index: 1000;
     display: flex;
     align-items: center;
     gap: 8px;
-    /* Visual gap approximation or slight buffer */
     text-decoration: none;
     transition: transform 0.3s ease;
 }
@@ -87,28 +96,22 @@ section {
 .logo-box {
     background: #f0f8ff;
     color: #000;
-    width: 40px;
-    /* Reference: 40px */
-    height: 23px;
-    /* Reference: 23px */
+    width: 38px;
+    height: 38px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: 'Share Tech Mono', monospace;
     font-weight: 900;
-    font-size: 1rem;
-    /* Proportional to box height */
+    font-size: 1.2rem;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
 .logo-text {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
-    /* Reference: 700 */
     font-size: 2rem;
-    /* Reference: 32px */
     letter-spacing: 5px;
-    /* Reference: 5px */
     color: white;
     text-transform: uppercase;
     line-height: 1;
@@ -133,9 +136,7 @@ section {
 .nav-contact-btn {
     position: fixed;
     top: 55px;
-    /* Mirrored top pos */
     right: 50px;
-    /* Mirrored offset */
     z-index: 1000;
     color: white;
     text-decoration: none;
@@ -156,31 +157,17 @@ section {
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
-@keyframes blinkCursor {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0;
-    }
-}
-
 /* --- SCROLL TRACKER (Sidebar) --- */
 .scroll-tracker {
     position: fixed;
     top: 50%;
     right: 20px;
-    /* Reduced from 40px */
     transform: translateY(-50%);
     z-index: 1000;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    /* Reduced from 30px */
     font-family: 'Share Tech Mono', monospace;
     color: rgba(255, 255, 255, 0.3);
 }
@@ -192,16 +179,10 @@ section {
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    /* Reduced from 20px */
     padding-right: 15px;
-    /* Reduced padding */
-    /* Space for the line */
     border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Moving marker line */
-/* Marker Line / Dot Container */
-/* Moving Rocket Indicator */
 .scroll-nav::after {
     content: '\f135';
     /* FontAwesome Rocket Icon */
@@ -210,13 +191,9 @@ section {
     position: absolute;
     top: var(--active-pos, 0px);
     right: -8px;
-    /* Adjusted spacing */
-    /* Center relative to border */
     font-size: 0.8rem;
-    /* Reduced from 1.2rem */
     color: var(--neon-blue);
     transform: translateY(-50%) rotate(-45deg);
-    /* Default: Pointing Up-Left (Up) */
     transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s ease;
     filter: drop-shadow(0 0 5px var(--neon-blue));
     z-index: 10;
@@ -225,7 +202,6 @@ section {
 /* Scroll Down State: Flip Rocket */
 body.scroll-down .scroll-nav::after {
     transform: translateY(-50%) rotate(135deg);
-    /* Pointing Down-Right (Down) */
 }
 
 /* Rocket Smoke Effect */
@@ -238,7 +214,6 @@ body.scroll-down .scroll-nav::after {
     height: 30px;
     background: linear-gradient(to bottom, rgba(0, 210, 255, 0.8), transparent);
     filter: blur(4px);
-    /* Default (Up): Smoke is below rocket */
     transform: translateY(10px);
     opacity: 0.6;
     transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.4s ease;
@@ -247,7 +222,6 @@ body.scroll-down .scroll-nav::after {
 
 /* Scroll Down State: Smoke moves ABOVE rocket */
 body.scroll-down .scroll-nav::before {
-    /* Move up and rotate 180deg so the gradient flushes upwards */
     transform: translateY(-35px) rotate(180deg);
 }
 
@@ -266,7 +240,6 @@ body.scroll-down .scroll-nav::before {
 /* Active Section Indicator Logic (via class) */
 .scroll-nav li {
     font-size: 0.75rem;
-    /* Reduced from 1rem */
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
@@ -278,12 +251,9 @@ body.scroll-down .scroll-nav::before {
     position: absolute;
     top: 50%;
     right: -25px;
-    /* On the line */
     width: 8px;
     height: 8px;
     background: transparent;
-    /* Dot removed, using line instead per ref image? Ref has dots maybe. */
-    /* Let's replicate Ref: Number gap Line. */
     border-radius: 50%;
     transform: translateY(-50%);
     transition: background 0.3s;
@@ -378,44 +348,56 @@ body.scroll-down .scroll-nav::before {
     }
 }
 
-/* --- SCROLL ANIMATIONS --- */
+/* --- SCROLL ANIMATIONS: ZERO-G HOLOGRAPHIC REVEAL --- */
+.fade-up,
+.fade-left,
+.fade-right,
+.zoom-in {
+    transition:
+        opacity 1.0s ease-out,
+        transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+        /* "Drift to stop" easing */
+        filter 1.0s ease-out;
+    will-change: opacity, transform, filter;
+}
+
 .fade-up {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transform: translateY(80px) scale(0.95);
+    filter: blur(10px);
 }
 
 .fade-left {
     opacity: 0;
-    transform: translateX(-50px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transform: translateX(-80px) scale(0.95);
+    filter: blur(10px);
 }
 
 .fade-right {
     opacity: 0;
-    transform: translateX(50px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transform: translateX(80px) scale(0.95);
+    filter: blur(10px);
 }
 
 .zoom-in {
     opacity: 0;
-    transform: scale(0.8);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transform: scale(0.5);
+    filter: blur(15px);
 }
 
+/* Visibility State */
 .fade-up.visible,
 .fade-left.visible,
 .fade-right.visible,
 .zoom-in.visible {
     opacity: 1;
     transform: none;
+    filter: blur(0);
 }
 
 /* --- SECTION 1: HERO (#home) --- */
 #home {
-    /* Hero specific overrides */
     padding-top: 0;
-    /* Full screen hero */
     height: 100vh;
 }
 
@@ -429,15 +411,121 @@ body.scroll-down .scroll-nav::before {
     pointer-events: none;
 }
 
+
+
+/* --- SHOOTING STARS & COMETS --- */
+#shooting-stars-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.shooting-star {
+    position: absolute;
+    width: 4px;
+    /* Head size */
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fff, 0 0 20px var(--neon-blue), 0 0 40px var(--neon-purple);
+    opacity: 0;
+    animation: shootingAnimation linear forwards;
+}
+
+/* Tail of the comet */
+.shooting-star::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 1px;
+    /* Attach to back of head */
+    width: 150px;
+    /* Tail length */
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 1));
+}
+
+@keyframes shootingAnimation {
+    0% {
+        transform: translate(0, 0) rotate(var(--angle)) scale(0.5);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(var(--tx), var(--ty)) rotate(var(--angle)) scale(1);
+        opacity: 0;
+    }
+}
+
 #home .nebula {
     position: absolute;
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 20% 30%, rgba(0, 89, 255, 0.15) 0%, transparent 40%),
-        radial-gradient(circle at 80% 70%, rgba(119, 0, 255, 0.15) 0%, transparent 40%);
+        radial-gradient(circle at 20% 30%, rgba(0, 89, 255, 0.15) 0%, transparent 40%);
     z-index: 0;
     pointer-events: none;
+}
+
+/* --- SECTION BACKGROUNDS (Using Images) --- */
+
+/* Fix Content Stacking - Ensure text is above background */
+section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.section-bg {
+    position: absolute;
+    top: -10%;
+    left: 0;
+    width: 100%;
+    height: 120%;
+    /* Extra height for parallax movement */
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4;
+    mix-blend-mode: lighten;
+    will-change: transform;
+}
+
+/* 1. About: "Spiral Galaxy" */
+.bg-nebula {
+    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000');
+    opacity: 0.2;
+}
+
+/* 2. Skills: "Asteroids / Network" */
+.bg-grid {
+    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000');
+    opacity: 0.2;
+}
+
+/* 3. Projects: "Planet Rings" */
+.bg-void {
+    background-image: url('https://images.unsplash.com/photo-1614728853975-69c770c1e9a1?auto=format&fit=crop&q=80&w=2000');
+    opacity: 0.3;
+}
+
+/* 4. Journey: "Moon / Space" */
+.bg-flow {
+    background-image: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=2000');
+    opacity: 0.25;
+}
+
+/* 5. Contact: "Mission Control" (Same as Skills) */
+.bg-signal {
+    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000');
+    opacity: 0.4;
 }
 
 /* 3D Scene Container */
@@ -445,10 +533,8 @@ body.scroll-down .scroll-nav::before {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    /* Default safer scale */
+    transform: translate(-50%, -50%) scale(2.5);
     width: 100vh;
-    /* Use viewport relative sizing for container base if needed, or keep fixed and scale */
     height: 100vh;
     max-width: 1000px;
     max-height: 1000px;
@@ -481,58 +567,46 @@ body.scroll-down .scroll-nav::before {
 }
 
 #home .sun {
-    width: 400px;
-    height: 400px;
+    width: 250px;
+    height: 250px;
     background: radial-gradient(circle, #fff5d6 0%, #ffaa00 40%, #ff5e00 100%);
     border-radius: 50%;
-    box-shadow: 0 0 60px #ffaa00, 0 0 120px rgba(255, 100, 0, 0.6);
+    box-shadow: 0 0 30px #ffaa00, 0 0 60px rgba(255, 100, 0, 0.6);
     opacity: 0.9;
-    /* Slight transparency for text readability if needed */
 }
 
-/* Hero Text Content (Restyled) */
-/* Hero Text Content (Restyled) */
+/* Hero Text Content */
 #home .sun-text {
     position: absolute;
     top: 50%;
     left: 50%;
-    /* Centered positioning */
     transform: translate(-50%, -50%);
     text-align: center;
     width: 800px;
-    /* Increased width for center layout */
     z-index: 250;
-    /* Bring above orbits/CTA */
     pointer-events: auto;
-    /* Allow interactions with buttons */
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* Align flex children to center */
 }
 
-/* Hide Name - or utilize as subtle eyebrow, but user asked for THIS style */
 #home .sun-text h1 {
     font-size: 1rem;
     color: var(--neon-purple);
-    /* As a subtle accent or remove */
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 10px;
     font-family: 'Share Tech Mono', monospace;
     display: none;
-    /* Reference image doesn't show name prominently, just Role */
 }
 
 #home .hero-role {
     font-family: 'Montserrat', sans-serif;
     font-weight: 800;
     font-size: 4rem;
-    /* Massive bold text */
     line-height: 1.1;
     color: white;
     text-transform: none;
-    /* Reference is Title Case/Sentence Case mix but visually Standard */
     margin-bottom: 30px;
     text-shadow: none;
     letter-spacing: -1px;
@@ -542,7 +616,6 @@ body.scroll-down .scroll-nav::before {
     font-family: 'Inter', sans-serif;
     font-size: 1.1rem;
     color: #cbd5e1;
-    /* White-ish grey */
     line-height: 1.6;
     font-weight: 400;
     text-shadow: none;
@@ -575,30 +648,58 @@ body.scroll-down .scroll-nav::before {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     pointer-events: none;
 }
 
 #home .orbit-1 {
-    width: 350px;
-    height: 350px;
-    border-color: rgba(0, 255, 200, 0.4);
-    box-shadow: 0 0 5px rgba(0, 255, 200, 0.2);
+    width: 320px;
+    height: 320px;
+    border-color: rgba(0, 255, 200, 0.6);
+    box-shadow: 0 0 5px rgba(0, 255, 200, 0.3);
 }
 
 #home .orbit-2 {
-    width: 600px;
-    height: 600px;
-    border-color: rgba(0, 150, 255, 0.4);
-    box-shadow: 0 0 5px rgba(0, 150, 255, 0.2);
+    width: 400px;
+    height: 400px;
+    border-color: rgba(0, 150, 255, 0.6);
+    box-shadow: 0 0 5px rgba(0, 150, 255, 0.3);
 }
 
 #home .orbit-3 {
-    width: 900px;
-    height: 900px;
-    border-color: rgba(255, 50, 100, 0.4);
-    box-shadow: 0 0 5px rgba(255, 50, 100, 0.2);
+    width: 480px;
+    height: 480px;
+    border-color: rgba(255, 50, 100, 0.6);
+    box-shadow: 0 0 5px rgba(255, 50, 100, 0.3);
+}
+
+#home .orbit-4 {
+    width: 560px;
+    height: 560px;
+    border-color: rgba(255, 200, 50, 0.6);
+    box-shadow: 0 0 5px rgba(255, 200, 50, 0.3);
+}
+
+#home .orbit-5 {
+    width: 640px;
+    height: 640px;
+    border-color: rgba(189, 0, 255, 0.6);
+    box-shadow: 0 0 5px rgba(189, 0, 255, 0.3);
+}
+
+#home .orbit-6 {
+    width: 720px;
+    height: 720px;
+    border-color: rgba(50, 255, 50, 0.6);
+    box-shadow: 0 0 5px rgba(50, 255, 50, 0.3);
+}
+
+#home .orbit-7 {
+    width: 800px;
+    height: 800px;
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
 /* Tracks & Planets */
@@ -609,24 +710,49 @@ body.scroll-down .scroll-nav::before {
     transform: translate(-50%, -50%);
     border-radius: 50%;
     transform-style: preserve-3d;
+    will-change: transform;
 }
 
 #home .track-1 {
-    width: 350px;
-    height: 350px;
-    animation: rotate 15s linear infinite;
+    width: 320px;
+    height: 320px;
+    animation: rotate 12s linear infinite;
 }
 
 #home .track-2 {
-    width: 600px;
-    height: 600px;
-    animation: rotate 25s linear infinite reverse;
+    width: 400px;
+    height: 400px;
+    animation: rotate 18s linear infinite reverse;
 }
 
 #home .track-3 {
-    width: 900px;
-    height: 900px;
-    animation: rotate 40s linear infinite;
+    width: 480px;
+    height: 480px;
+    animation: rotate 24s linear infinite;
+}
+
+#home .track-4 {
+    width: 560px;
+    height: 560px;
+    animation: rotate 30s linear infinite reverse;
+}
+
+#home .track-5 {
+    width: 640px;
+    height: 640px;
+    animation: rotate 36s linear infinite;
+}
+
+#home .track-6 {
+    width: 720px;
+    height: 720px;
+    animation: rotate 42s linear infinite reverse;
+}
+
+#home .track-7 {
+    width: 800px;
+    height: 800px;
+    animation: rotate 48s linear infinite;
 }
 
 @keyframes rotate {
@@ -641,40 +767,47 @@ body.scroll-down .scroll-nav::before {
 
 #home .p-wrapper {
     position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
     transform-style: preserve-3d;
 }
 
-#home .p-node {
-    transform: rotateZ(45deg) translate(175px);
+/* Planet Offsets (Radius) */
+#home .p-1 {
+    transform: rotateZ(0deg) translate(160px);
 }
 
-#home .p-react {
-    transform: rotateZ(225deg) translate(175px);
+#home .p-2 {
+    transform: rotateZ(120deg) translate(200px);
 }
 
-#home .p-html-mid {
-    transform: rotateZ(0deg) translate(300px);
+#home .p-3 {
+    transform: rotateZ(240deg) translate(240px);
 }
 
-#home .p-db {
-    transform: rotateZ(180deg) translate(300px);
+#home .p-4 {
+    transform: rotateZ(60deg) translate(280px);
 }
 
-#home .p-python {
-    transform: rotateZ(300deg) translate(450px);
+#home .p-5 {
+    transform: rotateZ(180deg) translate(320px);
 }
 
-#home .p-html-out {
-    transform: rotateZ(120deg) translate(450px);
+#home .p-6 {
+    transform: rotateZ(300deg) translate(360px);
 }
 
-#home .p-css {
-    transform: rotateZ(210deg) translate(450px);
+#home .p-7 {
+    transform: rotateZ(45deg) translate(400px);
 }
 
 #home .planet-body {
     width: 60px;
     height: 60px;
+    margin: -30px 0 0 -30px;
+    /* Center planet on the node point */
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -684,6 +817,7 @@ body.scroll-down .scroll-nav::before {
     transform: rotateX(-60deg);
     /* Initial Counter-Tilt */
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    will-change: transform;
 }
 
 /* Planet Specifics */
@@ -717,17 +851,39 @@ body.scroll-down .scroll-nav::before {
     box-shadow: 0 0 20px #2965f1;
 }
 
-/* Counter Rotation Animation */
+#home .style-git {
+    background: radial-gradient(circle at 30% 30%, #f05032, #ad261a);
+    box-shadow: 0 0 20px #f05032;
+}
+
+/* Counter Rotation Animation for all 7 tracks */
 #home .counter-rot-1 {
-    animation: anti-spin 15s linear infinite reverse;
+    animation: anti-spin 12s linear infinite reverse;
 }
 
 #home .counter-rot-2 {
-    animation: anti-spin 25s linear infinite;
+    animation: anti-spin 18s linear infinite;
 }
 
+/* Reverse track so anti-spin is normal */
 #home .counter-rot-3 {
-    animation: anti-spin 40s linear infinite reverse;
+    animation: anti-spin 24s linear infinite reverse;
+}
+
+#home .counter-rot-4 {
+    animation: anti-spin 30s linear infinite;
+}
+
+#home .counter-rot-5 {
+    animation: anti-spin 36s linear infinite reverse;
+}
+
+#home .counter-rot-6 {
+    animation: anti-spin 42s linear infinite;
+}
+
+#home .counter-rot-7 {
+    animation: anti-spin 48s linear infinite reverse;
 }
 
 @keyframes anti-spin {
@@ -740,35 +896,193 @@ body.scroll-down .scroll-nav::before {
     }
 }
 
+/* --- HERO CTA BUTTON (Reconstructed Mission Style) --- */
+
 #home .cta-container {
     position: absolute;
-    bottom: 10%;
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#home .cta-btn-wrapper {
+    position: relative;
+    width: 160px;
+    height: 40px;
+    perspective: 1000px;
 }
 
 #home .cta-btn {
-    display: inline-block;
-    white-space: nowrap;
-    padding: 12px 35px;
-    background: rgba(5, 10, 20, 0.9);
-    border: 2px solid #00d2ff;
-    color: white;
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 50px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    /* Glassmorphism gradient background */
+    background: linear-gradient(180deg, rgba(18, 28, 56, 0.7) 0%, rgba(8, 12, 25, 0.8) 100%);
+    border-radius: 12px;
+    /* Subtle blue border */
+    border: 1px solid rgba(100, 200, 255, 0.2);
+    /* Shadows for depth */
+    box-shadow:
+        0 0 20px rgba(0, 0, 0, 0.6),
+        inset 0 0 15px rgba(100, 220, 255, 0.05);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
-    transition: all 0.3s ease;
-    text-transform: capitalize;
+    transition: transform 0.1s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    text-decoration: none;
+    /* Remove link underline */
+    overflow: visible;
+    /* Allow Saturn to overhang */
 }
 
-#home .cta-btn:hover {
-    background: rgba(0, 210, 255, 0.15);
-    color: white;
-    box-shadow: 0 0 30px rgba(0, 210, 255, 0.5);
+/* Glowing Edges (Laser Lines) */
+#home .cta-btn::before,
+#home .cta-btn::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #80e5ff, #80e5ff, transparent);
+    box-shadow: 0 0 10px #80e5ff;
+    opacity: 0.8;
+}
+
+#home .cta-btn::before {
+    top: -1px;
+}
+
+#home .cta-btn::after {
+    bottom: -1px;
+}
+
+/* Text Styling */
+#home .btn-text {
+    font-family: 'Exo 2', 'Orbitron', sans-serif;
+    /* Use requested font fallback */
+    font-size: 0.55rem;
+    /* Scaled down to fit 160px */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 10;
+    /* Gradient Fill for Text */
+    background: linear-gradient(180deg, #ffffff 20%, #b3e6ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(100, 220, 255, 0.5));
+    white-space: nowrap;
+}
+
+/* Constellation Graphic (SVG) */
+#home .constellation-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+#home .constellation-line {
+    stroke: #aaddff;
+    stroke-width: 2;
+    stroke-dasharray: 8, 8;
+    opacity: 0.4;
+    filter: drop-shadow(0 0 2px #aaddff);
+}
+
+#home .star-dot {
+    fill: #ccf2ff;
+    filter: drop-shadow(0 0 4px #fff);
+    animation: pulseStar 3s infinite alternate;
+}
+
+@keyframes pulseStar {
+    0% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+}
+
+
+
+/* --- RE-INTEGRATED REALISTIC SATURN --- */
+/* Adjusted to perch on the new button structure */
+
+#home .saturn-container {
+    position: absolute;
+    top: -25px;
+    right: -20px;
+    width: 60px;
+    height: 40px;
+    pointer-events: none;
+    z-index: 20;
+    /* Maintain the 20deg tilt */
+    transform: scale(0.6) rotate(20deg);
+    /* Note: We will handle dynamic tilt via JS, but base rotation is here */
+}
+
+/* Common Ring Geometry */
+#home .ring-back,
+#home .ring-front {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 70px;
+    height: 25px;
+    border: 6px solid rgba(190, 170, 140, 0.6);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 5px rgba(255, 230, 200, 0.2);
+}
+
+#home .ring-back {
+    z-index: 1;
+    border-bottom-color: transparent;
+    border-top-color: rgba(180, 160, 130, 0.5);
+}
+
+#home .saturn-body {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%,
+            rgba(255, 245, 200, 1) 0%,
+            rgba(235, 200, 150, 1) 40%,
+            rgba(150, 100, 70, 1) 80%,
+            rgba(40, 25, 20, 1) 100%);
+    box-shadow:
+        inset -4px -4px 8px rgba(0, 0, 0, 0.7),
+        0 0 15px rgba(255, 200, 150, 0.4);
+    z-index: 2;
+}
+
+#home .ring-front {
+    z-index: 3;
+    border-top-color: transparent;
+    border-bottom-color: rgba(220, 200, 170, 0.9);
+    border-left-color: rgba(200, 180, 150, 0.7);
+    border-right-color: rgba(200, 180, 150, 0.7);
 }
 
 /* --- SECTION 2: ABOUT (#about) --- */
@@ -806,7 +1120,7 @@ body.scroll-down .scroll-nav::before {
     font-weight: 500;
     font-size: 1.5rem;
     color: #b3c5ef;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
     text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
 }
 
@@ -821,18 +1135,78 @@ body.scroll-down .scroll-nav::before {
 }
 
 #about .astronaut-container {
-    flex: 0 0 300px;
+    flex: 0 0 350px;
     /* Fixed width for astronaut */
+    height: 450px;
+    /* Fixed height for 3D model */
     display: flex;
     justify-content: center;
-    animation: float 6s ease-in-out infinite;
+    align-items: center;
+    position: relative;
+    /* Remove float animation from container as model rotates */
 }
 
-#about .astronaut-img {
-    max-width: 100%;
-    height: auto;
-    filter: drop-shadow(0 0 30px rgba(0, 210, 255, 0.2));
+/* 3D Model Styling */
+model-viewer {
+    width: 100%;
+    height: 100%;
+    --poster-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.2));
 }
+
+/* Speech Bubble "Say Hi" */
+.speech-bubble {
+    position: absolute;
+    top: 30px;
+    right: -20px;
+    background: rgba(10, 20, 40, 0.9);
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    padding: 10px 20px;
+    border-radius: 15px;
+    border-bottom-left-radius: 0;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1rem;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* Show on Hover or Touch */
+.astronaut-container:hover .speech-bubble,
+.astronaut-container:active .speech-bubble {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    animation: bubbleFloat 3s ease-in-out infinite;
+}
+
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-left: 10px solid var(--neon-blue);
+    border-top: 10px solid transparent;
+    border-bottom: 0 solid transparent;
+}
+
+@keyframes bubbleFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
 
 @keyframes float {
     0% {
@@ -853,7 +1227,7 @@ body.scroll-down .scroll-nav::before {
     background: rgba(10, 20, 40, 0.6);
     backdrop-filter: blur(12px);
     border-radius: 20px;
-    padding: 30px;
+    padding: 20px;
     position: relative;
     border: 1px solid rgba(0, 210, 255, 0.5);
     box-shadow: 0 0 15px rgba(0, 210, 255, 0.1), inset 0 0 20px rgba(0, 210, 255, 0.05);
@@ -1448,6 +1822,10 @@ body.scroll-down .scroll-nav::before {
 }
 
 /* --- SECTION 4: PROJECTS (#projects) --- */
+#projects {}
+
+/* Placehold to remove previous styles */
+
 #projects .filter-container {
     display: flex;
     justify-content: center;
@@ -1475,15 +1853,41 @@ body.scroll-down .scroll-nav::before {
 }
 
 #projects .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
     gap: 30px;
-    padding: 0 10%;
-    max-width: 1600px;
+    padding: 30px 10px;
+    max-width: 100%;
     margin: 0 auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-blue) rgba(255, 255, 255, 0.05);
+    /* Ensure padding doesn't cut off scroll */
+    scroll-padding: 0 5%;
+}
+
+/* Custom Horizontal Scrollbar */
+#projects .projects-grid::-webkit-scrollbar {
+    height: 8px;
+}
+
+#projects .projects-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin: 0 20px;
+}
+
+#projects .projects-grid::-webkit-scrollbar-thumb {
+    background: var(--neon-blue);
+    border-radius: 10px;
+    box-shadow: 0 0 5px var(--neon-blue);
 }
 
 #projects .project-card {
+    min-width: 320px;
+    /* Ensure cards don't shrink */
+    scroll-snap-align: center;
     background: var(--card-bg);
     backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border);
@@ -1554,6 +1958,8 @@ body.scroll-down .scroll-nav::before {
 }
 
 /* --- SECTION 5: JOURNEY (#journey) --- */
+#journey {}
+
 #journey .journey-container {
     max-width: 1100px;
     margin: 0 auto;
@@ -1564,8 +1970,8 @@ body.scroll-down .scroll-nav::before {
 #journey .path-column {
     width: 30%;
     position: relative;
-    min-height: 75vh;
-    /* Increased for better spacing */
+    min-height: 50vh;
+    /* Reduced for better spacing */
 }
 
 #journey .cards-column {
@@ -1573,7 +1979,7 @@ body.scroll-down .scroll-nav::before {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 30px;
+    gap: 15px;
     /* Essential gap */
     padding-top: 20px;
     padding-bottom: 20px;
@@ -1709,7 +2115,7 @@ body.scroll-down .scroll-nav::before {
     background: var(--card-bg);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    padding: 20px;
+    padding: 12px;
     display: flex;
     gap: 20px;
     transition: transform 0.3s;
@@ -1731,16 +2137,27 @@ body.scroll-down .scroll-nav::before {
 }
 
 /* --- SECTION 7: CONTACT (#contact) --- */
+#contact {}
+
 #contact .mission-control-container {
     display: flex;
+    flex-direction: column;
+    /* Stack Top (Text+Sat) and Bottom (Cards) */
     gap: 50px;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
-    justify-content: center;
-    align-items: center;
-    /* Vertically align text and cards */
 }
+
+#contact .contact-upper-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    width: 100%;
+}
+
+/* Removed old .contact-cards-area */
 
 #contact .contact-text-panel {
     flex: 1;
@@ -1764,57 +2181,393 @@ body.scroll-down .scroll-nav::before {
     line-height: 1.6;
 }
 
-#contact .text-highlight {
-    color: #ffaa00;
-    /* Golden/Orange highlight from image */
-    text-decoration: none;
-    font-weight: 600;
-}
-
-#contact .main-email {
-    font-size: 2.5rem;
-    font-family: 'Montserrat', sans-serif;
-    color: white;
-    text-decoration: none;
-    font-weight: 700;
-    transition: 0.3s;
-    display: inline-block;
-}
-
-#contact .main-email:hover {
-    color: var(--neon-blue);
-    text-shadow: 0 0 10px var(--neon-blue);
-    transform: scale(1.05);
-}
-
-
-
-#contact .info-panel {
-    flex: 1;
+#contact .contact-links-row {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
 }
 
+/* Space Module Card Style */
 #contact .contact-card {
-    background: rgba(189, 0, 255, 0.1);
-    border: 1px solid var(--neon-purple);
-    padding: 20px;
+    background: rgba(10, 20, 30, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    border-left: 4px solid var(--neon-blue);
+    /* Tech marker */
+    padding: 15px 25px;
     display: flex;
     align-items: center;
     gap: 20px;
-    border-radius: 10px;
+    border-radius: 4px;
+    /* Sharper corners for sci-fi look */
+    min-width: 250px;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
 }
 
-/* --- FOOTER --- */
-footer {
-    text-align: center;
-    padding: 30px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: #020305;
-    font-size: 0.9rem;
-    color: #888;
+/* Scanline/Grid Effect layer */
+#contact .contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 210, 255, 0.03) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 0;
 }
+
+#contact .contact-card i {
+    font-size: 2rem;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+    z-index: 1;
+    transition: transform 0.4s ease;
+}
+
+#contact .card-label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Share Tech Mono', monospace;
+    z-index: 1;
+    position: relative;
+}
+
+#contact .card-value {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    display: block;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    z-index: 1;
+    position: relative;
+}
+
+#contact .contact-card:hover {
+    transform: translateX(10px);
+    /* Slide out like a drawer */
+    background: rgba(0, 210, 255, 0.15);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.25);
+}
+
+#contact .contact-card:hover i {
+    transform: scale(1.1) rotate(10deg);
+}
+
+/* --- Realistic CSS 3D SATELLITE --- */
+.satellite-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    perspective: 1200px;
+    position: relative;
+    cursor: pointer;
+    /* Interactive */
+    /* overflow: visible; allow satellite to float outside */
+}
+
+/* Hover / Touch Effect: Show Signal */
+.satellite-container:hover .contact-signal,
+.satellite-container:active .contact-signal {
+    opacity: 1;
+    transform: translate(-50%, -150%) scale(1);
+}
+
+/* Float & Rotate Wrapper */
+.satellite {
+    position: relative;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+    animation: satFloat 8s ease-in-out infinite, satRotate 30s linear infinite;
+}
+
+@keyframes satFloat {
+
+    0%,
+    100% {
+        transform: translateY(-20px) rotateZ(5deg);
+    }
+
+    50% {
+        transform: translateY(20px) rotateZ(-5deg);
+    }
+}
+
+@keyframes satRotate {
+    0% {
+        transform: translateY(-20px) rotateY(0deg) rotateX(10deg);
+    }
+
+    100% {
+        transform: translateY(20px) rotateY(360deg) rotateX(10deg);
+    }
+}
+
+/* --- Materials --- */
+/* Gold Foil Texture: Noise + Gradients */
+.sat-face {
+    position: absolute;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    /* Base Gold */
+    background-color: #d4af37;
+    /* Crinkle Effect */
+    background-image:
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0px, transparent 2px, rgba(0, 0, 0, 0.1) 4px, transparent 6px),
+        repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.1) 0px, transparent 2px, rgba(0, 0, 0, 0.1) 4px, transparent 6px),
+        linear-gradient(135deg, #bf953f, #fcf6ba 50%, #b38728);
+    border: 1px solid #aa8830;
+    backface-visibility: hidden;
+    /* Hide inside to fix z-fighting or see-through if desired, but we build solid */
+}
+
+/* Solar Panel Texture: Dark Blue Grid */
+.panel-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #101525;
+    /* Grid Pattern */
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+        linear-gradient(135deg, rgba(30, 60, 100, 0.8), rgba(0, 0, 10, 0.9));
+    background-size: 20px 20px, 20px 20px, 100% 100%;
+    box-shadow: 0 0 15px rgba(0, 150, 255, 0.2);
+    border: 1px solid #444;
+}
+
+/* --- Geometry: Main Body (Box) --- */
+/* --- Geometry: Main Body (Box) - INCREASED SIZE --- */
+.sat-body {
+    transform-style: preserve-3d;
+    position: absolute;
+    top: -75px;
+    left: -52px;
+    /* Center body */
+    width: 105px;
+    height: 150px;
+}
+
+.sat-face.front {
+    width: 105px;
+    height: 150px;
+    transform: translateZ(52px);
+}
+
+.sat-face.back {
+    width: 105px;
+    height: 150px;
+    transform: rotateY(180deg) translateZ(52px);
+}
+
+.sat-face.right {
+    width: 105px;
+    height: 150px;
+    transform: rotateY(90deg) translateZ(52px);
+}
+
+.sat-face.left {
+    width: 105px;
+    height: 150px;
+    transform: rotateY(-90deg) translateZ(52px);
+}
+
+.sat-face.top {
+    width: 105px;
+    height: 105px;
+    transform: rotateX(90deg) translateZ(52px);
+}
+
+.sat-face.bottom {
+    width: 105px;
+    height: 105px;
+    transform: rotateX(-90deg) translateZ(98px);
+}
+
+/* --- Geometry: Solar Panels --- */
+/* --- Geometry: Solar Panels - INCREASED SIZE --- */
+.sat-panel {
+    position: absolute;
+    top: -60px;
+    /* Vertical align */
+    width: 240px;
+    height: 75px;
+    transform-style: preserve-3d;
+}
+
+.sat-panel.panel-left {
+    left: -300px;
+    transform-origin: right center;
+    /* Connect to body */
+    transform: rotateY(10deg);
+}
+
+.sat-panel.panel-right {
+    right: -300px;
+    transform-origin: left center;
+    transform: rotateY(-10deg);
+}
+
+/* Arms Connecting Panels */
+.sat-panel-arm {
+    position: absolute;
+    width: 52px;
+    height: 8px;
+    background: #888;
+    top: -22px;
+    /* Center on body vertical */
+}
+
+.left-arm {
+    left: -52px;
+    transform: translateX(-52px);
+}
+
+.right-arm {
+    right: -52px;
+    transform: translateX(52px);
+}
+
+/* --- Geometry: Dish --- */
+/* --- Geometry: Dish - INCREASED SIZE --- */
+.sat-dish-arm {
+    position: absolute;
+    width: 8px;
+    height: 45px;
+    background: #888;
+    top: -120px;
+    left: -4px;
+}
+
+.sat-dish {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle at 50% 10%, #eee, #999 60%, #555);
+    border-radius: 50%;
+    top: -150px;
+    left: -45px;
+    transform: rotateX(-30deg);
+    border: 1px solid #aaa;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Connector details to make it look engaged */
+.sat-dish::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 30px;
+    background: #333;
+    transform: translate(-50%, -50%) rotateX(60deg);
+}
+
+/* --- Contact Signal Effect --- */
+.contact-signal {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -140%) scale(0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s ease;
+    z-index: 100;
+}
+
+.signal-text {
+    background: var(--neon-blue);
+    color: #000;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 0 15px var(--neon-blue);
+    white-space: nowrap;
+    position: relative;
+    z-index: 101;
+}
+
+/* Signal Triangle Pointer */
+.signal-text::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--neon-blue);
+}
+
+.signal-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    border: 2px solid var(--neon-blue);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    animation: signalPulse 1.5s infinite ease-out;
+}
+
+.ring-2 {
+    animation-delay: 0.5s;
+}
+
+@keyframes signalPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Mobile Adjust for Satellite layout */
+@media (max-width: 900px) {
+    #contact .contact-upper-area {
+        flex-direction: column-reverse;
+        /* Put satellite on top or bottom? User asked for right side of text. In mobile, usually stack. Let's stack.*/
+        text-align: center;
+    }
+
+    .satellite-container {
+        height: 250px;
+        margin-bottom: 20px;
+        transform: scale(0.7);
+        /* Scale down for mobile */
+    }
+}
+
+
 
 /* RESPONSIVE */
 /* --- MOBILE NAVIGATION --- */
@@ -2032,10 +2785,7 @@ footer {
         padding: 20px;
     }
 
-    /* Footer Spacing */
-    footer {
-        padding-bottom: 80px;
-    }
+
 }
 
 /* Small Mobile (< 380px) */
@@ -2053,3 +2803,145 @@ footer {
 }
 
 /* --- TOP HERO NAVIGATION --- */
+
+/* --- INTERACTIVE TEXT ANIMATION --- */
+.interactive-letter {
+    display: inline-block;
+    transition: color 0.1s ease;
+    cursor: default;
+    position: relative;
+    z-index: 10;
+}
+
+.interactive-letter.active {
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+    animation: jump 0.4s ease;
+    /* Run once */
+}
+
+@keyframes jump {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* --- WARP SPEED TRANSITION --- */
+.warp-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+.warp-container.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* Star Streaks Layers */
+.warp-stars,
+.warp-stars-2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    box-shadow:
+        -200px -300px white, 200px 300px white, -300px 200px white, 300px -200px white,
+        -150px -400px white, 150px 400px white, -400px 150px white, 400px -150px white,
+        -100px -500px white, 100px 500px white, -500px 100px white, 500px -100px white,
+        0px -220px white, 0px 220px white, 220px 0px white, -220px 0px white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+}
+
+/* The Animation triggered by JS */
+.warp-container.active .warp-stars {
+    animation: warpZoom 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+
+.warp-container.active .warp-stars-2 {
+    animation: warpZoom 1.2s cubic-bezier(0.7, 0, 0.3, 1) 0.1s forwards;
+    /* Slight subtle delay */
+    box-shadow:
+        -180px -250px #00d2ff, 180px 250px #00d2ff, -250px 180px #00d2ff, 250px -180px #00d2ff;
+}
+
+/* White Flash at the end of the jump */
+.warp-flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.warp-container.active .warp-flash {
+    animation: jumpFlash 1.2s ease-in-out forwards;
+}
+
+@keyframes warpZoom {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        box-shadow:
+            -200px -300px 0px 0px white, 200px 300px 0px 0px white;
+        /* Normal dots */
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+        box-shadow:
+            -200px -300px 0px 50px white, 200px 300px 0px 50px white;
+        /* Stretch into streaks */
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(10);
+        /* Zoom past camera */
+        opacity: 0;
+    }
+}
+
+@keyframes jumpFlash {
+
+    0%,
+    70% {
+        opacity: 0;
+    }
+
+    80% {
+        opacity: 0.8;
+    }
+
+    /* Bright flash */
+    100% {
+        opacity: 0;
+    }
+}

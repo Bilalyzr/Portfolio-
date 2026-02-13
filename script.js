@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. GLOBAL: Scroll Animations & Navigation ---
 
     // Smooth Scroll for Nav Links handled by scroll-nav click listeners below
-    /* Removed old anchor listener to avoid conflict/redundancy */
 
     // Scroll Spy (Active Scroll Indicator)
     const sections = document.querySelectorAll('section');
@@ -75,42 +74,41 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', updateActiveScroll);
     updateActiveScroll(); // Initial check
 
-    // Click handler for Scroll Nav
-    scrollLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            const targetId = link.dataset.target;
-            document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+    // --- UPDATED: Warp Speed Page Transition ---
+    const warpContainer = document.getElementById('warp-transition');
+
+    // Select all navigation links (Sidebar + Top Contact + CTA Buttons)
+    const allNavLinks = document.querySelectorAll('.scroll-nav li, .nav-contact-btn, .cta-btn, .mobile-nav-links a');
+
+    allNavLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Get target ID (handle both data-target and href)
+            const targetId = link.dataset.target || link.getAttribute('href');
+
+            // Only run transition if target is a valid ID on this page
+            if (targetId && targetId.startsWith('#') && document.querySelector(targetId)) {
+                e.preventDefault(); // Stop default instant scroll
+
+                // 1. Start Warp Effect
+                warpContainer.classList.add('active');
+
+                // 2. Teleport (Scroll) to section during the flash (at 800ms)
+                setTimeout(() => {
+                    document.querySelector(targetId).scrollIntoView({
+                        behavior: 'auto', // INSTANT jump while screen is white
+                        block: 'start'
+                    });
+                }, 800);
+
+                // 3. End Warp Effect
+                setTimeout(() => {
+                    warpContainer.classList.remove('active');
+                }, 1300);
+            }
         });
     });
 
-    /**
-     * STAGGERED REVEAL ANIMATION (Character by Character)
-     * Matches typical high-end portfolio animations.
-     */
-    function splitTextForAnimation(element) {
-        if (element.classList.contains('split-done')) return;
-        const text = element.innerText;
-        element.innerHTML = '';
-        element.classList.add('split-done'); // Mark as done to avoid re-splitting
 
-        text.split('').forEach((char, index) => {
-            const span = document.createElement('span');
-            span.innerText = char === ' ' ? '\u00A0' : char; // Preserve spaces
-            span.style.display = 'inline-block';
-            span.style.opacity = '0';
-            span.style.transform = 'translateY(20px)'; // Start position
-            span.style.transition = `all 0.6s cubic-bezier(0.21, 1.00, 0.35, 1.00) ${index * 0.05}s`; // Staggered delay
-            element.appendChild(span);
-        });
-    }
-
-    function triggerReveal(element) {
-        const spans = element.querySelectorAll('span');
-        spans.forEach(span => {
-            span.style.opacity = '1';
-            span.style.transform = 'translateY(0)';
-        });
-    }
 
     // Fade Up Animation on Scroll
     const observer = new IntersectionObserver((entries) => {
@@ -118,17 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
 
-                // Trigger Reveal Animation for Headings
-                const headings = entry.target.querySelectorAll('h1, h2, h3, .section-title, .hero-role');
-                headings.forEach(heading => {
-                    // Split first if not already (safeguard)
-                    splitTextForAnimation(heading);
 
-                    // Force a tiny reflow/delay to ensure transitions catch the initial state
-                    setTimeout(() => {
-                        triggerReveal(heading);
-                    }, 50);
-                });
 
                 // Trigger Path Animation if Journey Section
                 if (entry.target.id === 'journey' || entry.target.querySelector('#journey')) {
@@ -137,20 +125,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-    }, { threshold: 0.2 }); /* Increased threshold for better visibility trigger */
+    }, { threshold: 0.2 });
 
     document.querySelectorAll('.fade-up, .fade-left, .fade-right, .zoom-in, section').forEach((el) => {
         observer.observe(el);
-        // Pre-split text for any headings inside observed elements to setup initial state
-        const headings = el.querySelectorAll('h1, h2, h3, .section-title, .hero-role');
-        headings.forEach(h => splitTextForAnimation(h));
     });
 
 
     // --- 2. HERO: Background Stars ---
     createStars('star-container-hero', 200);
-    // Global Stars (Less dense)
-    createStars('global-stars', 100);
+
+    // --- GLOBAL PARALLAX BACKGROUND ---
+    // Multi-layer star field
+    createStars('p-layer-1', 200);
+    createStars('p-layer-2', 300);
+    createStars('p-layer-3', 150);
+
+    // --- GLOBAL & SECTION PARALLAX ENGINE ---
+    const parallaxLayers = document.querySelectorAll('.parallax-layer');
+    const sectionBgs = document.querySelectorAll('.section-bg');
+
+    function updateParallax() {
+        const scrolled = window.pageYOffset;
+
+        // 1. Global Star Layers (Background)
+        parallaxLayers.forEach(layer => {
+            const speed = parseFloat(layer.getAttribute('data-speed'));
+            const yPos = -(scrolled * speed);
+            layer.style.transform = `translateY(${yPos}px)`;
+        });
+
+        // 2. Section Backgrounds (Images)
+        sectionBgs.forEach(bg => {
+            const section = bg.closest('section');
+            if (section) {
+                const speed = 0.2; // Moderate parallax intensity
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+
+                // Optimization: Only animate if relatively near viewport
+                if (scrolled + window.innerHeight > sectionTop && scrolled < sectionTop + sectionHeight) {
+                    // Calculate offset relative to when section hits top of viewport
+                    const distance = (scrolled - sectionTop) * speed;
+                    bg.style.transform = `translateY(${distance}px)`;
+                }
+            }
+        });
+    }
+
+    window.addEventListener('scroll', () => {
+        window.requestAnimationFrame(updateParallax);
+    });
 
 
     // --- 3. SKILLS: Interaction ---
@@ -271,4 +296,218 @@ document.addEventListener('DOMContentLoaded', () => {
             container.appendChild(star);
         }
     }
+
+    // --- 7. INTERACTIVE HEADINGS (Giggle Effect) ---
+    const interactiveTargets = document.querySelectorAll('.hero-role, .section-title, .skills-heading');
+
+    interactiveTargets.forEach(el => {
+        const nodes = Array.from(el.childNodes);
+        el.innerHTML = ''; // Clear content to Javascript re-render
+
+        nodes.forEach(node => {
+            if (node.nodeType === 3) { // Text Node
+                const text = node.textContent;
+                for (let char of text) {
+                    if (char.trim().length === 0) {
+                        el.appendChild(document.createTextNode(char)); // Preserve spaces/newlines
+                    } else {
+                        const span = document.createElement('span');
+                        span.className = 'interactive-letter';
+                        span.innerText = char;
+                        el.appendChild(span);
+                    }
+                }
+            } else {
+                el.appendChild(node.cloneNode(true)); // Preserve <br> and other tags
+            }
+        });
+
+        // Add proper listener for interaction
+        const letters = el.querySelectorAll('.interactive-letter');
+
+        letters.forEach(letter => {
+            letter.addEventListener('mouseenter', () => {
+                // Clear state from all other letters in this group
+                letters.forEach(l => l.classList.remove('active'));
+                // Activate current
+                letter.classList.add('active');
+            });
+            // Removed individual mouseleave to keep color active until next letter
+        });
+
+        // Clear all when leaving the entire heading area
+        el.addEventListener('mouseleave', () => {
+            letters.forEach(letter => letter.classList.remove('active'));
+        });
+    });
+
 });
+
+// --- 8. AUDIO: Space Ambience (Quiet Deep Space) ---
+// Initialize strictly on first user interaction
+const enableAudio = () => {
+    if (window.hasSpaceAudioStarted) return;
+    window.hasSpaceAudioStarted = true;
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+
+    const ctx = new AudioContext();
+    const masterGain = ctx.createGain();
+    masterGain.gain.value = 0;
+    masterGain.connect(ctx.destination);
+
+    // 2. Sound Design: "Deep Space Silence"
+    // Using pure Sine waves for a smooth, non-intrusive rumble
+
+    // Osc 1: Deep Sub-bass (The "Room Tone")
+    const osc1 = ctx.createOscillator();
+    osc1.type = 'sine';
+    osc1.frequency.value = 40;
+
+    // Osc 2: Slow Pulse (creates a 4Hz subtle throb)
+    const osc2 = ctx.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.value = 44;
+
+    // Osc 3: Breath/Air (Higher harmonic for presence, very quiet)
+    const osc3 = ctx.createOscillator();
+    osc3.type = 'sine';
+    osc3.frequency.value = 140;
+
+    // Mix (Very quiet volumes)
+    const g1 = ctx.createGain(); g1.gain.value = 0.4;  // Main rumble
+    const g2 = ctx.createGain(); g2.gain.value = 0.4;  // Pulse
+    const g3 = ctx.createGain(); g3.gain.value = 0.05; // Air (faint)
+
+    osc1.connect(g1); g1.connect(masterGain);
+    osc2.connect(g2); g2.connect(masterGain);
+    osc3.connect(g3); g3.connect(masterGain);
+
+    osc1.start();
+    osc2.start();
+    osc3.start();
+
+    // 3. Fade In (Gentle)
+    const now = ctx.currentTime;
+    // Ramp to a low master volume (0.1 instead of 0.5) for "Quiet" effect
+    masterGain.gain.setValueAtTime(0, now);
+    masterGain.gain.linearRampToValueAtTime(0.15, now + 5);
+
+    console.log("Space Ambience: Deep Silence Encaged...");
+
+    // 4. Auto Fade Out after 45s
+    setTimeout(() => {
+        const stopNow = ctx.currentTime;
+        masterGain.gain.cancelScheduledValues(stopNow);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, stopNow);
+        masterGain.gain.linearRampToValueAtTime(0, stopNow + 8); // Longer 8s fade out for smoothness
+
+        setTimeout(() => {
+            osc1.stop(); osc2.stop(); osc3.stop();
+            ctx.close();
+            console.log("Space Ambience: Faded.");
+        }, 8000);
+    }, 45000);
+};
+
+// Listen for ANY interaction to start the sound
+document.body.addEventListener('click', enableAudio, { once: true });
+document.body.addEventListener('touchstart', enableAudio, { once: true });
+document.body.addEventListener('scroll', enableAudio, { once: true });
+document.body.addEventListener('keydown', enableAudio, { once: true });
+
+
+// --- 9. HERO: Shooting Stars & Comets ---
+function initShootingStars() {
+    const container = document.getElementById('shooting-stars-container');
+    if (!container) return;
+
+    function createShootingStar() {
+        const star = document.createElement('div');
+        star.classList.add('shooting-star');
+
+        // Random Start Position
+        const startX = Math.random() * window.innerWidth;
+        const startY = Math.random() * window.innerHeight * 0.5; // Top half mostly
+
+        // Random Angle (Downwards diagonal)
+        const angle = Math.random() * 45 + 135; // 135 to 180 degrees (approx) representing top-left to bottom-right or similar
+
+        // Random Length/Distance
+        const length = Math.random() * 300 + 500; // 500px to 800px travel
+
+        // Calculate End Position based on angle
+        // Angle is in degrees, convert to radians
+        const rad = angle * (Math.PI / 180);
+        const tx = Math.cos(rad) * length;
+        const ty = Math.sin(rad) * length;
+
+        // Random Duration
+        const duration = Math.random() * 1.5 + 1; // 1s to 2.5s
+
+        // Set Styles
+        star.style.left = `${startX}px`;
+        star.style.top = `${startY}px`;
+        star.style.setProperty('--angle', `${angle}deg`);
+        star.style.setProperty('--tx', `${tx}px`);
+        star.style.setProperty('--ty', `${ty}px`);
+        star.style.animationDuration = `${duration}s`;
+
+        container.appendChild(star);
+
+        // Remove after animation
+        setTimeout(() => {
+            star.remove();
+        }, duration * 1000);
+    }
+
+    // Launch a new star every random interval
+    setInterval(() => {
+        if (Math.random() > 0.3) { // 70% chance to spawn, prevents flood
+            createShootingStar();
+        }
+    }, 800); // Check every 800ms
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initShootingStars();
+});
+
+// --- 10. HERO: Button 3D Tilt Effect ---
+function initButtonTilt() {
+    const wrapper = document.getElementById('btnWrapper');
+    const btn = document.getElementById('btn');
+    const planet = document.querySelector('.saturn-container');
+
+    if (!wrapper || !btn || !planet) return;
+
+    wrapper.addEventListener('mousemove', (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        // Calculate mouse position relative to center of button
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        // Sensitivity factor (higher number = less movement)
+        const rotateX = -1 * (y / 5); // Increased sensitivity slightly for smaller button
+        const rotateY = (x / 5);
+
+        // Apply rotation to button
+        btn.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+        // Move planet slightly differently for 3D parallax depth
+        // Maintain the base rotation (20deg) + parallax translation
+        planet.style.transform = `rotate(20deg) translate(${x * 0.1}px, ${y * 0.1}px)`;
+    });
+
+    // Reset positions when mouse leaves the area
+    wrapper.addEventListener('mouseleave', () => {
+        btn.style.transform = 'rotateX(0) rotateY(0)';
+        planet.style.transform = 'rotate(20deg) translate(0, 0)';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initButtonTilt();
+});
+
