@@ -227,8 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. PROJECTS: Filtering & Rendering ---
 
     const projects = [
-        { id: 1, name: "Control Mouse with Hand Gesture Detection", tools: "Python, OpenCV, MediaPipe", category: ["python", "ai"], icon: ["fab fa-python"], brief: "Computer vision system for touchless interaction recognizing real-time hand gestures.", img: "https://sl.bing.net/kdGJda4fwiG" },
-        { id: 2, name: "Credit Card Fraud Detection Using ML", tools: "Python, Scikit-learn, Pandas, NumPy", category: ["python", "ai"], icon: ["fab fa-python", "fas fa-robot"], brief: "Machine learning classification model built to detect fraudulent financial transactions.", img: "https://sl.bing.net/jvRsQTFgTWm" },
+        { id: 1, name: "Control Mouse with Hand Gesture Detection", tools: "Python, OpenCV, MediaPipe", category: ["python", "ai"], icon: ["fab fa-python"], brief: "Computer vision system for touchless interaction recognizing real-time hand gestures.", img: "assets/images/hand_gestures.png" },
+        { id: 2, name: "Credit Card Fraud Detection Using ML", tools: "Python, Scikit-learn, Pandas, NumPy", category: ["python", "ai"], icon: ["fab fa-python", "fas fa-robot"], brief: "Machine learning classification model built to detect fraudulent financial transactions.", img: "assets/images/fraud_detection.png" },
         { id: 3, name: "Tutor LMS Platform (Internship)", tools: "React JS, WordPress, HTML/CSS", category: ["web", "react"], icon: ["fab fa-react", "fab fa-wordpress"], brief: "Developed responsive interfaces and customized platform modules with AI-driven tools.", img: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=600&auto=format&fit=crop" }
     ];
 
