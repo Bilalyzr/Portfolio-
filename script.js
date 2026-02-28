@@ -227,12 +227,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. PROJECTS: Filtering & Rendering ---
 
     const projects = [
-        { id: 1, name: "Project Alpha", category: ["react"], icon: ["fab fa-react"], brief: "Real-time data visualization dashboard.", img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=500" },
-        { id: 2, name: "Project Beta", category: ["python", "db"], icon: ["fab fa-python", "fas fa-database"], brief: "Backend API for E-commerce.", img: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?auto=format&fit=crop&w=500" },
-        { id: 3, name: "Project Gamma", category: ["web"], icon: ["fab fa-html5", "fab fa-js"], brief: "Interactive Portfolio Interface.", img: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=500" },
-        { id: 4, name: "Social Dash", category: ["react", "db"], icon: ["fab fa-react", "fas fa-database"], brief: "Social media manager with auth.", img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=500" },
-        { id: 5, name: "Chat App", category: ["node", "js"], icon: ["fab fa-node-js", "fab fa-js"], brief: "Real-time websocket chat.", img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=500" },
-        { id: 6, name: "Landing Page", category: ["web", "react"], icon: ["fab fa-css3-alt", "fab fa-react"], brief: "High-conversion landing page.", img: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=500" }
+        { id: 1, name: "Control Mouse with Hand Gesture Detection", tools: "Python, OpenCV, MediaPipe", category: ["python", "ai"], icon: ["fab fa-python"], brief: "Computer vision system for touchless interaction recognizing real-time hand gestures.", img: "https://sl.bing.net/kdGJda4fwiG" },
+        { id: 2, name: "Credit Card Fraud Detection Using ML", tools: "Python, Scikit-learn, Pandas, NumPy", category: ["python", "ai"], icon: ["fab fa-python", "fas fa-robot"], brief: "Machine learning classification model built to detect fraudulent financial transactions.", img: "https://sl.bing.net/jvRsQTFgTWm" },
+        { id: 3, name: "Tutor LMS Platform (Internship)", tools: "React JS, WordPress, HTML/CSS", category: ["web", "react"], icon: ["fab fa-react", "fab fa-wordpress"], brief: "Developed responsive interfaces and customized platform modules with AI-driven tools.", img: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=600&auto=format&fit=crop" }
     ];
 
     const projectsGrid = document.getElementById('projects-grid');
@@ -253,12 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div class="card-img-container"><img src="${p.img}" class="card-img" alt="${p.name}"></div>
                 <div class="project-title">${p.name}</div>
-                <div class="tech-icons">${iconsHtml}</div>
-                <div style="flex-grow:1; color:#bbb; margin-bottom:15px; font-size:0.9rem;">${p.brief}</div>
-                <div class="card-buttons">
-                    <a href="#" class="btn-card">Demo</a>
-                    <a href="#" class="btn-card">Code</a>
-                </div>
+                <div class="tech-icons" style="margin-bottom:8px;">${iconsHtml}</div>
+                <div style="color:var(--neon-blue); font-size:0.85rem; font-weight:600; margin-bottom:8px; font-family:'Share Tech Mono', monospace;">TOOLS: <span style="color:white; font-family:'Inter', sans-serif; font-weight:400;">${p.tools}</span></div>
+                <div style="flex-grow:1; color:#bbb; margin-bottom:5px; font-size:0.9rem;">${p.brief}</div>
             `;
             projectsGrid.appendChild(card);
         });

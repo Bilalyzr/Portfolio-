@@ -96,22 +96,22 @@ section {
 .logo-box {
     background: #f0f8ff;
     color: #000;
-    width: 38px;
-    height: 38px;
+    width: 26px;
+    height: 26px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: 'Share Tech Mono', monospace;
     font-weight: 900;
-    font-size: 1.2rem;
+    font-size: 0.85rem;
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
 .logo-text {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
-    font-size: 2rem;
-    letter-spacing: 5px;
+    font-size: 1.3rem;
+    letter-spacing: 3px;
     color: white;
     text-transform: uppercase;
     line-height: 1;
@@ -1224,16 +1224,32 @@ model-viewer {
 
 /* Holographic Card Designs */
 .holograph-card {
-    background: rgba(10, 20, 40, 0.6);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 20px;
+    background: linear-gradient(135deg, rgba(8, 15, 30, 0.8) 0%, rgba(10, 20, 40, 0.4) 100%);
+    backdrop-filter: blur(16px);
+    border-radius: 12px;
+    padding: 30px;
     position: relative;
-    border: 1px solid rgba(0, 210, 255, 0.5);
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.1), inset 0 0 20px rgba(0, 210, 255, 0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
-    /* Outer Line effect */
-    outline: 2px solid transparent;
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.05), 0 5px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    overflow: hidden;
+}
+
+.holograph-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(0, 210, 255, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.holograph-card>* {
+    position: relative;
+    z-index: 1;
 }
 
 /* Double border/glow effect simulation */
@@ -1257,9 +1273,6 @@ model-viewer {
     flex: 1;
     min-width: 350px;
     padding: 40px;
-    /* Special styling for the main profile */
-    border: 2px solid rgba(0, 210, 255, 0.6);
-    box-shadow: 0 0 25px rgba(0, 210, 255, 0.15);
 }
 
 #about .profile-card h3 {
@@ -1285,7 +1298,7 @@ model-viewer {
 
 #about .grid-section {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 25px;
 }
 
@@ -1338,13 +1351,21 @@ model-viewer {
     padding-left: 10px;
 }
 
+#about .card-content ul.bullet-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
 #about .card-content ul.bullet-list li::before {
     content: '•';
     color: var(--neon-blue);
-    margin-right: 8px;
+    position: absolute;
+    left: 0;
+    top: 0;
     font-size: 1.2rem;
-    line-height: 1;
-    vertical-align: middle;
+    line-height: inherit;
 }
 
 /* --- SECTION 3: SKILLS (#skills) --- */
@@ -1885,7 +1906,7 @@ model-viewer {
 }
 
 #projects .project-card {
-    min-width: 320px;
+    min-width: 250px;
     /* Ensure cards don't shrink */
     scroll-snap-align: center;
     background: var(--card-bg);
@@ -1905,7 +1926,7 @@ model-viewer {
 }
 
 #projects .card-img-container {
-    height: 180px;
+    height: 140px;
     overflow: hidden;
     border-radius: 10px;
     margin-bottom: 20px;
@@ -1923,7 +1944,8 @@ model-viewer {
 }
 
 #projects .project-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    line-height: 1.3;
     color: white;
     margin-bottom: 10px;
 }
