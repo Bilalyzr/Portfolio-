@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         skillProgress.style.width = '0%';
 
         skillCard.classList.add('open');
-        planetsWrapper.classList.add('paused');
+        if (planetsWrapper) planetsWrapper.classList.add('paused');
 
         // Animate Progress Bar after card is visible
         setTimeout(() => {
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.closeSkillCard = function () {
         skillCard.classList.remove('open');
-        planetsWrapper.classList.remove('paused');
+        if (planetsWrapper) planetsWrapper.classList.remove('paused');
     };
 
 
@@ -229,7 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const projects = [
         { id: 1, name: "Control Mouse with Hand Gesture Detection", tools: "Python, OpenCV, MediaPipe", category: ["python", "ai"], icon: ["fab fa-python"], brief: "Computer vision system for touchless interaction recognizing real-time hand gestures.", img: "assets/images/hand_gestures.png" },
         { id: 2, name: "Credit Card Fraud Detection Using ML", tools: "Python, Scikit-learn, Pandas, NumPy", category: ["python", "ai"], icon: ["fab fa-python", "fas fa-robot"], brief: "Machine learning classification model built to detect fraudulent financial transactions.", img: "assets/images/fraud_detection.png" },
-        { id: 3, name: "Tutor LMS Platform (Internship)", tools: "React JS, WordPress, HTML/CSS", category: ["web", "react"], icon: ["fab fa-react", "fab fa-wordpress"], brief: "Developed responsive interfaces and customized platform modules with AI-driven tools.", img: "assets/images/tutor_lms.png" }
+        { id: 3, name: "Tutor LMS Platform (Internship)", tools: "React JS, WordPress, HTML/CSS", category: ["web", "react"], icon: ["fab fa-react", "fab fa-wordpress"], brief: "Developed responsive interfaces and customized platform modules with AI-driven tools.", img: "assets/images/tutor_lms.png" },
+        { id: 4, name: "Department Conference Website Development", tools: "HTML, CSS, JavaScript, Figma", category: ["web"], icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-figma"], brief: "Designed and developed a static web page for an international conference organized by the department.", img: "assets/images/conference_website.png" }
     ];
 
     const projectsGrid = document.getElementById('projects-grid');
@@ -247,6 +248,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const iconsHtml = p.icon.map(i => `<i class="${i}"></i>`).join(' ');
             const card = document.createElement('div');
             card.className = 'project-card fade-up visible'; // Add visible immediately for filter re-render
+            card.style.cursor = 'pointer'; // Make it clear it's clickable
+            card.onclick = () => openProjectModal(p.id); // Trigger modal
             card.innerHTML = `
                 <div class="card-img-container"><img src="${p.img}" class="card-img" alt="${p.name}"></div>
                 <div class="project-title">${p.name}</div>
@@ -256,6 +259,29 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             projectsGrid.appendChild(card);
         });
+    };
+
+    // Modal interaction logic
+    window.openProjectModal = function (id) {
+        const project = projects.find(p => p.id === id);
+        if (!project) return;
+
+        // Populate modal data
+        document.getElementById('p-modal-title').innerText = project.name;
+        document.getElementById('p-modal-icons').innerHTML = project.icon.map(i => `<i class="${i}"></i>`).join(' ');
+        document.getElementById('p-modal-tools').innerText = project.tools;
+        // In the future you can swap .brief for a deeper .description text property on the array too!
+        document.getElementById('p-modal-desc').innerText = project.brief;
+        document.getElementById('p-modal-img').src = project.img;
+
+        // Open modal & lock background scrolling
+        document.getElementById('project-modal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeProjectModal = function () {
+        document.getElementById('project-modal').classList.remove('open');
+        document.body.style.overflow = ''; // Restore scrolling
     };
 
     // Initial Load
