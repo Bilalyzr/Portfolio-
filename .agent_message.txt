@@ -1,5 +1,0 @@
-It looks like the `origin` remote for your git repository is not configured. 
-
-To push your changes, I need to know the URL of the remote repository (e.g., from GitHub, GitLab, or Bitbucket).
-
-Please provide the repository URL so I can configure it and push your changes.
