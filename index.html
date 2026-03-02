@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Raleway:wght@500&family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Raleway:wght@500&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <!-- Model Viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
@@ -16,7 +16,6 @@
 
 <body>
 
-    <!-- Global Background -->
     <!-- Global Parallax Backgrounds -->
     <div id="bg-base"
         style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-10; background-color: var(--bg-color);">
@@ -25,9 +24,6 @@
     <div id="p-layer-2" class="parallax-layer" data-speed="0.15"></div>
     <div id="p-layer-3" class="parallax-layer" data-speed="0.3"></div>
 
-
-
-    <!-- Navigation -->
     <!-- Brand Logo -->
     <a href="#home" class="brand-logo">
         <div class="logo-box">
@@ -39,7 +35,7 @@
     <!-- Top Right Contact Button -->
     <a href="#contact" class="nav-contact-btn">Contact</a>
 
-    <!-- Navigation replaced with Scroll Tracker -->
+    <!-- Scroll Tracker Sidebar -->
     <div class="scroll-tracker">
         <ul class="scroll-nav">
             <li data-target="#home" data-label="Home" class="active">00</li>
@@ -97,6 +93,7 @@
                         <h1>Mohammed Bilal</h1>
                         <p class="hero-role">Junior Web<br>Developer</p>
                         <p class="hero-desc">Crafting modern, accessible, and secure web experiences. I build elegant
+                            interfaces, solve complex design challenges, and bring ideas to life through clean, scalable
                             code.</p>
 
                     </div>
@@ -148,12 +145,10 @@
             </div>
         </div>
 
-
-
         <div class="cta-container">
             <a href="#projects" class="btn-style-1"
-                style="font-size: 1.1rem; padding: 18px 45px; white-space: nowrap; display: flex; align-items: center;">
-                EXPLORE MY UNIVERSE <i class="fas fa-rocket" style="margin-left:8px;"></i>
+                style="font-size: 0.7rem; padding: 8px 20px; letter-spacing: 1px; white-space: nowrap; display: flex; align-items: center;">
+                EXPLORE MY UNIVERSE <i class="fas fa-rocket" style="margin-left:6px; font-size: 0.8rem;"></i>
             </a>
         </div>
     </section>
@@ -239,8 +234,6 @@
             </div>
         </div>
     </section>
-
-
 
     <!-- 3. SKILLS SECTION -->
     <section id="skills">
@@ -548,34 +541,36 @@
                                 <i class="fab fa-github"></i>
                                 <div>
                                     <div class="card-label">GITHUB</div>
-                                    <a href="https://github.com/yourprofile" class="card-value">View on GitHub</a>
+                                    <a href="https://github.com/Bilalyzr" class="card-value">View on GitHub</a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="satellite-container fade-left">
-                        <div class="satellite">
-                            <div class="sat-body">
-                                <div class="sat-face front"></div>
-                                <div class="sat-face back"></div>
-                                <div class="sat-face top"></div>
-                                <div class="sat-face bottom"></div>
-                                <div class="sat-face left"></div>
-                                <div class="sat-face right"></div>
+                        <div class="satellite-scaler">
+                            <div class="satellite">
+                                <div class="sat-body">
+                                    <div class="sat-face front"></div>
+                                    <div class="sat-face back"></div>
+                                    <div class="sat-face top"></div>
+                                    <div class="sat-face bottom"></div>
+                                    <div class="sat-face left"></div>
+                                    <div class="sat-face right"></div>
+                                </div>
+                                <div class="sat-panel-arm left-arm"></div>
+                                <div class="sat-panel-arm right-arm"></div>
+                                <div class="sat-panel panel-left">
+                                    <div class="panel-face front"></div>
+                                    <div class="panel-face back"></div>
+                                </div>
+                                <div class="sat-panel panel-right">
+                                    <div class="panel-face front"></div>
+                                    <div class="panel-face back"></div>
+                                </div>
+                                <div class="sat-dish-arm"></div>
+                                <div class="sat-dish"></div>
                             </div>
-                            <div class="sat-panel-arm left-arm"></div>
-                            <div class="sat-panel-arm right-arm"></div>
-                            <div class="sat-panel panel-left">
-                                <div class="panel-face front"></div>
-                                <div class="panel-face back"></div>
-                            </div>
-                            <div class="sat-panel panel-right">
-                                <div class="panel-face front"></div>
-                                <div class="panel-face back"></div>
-                            </div>
-                            <div class="sat-dish-arm"></div>
-                            <div class="sat-dish"></div>
                         </div>
                         <!-- Signal Effect -->
                         <div class="contact-signal">
@@ -588,13 +583,7 @@
 
             </div>
         </div>
-        </div>
     </section>
-
-
-
-
-
     <!-- WARP SPEED TRANSITION OVERLAY -->
     <div id="warp-transition" class="warp-container">
         <div class="warp-stars"></div>

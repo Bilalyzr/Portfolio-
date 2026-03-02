@@ -168,7 +168,7 @@ section {
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     color: rgba(255, 255, 255, 0.3);
 }
 
@@ -270,7 +270,7 @@ body.scroll-down .scroll-nav::before {
     opacity: 0;
     pointer-events: none;
 
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
     color: var(--neon-blue);
     background: rgba(5, 7, 10, 0.9);
@@ -2147,9 +2147,14 @@ model-viewer {
     justify-content: center;
     padding: 0;
     height: 400px;
-    /* Exact fit for the SVG */
     margin-bottom: 80px;
-    /* Leaves physical physical space below for the lower hanging nodes without centering whitespace at the top */
+    /* Hide scrollbar natively */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#journey .map-area::-webkit-scrollbar {
+    display: none;
 }
 
 #journey .trajectory-map {
@@ -2460,10 +2465,19 @@ model-viewer {
 }
 
 @media (max-width: 900px) {
+    #journey .map-area {
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-left: 20px;
+        padding-bottom: 20px;
+    }
+
     #journey .trajectory-map {
-        transform: scale(0.65);
-        transform-origin: center;
-        margin: 60px 0;
+        transform: scale(0.8);
+        transform-origin: left center;
+        min-width: 1100px;
+        margin: 40px 0;
     }
 
     #journey.trajectory-container {
@@ -2473,29 +2487,35 @@ model-viewer {
 }
 
 @media (max-width: 600px) {
+    #journey .map-area {
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-left: 20px;
+        padding-bottom: 60px;
+        height: 450px;
+        /* Enhanced height for node expansion */
+    }
+
     #journey .trajectory-map {
-        transform: scale(0.35);
-        /* Force scaling to fit all elements vertically/horizontally */
-        transform-origin: center;
-        margin: 80px 0;
+        transform: scale(0.65);
+        transform-origin: left top;
+        min-width: 1100px;
+        margin: 30px 0;
     }
 
-    #journey .node {
-        width: 320px;
-    }
-
-    /* Expand node targets for mobile */
+    /* Expand node targets for mobile readability while keeping them locked on the trajectory curve */
     #journey .node-core {
-        transform: scale(1.5);
+        transform: scale(1.4);
     }
 
     #journey .node-ring {
-        transform: scale(1.5);
+        transform: scale(1.4);
         margin-bottom: 30px;
     }
 
     #journey .info-block {
-        transform: scale(1.3);
+        transform: scale(1.2);
     }
 
     #journey.trajectory-container {
@@ -2505,6 +2525,14 @@ model-viewer {
 }
 
 /* --- SECTION 7: CONTACT (#contact) --- */
+#contact {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 0;
+    /* Creates an unbreakable safe-zone barrier so content physically cannot be cut vertically */
+}
 
 #contact .mission-control-container {
     display: flex;
@@ -2524,8 +2552,6 @@ model-viewer {
     width: 100%;
 }
 
-/* Removed old .contact-cards-area */
-
 #contact .contact-text-panel {
     flex: 1;
     min-width: 300px;
@@ -2536,8 +2562,9 @@ model-viewer {
     font-size: 2rem;
     font-family: 'Raleway', sans-serif;
     font-weight: 500;
-    margin-bottom: 20px;
-    line-height: 1.3;
+    margin-bottom: 25px;
+    line-height: 1.5;
+    letter-spacing: 1px;
 }
 
 #contact .contact-subtext {
@@ -2545,7 +2572,8 @@ model-viewer {
     color: #ccc;
     font-family: 'Inter', sans-serif;
     margin-bottom: 40px;
-    line-height: 1.6;
+    line-height: 1.9;
+    letter-spacing: 0.5px;
 }
 
 #contact .contact-links-row {
@@ -2655,6 +2683,13 @@ model-viewer {
 }
 
 /* Float & Rotate Wrapper */
+.satellite-scaler {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease;
+    transform: scale(1);
+}
+
 .satellite {
     position: relative;
     width: 0;
@@ -3067,6 +3102,14 @@ model-viewer {
         text-align: center;
     }
 
+    #about .astronaut-container {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 350px;
+        height: 350px;
+        margin-bottom: 30px;
+    }
+
     #about .profile-card {
         width: 100%;
     }
@@ -3088,6 +3131,28 @@ model-viewer {
 
     #contact .mission-control-container {
         flex-direction: column;
+    }
+
+
+    #contact .contact-upper-area {
+        flex-direction: column;
+        text-align: center;
+        gap: 0px;
+        /* Reduce gap since satellite is huge */
+    }
+
+    #contact .contact-links-row {
+        justify-content: center;
+    }
+
+    /* Target the container to safely zoom down the 600px wide satellite without shattering 3D coordinate space */
+    .satellite-container {
+        margin-top: -30px;
+        margin-bottom: -50px;
+    }
+
+    .satellite-scaler {
+        transform: scale(0.6);
     }
 
     #contact .form-panel,
@@ -3145,6 +3210,27 @@ model-viewer {
     #projects .projects-grid {
         grid-template-columns: 1fr;
         padding: 0 15px;
+    }
+
+    #contact {
+        justify-content: flex-start;
+        /* Disable hard centering on strictly short visual vertical phones to prevent top cutoff */
+        padding-top: 100px;
+        padding-bottom: 50px;
+    }
+
+    #contact .contact-upper-area {
+        gap: 0;
+    }
+
+    /* Safely scale down the physical geometry scale to prevent absolute blocks from shattering mobile screens */
+    .satellite-container {
+        margin-top: -80px;
+        margin-bottom: -100px;
+    }
+
+    .satellite-scaler {
+        transform: scale(0.40);
     }
 
     /* Resume Compact */
