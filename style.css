@@ -818,6 +818,24 @@ section .container {
     /* Initial Counter-Tilt */
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     will-change: transform;
+    position: relative;
+    /* Added for 3D overlay */
+}
+
+/* 3D Sphere Overlay Trick */
+#home .planet-body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: transparent;
+    pointer-events: none;
+    box-shadow:
+        inset -15px -15px 25px rgba(0, 0, 0, 0.7),
+        inset 10px 10px 15px rgba(255, 255, 255, 0.4);
 }
 
 /* Planet Specifics */
