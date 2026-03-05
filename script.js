@@ -1,5 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- 0. LENIS SMOOTH SCROLL INIT ---
+    const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        mouseMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+        infinite: false,
+    });
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+    window.lenis = lenis;
+
     // --- 1. GLOBAL: Scroll Animations & Navigation ---
 
     // Smooth Scroll for Nav Links handled by scroll-nav click listeners below
@@ -57,14 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (current === '#contact') {
                 // Back To Top (Arrow First = Top in vertical mode)
                 scrollLabel.innerHTML = '<i class="fas fa-chevron-up"></i><span>Back To Top</span>';
-                scrollLabel.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+                scrollLabel.onclick = () => window.lenis.scrollTo(0);
             } else {
                 // Scroll Down (Text First = Top in vertical mode)
                 scrollLabel.innerHTML = '<span>Scroll Down</span><i class="fas fa-chevron-down"></i>';
                 scrollLabel.onclick = () => {
                     const nextIndex = activeIndex + 1;
                     if (nextIndex < sections.length) {
-                        sections[nextIndex].scrollIntoView({ behavior: 'smooth' });
+                        window.lenis.scrollTo(sections[nextIndex]);
                     }
                 };
             }
@@ -227,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. PROJECTS: Filtering & Rendering ---
 
     const projects = [
-        { id: 1, name: "Control Mouse with Hand Gesture Detection", tools: "Python, OpenCV, MediaPipe", category: ["python", "ai"], icon: ["fab fa-python"], brief: "Computer vision system for touchless interaction recognizing real-time hand gestures.", img: "assets/images/hand_gestures.png" },
+        { id: 1, name: "Control Mouse with Hand Gesture Detection", tools: "Python, OpenCV, MediaPipe", category: ["python", "ai"], icon: ["fab fa-python", "fas fa-robot"], brief: "Computer vision system for touchless interaction recognizing real-time hand gestures.", img: "assets/images/hand_gestures.png" },
         { id: 2, name: "Credit Card Fraud Detection Using ML", tools: "Python, Scikit-learn, Pandas, NumPy", category: ["python", "ai"], icon: ["fab fa-python", "fas fa-robot"], brief: "Machine learning classification model built to detect fraudulent financial transactions.", img: "assets/images/fraud_detection.png" },
         { id: 3, name: "Tutor LMS Platform (Internship)", tools: "React JS, WordPress, HTML/CSS", category: ["web", "react"], icon: ["fab fa-react", "fab fa-wordpress"], brief: "Developed responsive interfaces and customized platform modules with AI-driven tools.", img: "assets/images/tutor_lms.png" },
         { id: 4, name: "Department Conference Website Development", tools: "HTML, CSS, JavaScript, Figma", category: ["web"], icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-figma"], brief: "Designed and developed a static web page for an international conference organized by the department.", img: "assets/images/conference_website.png" }
