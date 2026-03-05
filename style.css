@@ -15,7 +15,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    scroll-behavior: smooth;
 }
 
 body {
@@ -573,6 +572,40 @@ section .container {
     border-radius: 50%;
     box-shadow: 0 0 30px #ffaa00, 0 0 60px rgba(255, 100, 0, 0.6);
     opacity: 0.9;
+    position: relative;
+    /* Added for 3D overlay */
+}
+
+/* 3D Sphere Glass Lighting Trick for Sun */
+#home .sun::before {
+    content: '';
+    position: absolute;
+    top: 8%;
+    left: 15%;
+    width: 45%;
+    height: 25%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
+    transform: rotate(-30deg);
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.8;
+}
+
+#home .sun::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: transparent;
+    pointer-events: none;
+    z-index: 1;
+    box-shadow:
+        inset -25px -25px 50px rgba(150, 20, 0, 0.8),
+        inset 15px 15px 30px rgba(255, 255, 255, 0.6);
 }
 
 /* Hero Text Content */
@@ -661,43 +694,43 @@ section .container {
 }
 
 #home .orbit-2 {
-    width: 400px;
-    height: 400px;
+    width: 410px;
+    height: 410px;
     border-color: rgba(0, 150, 255, 0.6);
     box-shadow: 0 0 5px rgba(0, 150, 255, 0.3);
 }
 
 #home .orbit-3 {
-    width: 480px;
-    height: 480px;
+    width: 500px;
+    height: 500px;
     border-color: rgba(255, 50, 100, 0.6);
     box-shadow: 0 0 5px rgba(255, 50, 100, 0.3);
 }
 
 #home .orbit-4 {
-    width: 560px;
-    height: 560px;
+    width: 590px;
+    height: 590px;
     border-color: rgba(255, 200, 50, 0.6);
     box-shadow: 0 0 5px rgba(255, 200, 50, 0.3);
 }
 
 #home .orbit-5 {
-    width: 640px;
-    height: 640px;
+    width: 680px;
+    height: 680px;
     border-color: rgba(189, 0, 255, 0.6);
     box-shadow: 0 0 5px rgba(189, 0, 255, 0.3);
 }
 
 #home .orbit-6 {
-    width: 720px;
-    height: 720px;
+    width: 770px;
+    height: 770px;
     border-color: rgba(50, 255, 50, 0.6);
     box-shadow: 0 0 5px rgba(50, 255, 50, 0.3);
 }
 
 #home .orbit-7 {
-    width: 800px;
-    height: 800px;
+    width: 860px;
+    height: 860px;
     border-color: rgba(255, 255, 255, 0.5);
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
@@ -720,38 +753,38 @@ section .container {
 }
 
 #home .track-2 {
-    width: 400px;
-    height: 400px;
+    width: 410px;
+    height: 410px;
     animation: rotate 18s linear infinite reverse;
 }
 
 #home .track-3 {
-    width: 480px;
-    height: 480px;
+    width: 500px;
+    height: 500px;
     animation: rotate 24s linear infinite;
 }
 
 #home .track-4 {
-    width: 560px;
-    height: 560px;
+    width: 590px;
+    height: 590px;
     animation: rotate 30s linear infinite reverse;
 }
 
 #home .track-5 {
-    width: 640px;
-    height: 640px;
+    width: 680px;
+    height: 680px;
     animation: rotate 36s linear infinite;
 }
 
 #home .track-6 {
-    width: 720px;
-    height: 720px;
+    width: 770px;
+    height: 770px;
     animation: rotate 42s linear infinite reverse;
 }
 
 #home .track-7 {
-    width: 800px;
-    height: 800px;
+    width: 860px;
+    height: 860px;
     animation: rotate 48s linear infinite;
 }
 
@@ -780,27 +813,27 @@ section .container {
 }
 
 #home .p-2 {
-    transform: rotateZ(120deg) translate(200px);
+    transform: rotateZ(120deg) translate(205px);
 }
 
 #home .p-3 {
-    transform: rotateZ(240deg) translate(240px);
+    transform: rotateZ(240deg) translate(250px);
 }
 
 #home .p-4 {
-    transform: rotateZ(60deg) translate(280px);
+    transform: rotateZ(60deg) translate(295px);
 }
 
 #home .p-5 {
-    transform: rotateZ(180deg) translate(320px);
+    transform: rotateZ(180deg) translate(340px);
 }
 
 #home .p-6 {
-    transform: rotateZ(300deg) translate(360px);
+    transform: rotateZ(300deg) translate(385px);
 }
 
 #home .p-7 {
-    transform: rotateZ(45deg) translate(400px);
+    transform: rotateZ(45deg) translate(430px);
 }
 
 #home .planet-body {
@@ -822,7 +855,29 @@ section .container {
     /* Added for 3D overlay */
 }
 
-/* 3D Sphere Overlay Trick */
+/* Ensure Icon sits behind the glare */
+#home .planet-body i {
+    position: relative;
+    z-index: 1;
+}
+
+/* 3D Sphere Glass Lighting Trick */
+#home .planet-body::before {
+    content: '';
+    position: absolute;
+    top: 8%;
+    left: 15%;
+    width: 45%;
+    height: 25%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
+    transform: rotate(-30deg);
+    pointer-events: none;
+    z-index: 2;
+    /* Needs to sit above the icon for the glossy reflection effect */
+    opacity: 0.8;
+}
+
 #home .planet-body::after {
     content: '';
     position: absolute;
@@ -833,45 +888,48 @@ section .container {
     border-radius: 50%;
     background: transparent;
     pointer-events: none;
+    z-index: 1;
+    /* Shadow sits above planet background but icon can peer through */
     box-shadow:
-        inset -15px -15px 25px rgba(0, 0, 0, 0.7),
-        inset 10px 10px 15px rgba(255, 255, 255, 0.4);
+        inset -15px -15px 25px rgba(0, 0, 0, 0.8),
+        inset 10px 10px 15px rgba(255, 255, 255, 0.3),
+        inset -5px -5px 15px rgba(0, 0, 0, 0.6);
 }
 
-/* Planet Specifics */
+/* Planet Specifics - 3D Spherical Gradients */
 #home .style-node {
-    background: radial-gradient(circle at 30% 30%, #6cc24a, #3e6e2a);
-    box-shadow: 0 0 20px #6cc24a;
+    background: radial-gradient(circle at 25% 25%, #8de963 0%, #6cc24a 40%, #1a3810 100%);
+    box-shadow: 0 0 20px rgba(108, 194, 74, 0.6);
 }
 
 #home .style-react {
-    background: radial-gradient(circle at 30% 30%, #61dafb, #2d6675);
-    box-shadow: 0 0 20px #61dafb;
+    background: radial-gradient(circle at 25% 25%, #a1ebff 0%, #61dafb 40%, #112d36 100%);
+    box-shadow: 0 0 20px rgba(97, 218, 251, 0.6);
 }
 
 #home .style-html {
-    background: radial-gradient(circle at 30% 30%, #e34f26, #8a2be2);
-    box-shadow: 0 0 20px #e34f26;
+    background: radial-gradient(circle at 25% 25%, #ff8666 0%, #e34f26 40%, #520b29 100%);
+    box-shadow: 0 0 20px rgba(227, 79, 38, 0.6);
 }
 
 #home .style-db {
-    background: radial-gradient(circle at 30% 30%, #d93856, #801f30);
-    box-shadow: 0 0 20px #d93856;
+    background: radial-gradient(circle at 25% 25%, #ff708a 0%, #d93856 40%, #470613 100%);
+    box-shadow: 0 0 20px rgba(217, 56, 86, 0.6);
 }
 
 #home .style-python {
-    background: radial-gradient(circle at 30% 30%, #3776ab, #ffd343);
-    box-shadow: 0 0 20px #3776ab;
+    background: radial-gradient(circle at 25% 25%, #66a1d4 0%, #3776ab 45%, #b38e14 100%);
+    box-shadow: 0 0 20px rgba(55, 118, 171, 0.6);
 }
 
 #home .style-css {
-    background: radial-gradient(circle at 30% 30%, #2965f1, #102d6e);
-    box-shadow: 0 0 20px #2965f1;
+    background: radial-gradient(circle at 25% 25%, #639aff 0%, #2965f1 40%, #05102e 100%);
+    box-shadow: 0 0 20px rgba(41, 101, 241, 0.6);
 }
 
 #home .style-git {
-    background: radial-gradient(circle at 30% 30%, #f05032, #ad261a);
-    box-shadow: 0 0 20px #f05032;
+    background: radial-gradient(circle at 25% 25%, #ff8b78 0%, #f05032 40%, #520904 100%);
+    box-shadow: 0 0 20px rgba(240, 80, 50, 0.6);
 }
 
 /* Counter Rotation Animation for all 7 tracks */
@@ -1241,6 +1299,7 @@ model-viewer {
     }
 }
 
+
 /* Holographic Card Designs */
 .holograph-card {
     background: linear-gradient(135deg, rgba(8, 15, 30, 0.8) 0%, rgba(10, 20, 40, 0.4) 100%);
@@ -1496,14 +1555,14 @@ model-viewer {
 
 #skills .orbit-ring {
     position: absolute;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.4);
     border-radius: 50%;
     top: 50%;
     left: 50%;
     /* Base center, specific rotations in subclasses */
     transform: translate(-50%, -50%);
     pointer-events: none;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 #skills .ring-1 {
@@ -1511,7 +1570,7 @@ model-viewer {
     height: 700px;
     /* Main Planet Path */
     transform: translate(-50%, -50%) rotateX(75deg);
-    border-color: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.8);
 }
 
 #skills .ring-2 {
@@ -1519,7 +1578,7 @@ model-viewer {
     height: 700px;
     /* Cross Orbit 1 */
     transform: translate(-50%, -50%) rotateZ(60deg) rotateX(75deg);
-    border-color: rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 #skills .ring-3 {
@@ -1527,14 +1586,15 @@ model-viewer {
     height: 700px;
     /* Cross Orbit 2 */
     transform: translate(-50%, -50%) rotateZ(-60deg) rotateX(75deg);
-    border-color: rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 #skills .central-sun-logo {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) translateZ(0);
+    margin: 0 !important;
     width: 80px;
     height: 80px;
     background: radial-gradient(circle at 30% 30%, #ff5e00, #ff0000);
@@ -1544,9 +1604,50 @@ model-viewer {
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 2rem;
+    font-size: 2.2rem;
     z-index: 5;
     animation: pulseSun 3s infinite alternate;
+}
+
+#skills .central-sun-logo i {
+    position: relative;
+    z-index: 10;
+    line-height: 1;
+    /* Normalize the FontAwesome baseline height */
+    display: block;
+}
+
+/* 3D Sphere Glass Lighting Trick for Skills Sun */
+#skills .central-sun-logo::before {
+    content: '';
+    position: absolute;
+    top: 8%;
+    left: 15%;
+    width: 45%;
+    height: 25%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
+    transform: rotate(-30deg);
+    pointer-events: none;
+    z-index: 2;
+    /* Sits above icon */
+    opacity: 0.8;
+}
+
+#skills .central-sun-logo::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: transparent;
+    pointer-events: none;
+    z-index: 1;
+    box-shadow:
+        inset -15px -15px 25px rgba(100, 0, 0, 0.8),
+        inset 10px 10px 15px rgba(255, 255, 255, 0.6);
 }
 
 @keyframes pulseSun {
@@ -1901,34 +2002,16 @@ model-viewer {
     max-width: 100%;
     margin: 0 auto;
     scroll-snap-type: x mandatory;
-    scrollbar-width: thin;
-    scrollbar-color: var(--neon-blue) rgba(255, 255, 255, 0.05);
+    scrollbar-width: none;
+    /* Hidden scrollbar for Firefox */
     /* Ensure padding doesn't cut off scroll */
     scroll-padding: 0 5%;
 }
 
-/* Custom Horizontal Scrollbar */
+/* Hide Custom Horizontal Scrollbar */
 #projects .projects-grid::-webkit-scrollbar {
-    height: 8px;
-}
-
-#projects .projects-grid::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    margin: 0 20px;
-}
-
-#projects .projects-grid::-webkit-scrollbar-thumb {
-    background: rgba(0, 210, 255, 0.3);
-    /* Lowered opacity */
-    border-radius: 10px;
-    box-shadow: 0 0 5px rgba(0, 210, 255, 0.2);
-    /* Reduced glow */
-}
-
-#projects .projects-grid::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 210, 255, 0.6);
-    /* Slightly highlights on hover */
+    display: none;
+    /* Hidden scrollbar for Chrome, Edge, Safari */
 }
 
 #projects .project-card {
@@ -3471,4 +3554,11 @@ model-viewer {
     100% {
         transform: rotate(360deg);
     }
+}
+
+/* --- FIX FOR MOBILE ZOOM FLICKERING IN 3D SECTIONS --- */
+#home .scene-container,
+#skills .universe-container {
+    will-change: transform;
+    /* Forces the browser to composite the entire 3D scene as a single hardware-accelerated layer, preventing iOS WebKit re-rasterization flickering on zoom or scroll */
 }
