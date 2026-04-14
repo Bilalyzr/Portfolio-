@@ -544,6 +544,18 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-figma"],
             brief: "Designed and developed a static web page for an international conference organized by the department.",
             img: "assets/images/conference_website.png"
+        },
+        {
+            id: 5,
+            codename: "ECHO-05",
+            name: "SAST Organization Static Website",
+            tools: "HTML, CSS, JavaScript, Figma",
+            category: ["web"],
+            missionClass: "CONSTRUCT",
+            status: "complete",
+            icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-js", "fab fa-figma"],
+            brief: "Developed a fully static website for the SAST Organization, featuring a clean UI designed in Figma and brought to life with HTML, CSS, and JavaScript.",
+            img: "assets/images/sast_website.png"
         }
     ];
 
