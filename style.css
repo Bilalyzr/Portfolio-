@@ -17,6 +17,10 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
@@ -421,6 +425,39 @@ body.scroll-down .scroll-nav::before {
     opacity: 1;
     transform: none;
     filter: blur(0);
+}
+
+/* Toned-down scroll animations on mobile to prevent jarring zoom effect */
+@media (max-width: 768px) {
+    .fade-up,
+    .fade-left,
+    .fade-right,
+    .zoom-in {
+        transition:
+            opacity 0.6s ease-out,
+            transform 0.6s ease-out,
+            filter 0.6s ease-out;
+    }
+
+    .zoom-in {
+        transform: scale(0.9);
+        filter: blur(4px);
+    }
+
+    .fade-up {
+        transform: translateY(30px);
+        filter: blur(4px);
+    }
+
+    .fade-left {
+        transform: translateX(-30px);
+        filter: blur(4px);
+    }
+
+    .fade-right {
+        transform: translateX(30px);
+        filter: blur(4px);
+    }
 }
 
 /* --- SECTION 1: HERO (#home) --- */
