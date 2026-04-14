@@ -1916,19 +1916,16 @@ model-viewer {
     background: radial-gradient(circle at 30% 30%, #f05032, #7a2211);
 }
 
-/* --- SECTION 4: PROJECTS — MISSIONS LOG --- */
+/* --- SECTION 4: PROJECTS — MISSION CONTROL DASHBOARD --- */
 
 #projects {
     position: relative;
 }
 
-/* --- Holographic Grid Background Plane --- */
 .holo-grid-plane {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60%;
+    bottom: 0; left: 0;
+    width: 100%; height: 60%;
     background-image:
         linear-gradient(rgba(0,210,255,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0,210,255,0.03) 1px, transparent 1px);
@@ -1954,850 +1951,291 @@ model-viewer {
     margin-bottom: 30px;
 }
 
-/* --- FREQUENCY SCANNER FILTER BAR --- */
-.freq-scanner {
-    position: relative;
-    margin-bottom: 35px;
-}
+/* Filter Bar */
+.freq-scanner { position: relative; margin-bottom: 25px; }
+.scanner-line { position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.06); }
+.scanner-line::after { content: ''; position: absolute; top: 0; left: 0; width: 80px; height: 100%; background: linear-gradient(90deg, transparent, var(--neon-blue), transparent); animation: scanSweep 3s linear infinite; opacity: 0.5; }
+@keyframes scanSweep { 0% { left: -80px; } 100% { left: 100%; } }
+.freq-buttons { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; padding-bottom: 15px; }
+.freq-btn { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.45); padding: 9px 20px; border-radius: 4px; cursor: pointer; font-family: 'JetBrains Mono', 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; transition: all 0.3s; }
+.freq-btn:hover { border-color: rgba(0,210,255,0.3); color: rgba(255,255,255,0.75); }
+.freq-btn.active { background: rgba(0,210,255,0.12); border-color: var(--neon-blue); color: var(--neon-blue); box-shadow: 0 0 15px rgba(0,210,255,0.1); }
+.freq-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s; flex-shrink: 0; }
+.freq-btn.active .freq-dot { background: var(--neon-blue); box-shadow: 0 0 8px var(--neon-blue); }
 
-.scanner-line {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: rgba(255,255,255,0.06);
-}
-
-.scanner-line::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 80px;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
-    animation: scanSweep 3s linear infinite;
-    opacity: 0.5;
-}
-
-@keyframes scanSweep {
-    0% { left: -80px; }
-    100% { left: 100%; }
-}
-
-.freq-buttons {
+/* --- MISSION CONTROL DASHBOARD --- */
+.mc-dashboard {
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding-bottom: 15px;
-}
-
-.freq-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.45);
-    padding: 9px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    position: relative;
+    gap: 0;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
     overflow: hidden;
-}
-
-.freq-btn:hover {
-    border-color: rgba(0,210,255,0.3);
-    color: rgba(255,255,255,0.75);
-    background: rgba(0,210,255,0.05);
-}
-
-.freq-btn.active {
-    background: rgba(0,210,255,0.12);
-    border-color: var(--neon-blue);
-    color: var(--neon-blue);
-    box-shadow: 0 0 15px rgba(0,210,255,0.1), inset 0 0 15px rgba(0,210,255,0.05);
-}
-
-.freq-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    transition: all 0.3s;
-    flex-shrink: 0;
-}
-
-.freq-btn.active .freq-dot {
-    background: var(--neon-blue);
-    box-shadow: 0 0 8px var(--neon-blue);
-    animation: freqPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes freqPulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.7); }
-}
-
-/* Scan flash on filter change */
-.scan-flash {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(ellipse at center, rgba(0,210,255,0.08) 0%, transparent 70%);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 0;
-    transition: opacity 0.15s ease;
-}
-
-.scan-flash.active {
-    opacity: 1;
-}
-
-/* --- BENTO GRID LAYOUT --- */
-.missions-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 170px;
-    gap: 14px;
-    padding: 10px 0;
+    min-height: 400px;
+    background: rgba(255,255,255,0.02);
     position: relative;
     z-index: 2;
-    max-width: 960px;
-    margin: 0 auto;
 }
 
-/* --- BENTO CARD (Base) --- */
-.bento-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 14px;
-    overflow: hidden;
+/* Sidebar: Mission List */
+.mc-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mc-sidebar::-webkit-scrollbar { width: 3px; }
+.mc-sidebar::-webkit-scrollbar-thumb { background: rgba(0,210,255,0.2); border-radius: 10px; }
+
+.mc-mission-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
     cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    transition: all 0.3s;
     position: relative;
+}
+
+.mc-mission-item:hover {
+    background: rgba(0,210,255,0.03);
+}
+
+.mc-mission-item.active {
+    background: rgba(0,210,255,0.06);
+}
+
+.mc-mission-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--neon-blue);
+    box-shadow: 0 0 8px rgba(0,210,255,0.5);
+}
+
+.mc-mi-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #34d399;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px rgba(52,211,153,0.4);
+}
+
+.mc-mi-info { flex: 1; min-width: 0; }
+
+.mc-mi-code {
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--neon-blue);
+    letter-spacing: 1.5px;
+}
+
+.mc-mi-name {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+    margin-top: 2px;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mc-mission-item.active .mc-mi-name { color: white; }
+
+/* Detail Panel */
+.mc-detail {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* Stellar glow border on hover — animated conic trace */
-.bento-card::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: 15px;
-    background: conic-gradient(from var(--glow-angle, 0deg),
-        transparent 0%,
-        var(--neon-blue) 8%,
-        transparent 16%,
-        transparent 50%,
-        var(--neon-purple) 58%,
-        transparent 66%,
-        transparent 100%
-    );
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    animation: glowTrace 4s linear infinite;
-}
-
-@property --glow-angle {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-}
-
-@keyframes glowTrace {
-    from { --glow-angle: 0deg; }
-    to { --glow-angle: 360deg; }
-}
-
-.bento-card:hover::before { opacity: 1; }
-
-/* Nebula glow on hover */
-.bento-card::after {
-    content: '';
-    position: absolute;
-    top: -30%; left: -30%;
-    width: 160%; height: 160%;
-    background: radial-gradient(circle at center, rgba(0,210,255,0.06) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.bento-card:hover::after { opacity: 1; }
-
-.bento-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(0,210,255,0.2);
-    box-shadow: 0 15px 50px rgba(0,0,0,0.4), 0 0 40px rgba(0,210,255,0.06);
-}
-
-/* --- Featured Card (first card: 2 cols, 2 rows) --- */
-.bento-card.featured {
-    grid-column: span 2;
-    grid-row: span 2;
-}
-
-/* --- Card Image Area --- */
-.bento-card .card-img-wrap {
-    flex: 1;
-    min-height: 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.bento-card .card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(0.3) brightness(0.7);
-    transition: filter 0.5s ease, transform 0.6s ease;
-}
-
-.bento-card:hover .card-img {
-    filter: saturate(1) brightness(1);
-    transform: scale(1.05);
-}
-
-.bento-card .card-img-wrap::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 65%;
-    background: linear-gradient(to top, rgba(5,5,5,1) 0%, transparent 100%);
-    pointer-events: none;
-}
-
-/* Featured card: animated star canvas */
-.bento-card.featured .card-img-wrap canvas {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    pointer-events: none;
-}
-
-/* HUD Crosshair overlay on hover */
-.bento-card .hud-reticle {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 60px; height: 60px;
-    transform: translate(-50%, -50%) scale(1.4);
-    opacity: 0;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    pointer-events: none;
-    z-index: 3;
-}
-
-.bento-card:hover .hud-reticle {
-    opacity: 0.4;
-    transform: translate(-50%, -50%) scale(1);
-}
-
-.hud-reticle .ret-h,
-.hud-reticle .ret-v {
-    position: absolute;
-    background: var(--neon-blue);
-}
-
-.hud-reticle .ret-h { width: 100%; height: 1px; top: 50%; }
-.hud-reticle .ret-v { width: 1px; height: 100%; left: 50%; }
-
-.hud-reticle .ret-circle {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 30px; height: 30px;
-    border: 1px solid var(--neon-blue);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* --- Badges --- */
-.bento-card .mission-codename {
-    position: absolute;
-    top: 12px; left: 12px;
-    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-    font-size: 0.55rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--neon-blue);
-    background: rgba(5,5,5,0.8);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(0,210,255,0.2);
-    padding: 4px 10px;
-    border-radius: 3px;
-    z-index: 4;
-}
-
-.bento-card .mission-status-badge {
-    position: absolute;
-    top: 12px; right: 12px;
-    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-    font-size: 0.5rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 4px 8px;
-    border-radius: 3px;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.mission-status-badge .status-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-}
-
-.mission-status-badge.status-complete {
-    color: #34d399;
-    background: rgba(52,211,153,0.1);
-    border: 1px solid rgba(52,211,153,0.3);
-}
-
-.mission-status-badge.status-complete .status-dot {
-    background: #34d399;
-    box-shadow: 0 0 6px rgba(52,211,153,0.5);
-}
-
-.mission-status-badge.status-active {
-    color: #ffd700;
-    background: rgba(255,215,0,0.1);
-    border: 1px solid rgba(255,215,0,0.3);
-}
-
-.mission-status-badge.status-active .status-dot {
-    background: #ffd700;
-    animation: statusPulse 1.5s infinite;
-}
-
-@keyframes statusPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-}
-
-/* --- Card Body --- */
-.bento-card .bento-body {
-    padding: 14px;
-    position: relative;
-    z-index: 2;
-}
-
-.bento-card.featured .bento-body {
-    padding: 18px;
-}
-
-.bento-card .mission-class-tag {
-    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-    font-size: 0.55rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--neon-purple);
-    margin-bottom: 6px;
-    opacity: 0.8;
-}
-
-.bento-card .bento-title {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: white;
-    line-height: 1.3;
-    margin-bottom: 6px;
-}
-
-.bento-card.featured .bento-title {
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-}
-
-.bento-card .bento-payload {
-    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-    font-size: 0.62rem;
-    color: rgba(255,255,255,0.3);
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-}
-
-.bento-card .bento-payload span {
-    color: var(--neon-blue);
-    font-weight: 600;
-}
-
-/* Brief: visible only on featured card, hidden on small tiles */
-.bento-card .bento-brief {
-    font-size: 0.82rem;
-    color: rgba(255,255,255,0.45);
-    line-height: 1.6;
-    display: none;
-}
-
-.bento-card.featured .bento-brief {
-    display: block;
-    margin-bottom: 12px;
-}
-
-.bento-card .bento-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255,255,255,0.04);
-}
-
-.bento-card .bento-icons {
-    display: flex;
-    gap: 8px;
-    font-size: 1rem;
-    color: rgba(255,255,255,0.25);
-    transition: color 0.3s;
-}
-
-.bento-card:hover .bento-icons {
-    color: var(--neon-blue);
-}
-
-.bento-card .open-file-btn {
-    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-    font-size: 0.55rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--neon-blue);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    opacity: 0;
-    transform: translateX(-8px);
-    transition: all 0.3s ease;
-}
-
-.bento-card:hover .open-file-btn {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-/* --- WARP-IN ANIMATION --- */
-@keyframes warpIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.6) translateY(30px);
-        filter: blur(12px) brightness(2);
-    }
-    60% {
-        filter: blur(0) brightness(1.3);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-        filter: blur(0) brightness(1);
-    }
-}
-
-.bento-card.warp-enter {
-    animation: warpIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* --- MISSION DEBRIEF MODAL (Terminal) --- */
-.mission-debrief-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(3,5,10,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    z-index: 9999;
-    overflow-y: scroll;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
-.mission-debrief-overlay.open {
-    opacity: 1;
-    visibility: visible;
-}
-
-.debrief-terminal {
-    background: linear-gradient(180deg, rgba(8,15,28,0.98) 0%, rgba(5,8,16,0.98) 100%);
-    border: 1px solid rgba(0,210,255,0.2);
-    border-radius: 10px;
-    width: 92%;
-    max-width: 580px;
-    margin: 20px auto;
-    position: relative;
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    box-shadow:
-        0 0 60px rgba(0,0,0,0.6),
-        0 0 40px rgba(0,210,255,0.05),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-.mission-debrief-overlay.open .debrief-terminal {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-/* Terminal header bar */
-.terminal-header {
+.mc-detail-empty {
+    flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    padding: 14px 18px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    background: rgba(0,0,0,0.3);
-    border-radius: 10px 10px 0 0;
-}
-
-.terminal-dots {
-    display: flex;
-    gap: 6px;
-    margin-right: 14px;
-}
-
-.t-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-}
-
-.t-dot.red { background: #ff5f57; }
-.t-dot.yellow { background: #febc2e; }
-.t-dot.green { background: #28c840; }
-
-.terminal-title {
+    justify-content: center;
+    gap: 12px;
+    color: rgba(255,255,255,0.1);
     font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
     font-size: 0.7rem;
     letter-spacing: 2px;
-    color: var(--neon-blue);
-    text-transform: uppercase;
-    flex: 1;
 }
 
-.close-terminal {
-    color: rgba(255,255,255,0.3);
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: color 0.3s;
-    padding: 4px;
-}
+.mc-detail-empty i { font-size: 2rem; }
 
-.close-terminal:hover { color: #ff5f57; }
-
-/* CRT scanline overlay */
-.terminal-scanline {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,210,255,0.01) 2px,
-        rgba(0,210,255,0.01) 4px
-    );
-    pointer-events: none;
-    z-index: 1;
-    border-radius: 10px;
-}
-
-/* Terminal image with crosshair */
-.terminal-img-wrap {
-    position: relative;
+/* Detail Image */
+.mc-detail-img {
     width: 100%;
     height: 220px;
     overflow: hidden;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    flex-shrink: 0;
 }
 
-.terminal-img-wrap img {
+.mc-detail-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.img-crosshair {
+.mc-detail-img::after {
+    content: '';
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    bottom: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(5,7,10,1), transparent);
     pointer-events: none;
-    z-index: 2;
 }
 
-.img-crosshair .ch-h {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: rgba(0,210,255,0.15);
-}
-
-.img-crosshair .ch-v {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 1px;
-    height: 100%;
-    background: rgba(0,210,255,0.15);
-}
-
-.img-crosshair .ch-circle {
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 50px; height: 50px;
-    border: 1px solid rgba(0,210,255,0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* Terminal body: data rows */
-.terminal-body {
+/* Detail Body */
+.mc-detail-body {
     padding: 24px;
-    position: relative;
-    z-index: 2;
+    flex: 1;
 }
 
-.debrief-row {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin-bottom: 10px;
+.mc-db-codename {
     font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-    font-size: 0.78rem;
-    line-height: 1.5;
-}
-
-.debrief-label {
+    font-size: 0.6rem;
     color: var(--neon-blue);
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    min-width: 80px;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+}
+
+.mc-db-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.55rem;
+    padding: 3px 10px;
+    border-radius: 3px;
+    color: #34d399;
+    background: rgba(52,211,153,0.08);
+    border: 1px solid rgba(52,211,153,0.2);
+    margin-bottom: 12px;
+}
+
+.mc-db-status-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #34d399;
+}
+
+.mc-db-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+    line-height: 1.3;
+    color: white;
+}
+
+.mc-db-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+}
+
+.mc-db-label {
+    color: var(--neon-blue);
+    min-width: 70px;
     flex-shrink: 0;
-    white-space: nowrap;
+    letter-spacing: 1px;
 }
 
-/* Dotted leader between label and value */
-.debrief-label::after {
-    content: ' ........';
-    color: rgba(255,255,255,0.1);
-    letter-spacing: 0;
+.mc-db-label::after {
+    content: ' .......';
+    color: rgba(255,255,255,0.08);
 }
 
-.debrief-value {
-    color: rgba(255,255,255,0.85);
+.mc-db-value {
+    color: rgba(255,255,255,0.65);
     font-family: 'Inter', sans-serif;
-    font-weight: 400;
 }
 
-.debrief-divider {
-    width: 100%;
+.mc-db-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0,210,255,0.15), transparent);
+    background: linear-gradient(90deg, rgba(0,210,255,0.12), transparent);
     margin: 16px 0;
 }
 
-.debrief-brief {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.88rem;
-    color: rgba(255,255,255,0.6);
+.mc-db-brief {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.5);
     line-height: 1.7;
-    margin-bottom: 10px;
-    padding-left: 0;
 }
 
-.debrief-icons {
+.mc-db-icons {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     color: var(--neon-blue);
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    opacity: 0.7;
-}
-
-.close-transmission-btn {
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    border: 1px solid rgba(0,210,255,0.2);
-    border-radius: 6px;
-    color: var(--neon-blue);
-    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.close-transmission-btn:hover {
-    background: rgba(0,210,255,0.1);
-    border-color: var(--neon-blue);
-    box-shadow: 0 0 20px rgba(0,210,255,0.1);
-}
-
-/* Custom scrollbar for terminal */
-.debrief-terminal::-webkit-scrollbar { width: 4px; }
-.debrief-terminal::-webkit-scrollbar-thumb {
-    background: rgba(0,210,255,0.3);
-    border-radius: 10px;
+    font-size: 1.1rem;
+    margin-top: 16px;
+    opacity: 0.6;
 }
 
 /* ==============================
-   RESPONSIVE — BENTO MISSIONS LOG
+   RESPONSIVE — MISSION CONTROL
    ============================== */
-
-/* Tablet: 2 equal columns, featured loses span */
-@media (max-width: 900px) {
-    .missions-grid {
-        grid-template-columns: repeat(2, 1fr);
-        grid-auto-rows: 160px;
-        gap: 12px;
-        max-width: 100%;
-    }
-
-    .bento-card.featured {
-        grid-column: span 2;
-        grid-row: span 1;
-    }
-
-    .bento-card.featured .bento-title {
-        font-size: 0.95rem;
-    }
-}
-
-/* Small tablet / large phone */
-@media (max-width: 700px) {
-    .missions-grid {
-        grid-template-columns: 1fr;
-        grid-auto-rows: auto;
-        gap: 18px;
-    }
-
-    .bento-card.featured {
-        grid-column: span 1;
-        grid-row: span 1;
-    }
-
-    .bento-card .card-img-wrap {
-        height: 130px;
-        flex: none;
-    }
-
-    /* Show brief on all cards when single column */
-    .bento-card .bento-brief {
-        display: block;
-    }
-
-    .freq-buttons {
-        gap: 6px;
-    }
-
-    .freq-btn {
-        padding: 7px 14px;
-        font-size: 0.6rem;
-    }
-
-    /* Modal mobile fixes */
-    .debrief-terminal {
-        width: 95%;
-        margin: 10px auto;
-        border-radius: 8px;
-    }
-
-    .terminal-img-wrap {
-        height: 160px;
-    }
-
-    .terminal-body {
-        padding: 18px;
-    }
-
-    .debrief-row {
+@media (max-width: 768px) {
+    .mc-dashboard {
         flex-direction: column;
-        gap: 2px;
+        min-height: auto;
     }
 
-    .debrief-label::after {
-        content: '';
+    .mc-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
     }
 
-    .close-transmission-btn {
-        font-size: 0.6rem;
-        padding: 10px;
+    .mc-sidebar::-webkit-scrollbar { display: none; }
+
+    .mc-mission-item {
+        white-space: nowrap;
+        border-bottom: none;
+        border-right: 1px solid rgba(255,255,255,0.03);
+        min-width: 160px;
+        padding: 12px 16px;
+        flex-shrink: 0;
     }
+
+    .mc-mission-item.active::before {
+        left: 0; right: 0; top: auto; bottom: 0;
+        width: 100%; height: 2px;
+    }
+
+    .mc-detail-img { height: 180px; }
+    .mc-detail-body { padding: 18px; }
+    .mc-db-title { font-size: 1.1rem; }
+
+    .freq-buttons { gap: 6px; }
+    .freq-btn { padding: 7px 14px; font-size: 0.6rem; }
 }
 
-/* Phone */
 @media (max-width: 480px) {
-    .missions-subtitle {
-        font-size: 0.65rem;
-        letter-spacing: 2px;
-    }
-
-    .freq-btn {
-        padding: 6px 10px;
-        font-size: 0.55rem;
-        letter-spacing: 1px;
-    }
-
-    /* Modal phone fixes */
-    .debrief-terminal {
-        width: 98%;
-        margin: 8px auto;
-    }
-
-    .terminal-img-wrap {
-        height: 140px;
-    }
-
-    .terminal-body {
-        padding: 14px;
-    }
-
-    .terminal-header {
-        padding: 10px 14px;
-    }
-
-    .terminal-title {
-        font-size: 0.55rem;
-    }
-
-    .debrief-brief {
-        font-size: 0.82rem;
-    }
-
-    .bento-card .bento-body {
-        padding: 14px;
-    }
-
-    .bento-card .card-img-wrap {
-        height: 110px;
-    }
-
-    .bento-card .bento-title {
-        font-size: 0.82rem;
-    }
+    .missions-subtitle { font-size: 0.65rem; letter-spacing: 2px; }
+    .freq-btn { padding: 6px 10px; font-size: 0.55rem; letter-spacing: 1px; }
+    .mc-mission-item { min-width: 140px; padding: 10px 12px; }
+    .mc-mi-name { font-size: 0.72rem; }
+    .mc-detail-img { height: 150px; }
+    .mc-detail-body { padding: 14px; }
+    .mc-db-title { font-size: 1rem; }
+    .mc-db-row { flex-direction: column; gap: 2px; }
+    .mc-db-label::after { content: ''; }
 }
 
 /* --- SECTION 5: JOURNEY — STELLAR TRAJECTORY --- */

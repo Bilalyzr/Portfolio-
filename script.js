@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('click', (e) => {
             // Don't trigger on interactive elements
             const tag = e.target.tagName.toLowerCase();
-            const isInteractive = e.target.closest('a, button, .bento-card, .planet, .skill-tile, .freq-btn, .scroll-nav li, model-viewer, .debrief-terminal, input, textarea, .mobile-menu-btn, .mobile-nav-overlay');
+            const isInteractive = e.target.closest('a, button, .mc-dashboard, .planet, .skill-tile, .freq-btn, .scroll-nav li, model-viewer, input, textarea, .mobile-menu-btn, .mobile-nav-overlay');
             if (isInteractive || tag === 'a' || tag === 'button') return;
 
             const count = 6 + Math.floor(Math.random() * 4);
@@ -550,134 +550,67 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectsGrid = document.getElementById('projects-grid');
     const scanFlash = document.getElementById('scanFlash');
 
-    // Animated star canvas for featured card
-    function initFeaturedStars(canvas) {
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
-        resize();
-        const stars = [];
-        for (let i = 0; i < 40; i++) {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                s: Math.random() * 1.2 + 0.3,
-                o: Math.random(),
-                sp: Math.random() * 0.015 + 0.005,
-                ph: Math.random() * Math.PI * 2
-            });
-        }
-        function draw(t) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(s => {
-                const a = s.o * (Math.sin(t * s.sp + s.ph) * 0.3 + 0.7);
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.s, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(180,210,255,${a})`;
-                ctx.fill();
-            });
-            requestAnimationFrame(draw);
-        }
-        requestAnimationFrame(draw);
-        window.addEventListener('resize', resize);
+    // --- Mission Control Dashboard: Sidebar + Detail ---
+    const mcSidebar = document.getElementById('mcSidebar');
+    const mcDetail = document.getElementById('mcDetail');
+    let selectedProjectId = null;
+
+    function renderDetail(id) {
+        const p = projects.find(pr => pr.id === id);
+        if (!p) return;
+        selectedProjectId = id;
+
+        // Highlight active sidebar item
+        mcSidebar.querySelectorAll('.mc-mission-item').forEach(item => {
+            item.classList.toggle('active', parseInt(item.dataset.id) === id);
+        });
+
+        const iconsHtml = p.icon.map(i => `<i class="${i}"></i>`).join(' ');
+
+        mcDetail.innerHTML = `
+            <div class="mc-detail-img"><img src="${p.img}" alt="${p.name}"></div>
+            <div class="mc-detail-body">
+                <div class="mc-db-codename">${p.codename}</div>
+                <div class="mc-db-status"><span class="mc-db-status-dot"></span>COMPLETE</div>
+                <div class="mc-db-title">${p.name}</div>
+                <div class="mc-db-row"><span class="mc-db-label">CLASS</span><span class="mc-db-value">${p.missionClass}</span></div>
+                <div class="mc-db-row"><span class="mc-db-label">PAYLOAD</span><span class="mc-db-value">${p.tools}</span></div>
+                <div class="mc-db-divider"></div>
+                <p class="mc-db-brief">${p.brief}</p>
+                <div class="mc-db-icons">${iconsHtml}</div>
+            </div>
+        `;
     }
 
     window.filterProjects = function (category, btn) {
-        // Update active filter button
         document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // Trigger scan flash
-        if (scanFlash) {
-            scanFlash.classList.add('active');
-            setTimeout(() => scanFlash.classList.remove('active'), 300);
-        }
-
-        // Render bento cards
-        projectsGrid.innerHTML = '';
         const filtered = category === 'all' ? projects : projects.filter(p => p.category.includes(category));
 
-        filtered.forEach((p, index) => {
-            const iconsHtml = p.icon.map(i => `<i class="${i}"></i>`).join(' ');
-            const isFeatured = index === 0;
-
-            const statusLabel = p.status === 'active' ? 'ACTIVE' :
-                                p.status === 'classified' ? 'CLASSIFIED' : 'COMPLETE';
-            const statusClass = 'status-' + p.status;
-
-            const card = document.createElement('div');
-            card.className = 'bento-card warp-enter' + (isFeatured ? ' featured' : '');
-            card.style.animationDelay = (index * 0.1) + 's';
-            card.onclick = () => openProjectModal(p.id);
-
-            card.innerHTML = `
-                <div class="card-img-wrap">
-                    <img src="${p.img}" class="card-img" alt="${p.name}">
-                    ${isFeatured ? '<canvas class="featured-stars-canvas"></canvas>' : ''}
-                    <span class="mission-codename">${p.codename}</span>
-                    <span class="mission-status-badge ${statusClass}">
-                        <span class="status-dot"></span> ${statusLabel}
-                    </span>
-                    <div class="hud-reticle">
-                        <div class="ret-h"></div>
-                        <div class="ret-v"></div>
-                        <div class="ret-circle"></div>
-                    </div>
-                </div>
-                <div class="bento-body">
-                    <div class="mission-class-tag">${p.missionClass}</div>
-                    <div class="bento-title">${p.name}</div>
-                    <div class="bento-payload"><span>PAYLOAD:</span> ${p.tools}</div>
-                    <div class="bento-brief">${p.brief}</div>
-                    <div class="bento-footer">
-                        <div class="bento-icons">${iconsHtml}</div>
-                        <div class="open-file-btn">OPEN FILE <i class="fas fa-chevron-right" style="font-size:0.5rem;"></i></div>
-                    </div>
+        // Render sidebar
+        mcSidebar.innerHTML = '';
+        filtered.forEach(p => {
+            const item = document.createElement('div');
+            item.className = 'mc-mission-item';
+            item.dataset.id = p.id;
+            item.innerHTML = `
+                <div class="mc-mi-dot"></div>
+                <div class="mc-mi-info">
+                    <div class="mc-mi-code">${p.codename}</div>
+                    <div class="mc-mi-name">${p.name}</div>
                 </div>
             `;
-            projectsGrid.appendChild(card);
+            item.addEventListener('click', () => renderDetail(p.id));
+            mcSidebar.appendChild(item);
         });
 
-        // Init star canvas on featured card
-        const featuredCanvas = projectsGrid.querySelector('.featured-stars-canvas');
-        if (featuredCanvas) initFeaturedStars(featuredCanvas);
-    };
-
-    // Mission Debrief Modal
-    window.openProjectModal = function (id) {
-        const project = projects.find(p => p.id === id);
-        if (!project) return;
-
-        document.getElementById('p-modal-codename').innerText = 'MISSION DEBRIEF — ' + project.codename;
-        document.getElementById('p-modal-title').innerText = project.name;
-        document.getElementById('p-modal-icons').innerHTML = project.icon.map(i => `<i class="${i}"></i>`).join(' ');
-        document.getElementById('p-modal-tools').innerText = project.tools;
-        document.getElementById('p-modal-desc').innerText = project.brief;
-        document.getElementById('p-modal-img').src = project.img;
-
-        const statusEl = document.getElementById('p-modal-status');
-        if (statusEl) {
-            const label = project.status === 'active' ? 'ACTIVE' :
-                          project.status === 'classified' ? 'CLASSIFIED' : 'COMPLETE';
-            statusEl.innerText = label;
-            statusEl.style.color = project.status === 'active' ? '#ffd700' :
-                                   project.status === 'classified' ? '#f87171' : '#34d399';
+        // Auto-select first
+        if (filtered.length) {
+            renderDetail(filtered[0].id);
+        } else {
+            mcDetail.innerHTML = '<div class="mc-detail-empty"><i class="fas fa-satellite-dish"></i><span>No missions found</span></div>';
         }
-
-        const classEl = document.getElementById('p-modal-class');
-        if (classEl) classEl.innerText = project.missionClass;
-
-        const modal = document.getElementById('project-modal');
-        modal.classList.add('open');
-        modal.scrollTop = 0;
-        // Stop Lenis so it doesn't fight with modal scroll
-        if (window.lenis) window.lenis.stop();
-    };
-
-    window.closeProjectModal = function () {
-        document.getElementById('project-modal').classList.remove('open');
-        // Resume Lenis
-        if (window.lenis) window.lenis.start();
     };
 
     // Initial Load
