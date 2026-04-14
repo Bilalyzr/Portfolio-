@@ -667,21 +667,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const classEl = document.getElementById('p-modal-class');
         if (classEl) classEl.innerText = project.missionClass;
 
-        document.getElementById('project-modal').classList.add('open');
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.top = `-${window.scrollY}px`;
+        const modal = document.getElementById('project-modal');
+        modal.classList.add('open');
+        // Scroll modal overlay to top so user sees the full content
+        modal.scrollTop = 0;
+        document.documentElement.classList.add('modal-open');
     };
 
     window.closeProjectModal = function () {
-        const scrollY = document.body.style.top;
         document.getElementById('project-modal').classList.remove('open');
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.top = '';
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        document.documentElement.classList.remove('modal-open');
     };
 
     // Initial Load
