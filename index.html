@@ -363,7 +363,7 @@
             <h2 class="section-title" style="text-align:center;">Missions Log</h2>
             <p class="missions-subtitle">Classified Operations &mdash; Mission Archive</p>
 
-            <!-- Frequency Scanner Filter Bar -->
+            <!-- Filter Bar -->
             <div class="freq-scanner">
                 <div class="scanner-line"></div>
                 <div class="freq-buttons">
@@ -385,61 +385,15 @@
                 </div>
             </div>
 
-            <!-- Scanning flash overlay on filter change -->
-            <div class="scan-flash" id="scanFlash"></div>
-
-            <div class="missions-grid" id="projects-grid">
-                <!-- Injected via JS -->
-            </div>
-
-            <!-- Mission Debrief Modal (Terminal Style) -->
-            <div id="project-modal" class="mission-debrief-overlay" onclick="if(event.target === this) closeProjectModal()">
-                <div class="debrief-terminal">
-                    <div class="terminal-header">
-                        <div class="terminal-dots">
-                            <span class="t-dot red"></span>
-                            <span class="t-dot yellow"></span>
-                            <span class="t-dot green"></span>
-                        </div>
-                        <span class="terminal-title" id="p-modal-codename">MISSION DEBRIEF</span>
-                        <span class="close-terminal" onclick="closeProjectModal()"><i class="fas fa-times"></i></span>
-                    </div>
-                    <div class="terminal-scanline"></div>
-                    <div class="terminal-img-wrap">
-                        <img id="p-modal-img" src="" alt="Mission Image">
-                        <div class="img-crosshair">
-                            <div class="ch-h"></div>
-                            <div class="ch-v"></div>
-                            <div class="ch-circle"></div>
-                        </div>
-                    </div>
-                    <div class="terminal-body">
-                        <div class="debrief-row">
-                            <span class="debrief-label">CODENAME</span>
-                            <span class="debrief-value" id="p-modal-title"></span>
-                        </div>
-                        <div class="debrief-row">
-                            <span class="debrief-label">STATUS</span>
-                            <span class="debrief-value" id="p-modal-status"></span>
-                        </div>
-                        <div class="debrief-row">
-                            <span class="debrief-label">CLASS</span>
-                            <span class="debrief-value" id="p-modal-class"></span>
-                        </div>
-                        <div class="debrief-row">
-                            <span class="debrief-label">PAYLOAD</span>
-                            <span class="debrief-value" id="p-modal-tools"></span>
-                        </div>
-                        <div class="debrief-divider"></div>
-                        <div class="debrief-row">
-                            <span class="debrief-label">BRIEF</span>
-                        </div>
-                        <p class="debrief-brief" id="p-modal-desc"></p>
-                        <div class="debrief-divider"></div>
-                        <div class="debrief-icons" id="p-modal-icons"></div>
-                        <button class="close-transmission-btn" onclick="closeProjectModal()">
-                            <i class="fas fa-satellite-dish"></i> CLOSE TRANSMISSION
-                        </button>
+            <!-- Mission Control Dashboard: Sidebar + Detail Panel -->
+            <div class="mc-dashboard">
+                <div class="mc-sidebar" id="mcSidebar">
+                    <!-- Injected via JS -->
+                </div>
+                <div class="mc-detail" id="mcDetail">
+                    <div class="mc-detail-empty">
+                        <i class="fas fa-satellite-dish"></i>
+                        <span>Select a mission</span>
                     </div>
                 </div>
             </div>
