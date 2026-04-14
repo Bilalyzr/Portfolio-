@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('click', (e) => {
             // Don't trigger on interactive elements
             const tag = e.target.tagName.toLowerCase();
-            const isInteractive = e.target.closest('a, button, .mc-dashboard, .planet, .skill-tile, .freq-btn, .scroll-nav li, model-viewer, input, textarea, .mobile-menu-btn, .mobile-nav-overlay');
+            const isInteractive = e.target.closest('a, button, .stack-card, .stack-nav, .planet, .skill-tile, .freq-btn, .scroll-nav li, model-viewer, input, textarea, .mobile-menu-btn, .mobile-nav-overlay');
             if (isInteractive || tag === 'a' || tag === 'button') return;
 
             const count = 6 + Math.floor(Math.random() * 4);
@@ -550,68 +550,93 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectsGrid = document.getElementById('projects-grid');
     const scanFlash = document.getElementById('scanFlash');
 
-    // --- Mission Control Dashboard: Sidebar + Detail ---
-    const mcSidebar = document.getElementById('mcSidebar');
-    const mcDetail = document.getElementById('mcDetail');
-    let selectedProjectId = null;
+    // --- Holographic File Stack Carousel ---
+    const stackContainer = document.getElementById('stackContainer');
+    const dotsContainer = document.getElementById('navDots');
+    let activeStackIndex = 0;
 
-    function renderDetail(id) {
-        const p = projects.find(pr => pr.id === id);
-        if (!p) return;
-        selectedProjectId = id;
-
-        // Highlight active sidebar item
-        mcSidebar.querySelectorAll('.mc-mission-item').forEach(item => {
-            item.classList.toggle('active', parseInt(item.dataset.id) === id);
-        });
-
-        const iconsHtml = p.icon.map(i => `<i class="${i}"></i>`).join(' ');
-
-        mcDetail.innerHTML = `
-            <div class="mc-detail-img"><img src="${p.img}" alt="${p.name}"></div>
-            <div class="mc-detail-body">
-                <div class="mc-db-codename">${p.codename}</div>
-                <div class="mc-db-status"><span class="mc-db-status-dot"></span>COMPLETE</div>
-                <div class="mc-db-title">${p.name}</div>
-                <div class="mc-db-row"><span class="mc-db-label">CLASS</span><span class="mc-db-value">${p.missionClass}</span></div>
-                <div class="mc-db-row"><span class="mc-db-label">PAYLOAD</span><span class="mc-db-value">${p.tools}</span></div>
-                <div class="mc-db-divider"></div>
-                <p class="mc-db-brief">${p.brief}</p>
-                <div class="mc-db-icons">${iconsHtml}</div>
-            </div>
-        `;
+    function getFiltered(category) {
+        return category === 'all' ? projects : projects.filter(p => p.category.includes(category));
     }
+
+    let currentFilter = 'all';
+
+    function renderStack() {
+        const filtered = getFiltered(currentFilter);
+        if (activeStackIndex >= filtered.length) activeStackIndex = 0;
+
+        stackContainer.innerHTML = '';
+        dotsContainer.innerHTML = '';
+
+        filtered.forEach((p, i) => {
+            const iconsHtml = p.icon.map(ic => `<i class="${ic}"></i>`).join(' ');
+            const offset = i - activeStackIndex;
+
+            const card = document.createElement('div');
+            card.className = 'stack-card' + (i === activeStackIndex ? ' active' : '');
+
+            // 3D stacking on desktop
+            if (window.innerWidth > 768) {
+                card.style.transform = `translateX(${offset * 30}px) translateZ(${-Math.abs(offset) * 80}px) rotateY(${offset * -5}deg)`;
+                card.style.opacity = Math.abs(offset) > 2 ? 0 : 1 - Math.abs(offset) * 0.2;
+                card.style.zIndex = 10 - Math.abs(offset);
+            }
+
+            card.innerHTML = `
+                <div class="sc-img">
+                    <img src="${p.img}" alt="${p.name}">
+                    <span class="sc-codename">${p.codename}</span>
+                    <span class="sc-status"><span class="sc-status-dot"></span>COMPLETE</span>
+                </div>
+                <div class="sc-body">
+                    <div class="sc-class">${p.missionClass}</div>
+                    <div class="sc-name">${p.name}</div>
+                    <div class="sc-tools"><span>PAYLOAD:</span> ${p.tools}</div>
+                    <div class="sc-brief">${p.brief}</div>
+                    <div class="sc-icons">${iconsHtml}</div>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                activeStackIndex = i;
+                renderStack();
+            });
+
+            stackContainer.appendChild(card);
+
+            // Nav dot
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot' + (i === activeStackIndex ? ' active' : '');
+            dot.addEventListener('click', () => {
+                activeStackIndex = i;
+                renderStack();
+            });
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    // Nav arrows
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        const f = getFiltered(currentFilter);
+        activeStackIndex = (activeStackIndex - 1 + f.length) % f.length;
+        renderStack();
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        const f = getFiltered(currentFilter);
+        activeStackIndex = (activeStackIndex + 1) % f.length;
+        renderStack();
+    });
 
     window.filterProjects = function (category, btn) {
         document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-
-        const filtered = category === 'all' ? projects : projects.filter(p => p.category.includes(category));
-
-        // Render sidebar
-        mcSidebar.innerHTML = '';
-        filtered.forEach(p => {
-            const item = document.createElement('div');
-            item.className = 'mc-mission-item';
-            item.dataset.id = p.id;
-            item.innerHTML = `
-                <div class="mc-mi-dot"></div>
-                <div class="mc-mi-info">
-                    <div class="mc-mi-code">${p.codename}</div>
-                    <div class="mc-mi-name">${p.name}</div>
-                </div>
-            `;
-            item.addEventListener('click', () => renderDetail(p.id));
-            mcSidebar.appendChild(item);
-        });
-
-        // Auto-select first
-        if (filtered.length) {
-            renderDetail(filtered[0].id);
-        } else {
-            mcDetail.innerHTML = '<div class="mc-detail-empty"><i class="fas fa-satellite-dish"></i><span>No missions found</span></div>';
-        }
+        currentFilter = category;
+        activeStackIndex = 0;
+        renderStack();
     };
+
+    window.addEventListener('resize', renderStack);
 
     // Initial Load
     filterProjects('all', document.querySelector('.freq-btn.active'));
