@@ -669,14 +669,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const modal = document.getElementById('project-modal');
         modal.classList.add('open');
-        // Scroll modal overlay to top so user sees the full content
         modal.scrollTop = 0;
-        document.documentElement.classList.add('modal-open');
+        // Stop Lenis so it doesn't fight with modal scroll
+        if (window.lenis) window.lenis.stop();
     };
 
     window.closeProjectModal = function () {
         document.getElementById('project-modal').classList.remove('open');
-        document.documentElement.classList.remove('modal-open');
+        // Resume Lenis
+        if (window.lenis) window.lenis.start();
     };
 
     // Initial Load

@@ -2411,19 +2411,6 @@ model-viewer {
 }
 
 /* --- MISSION DEBRIEF MODAL (Terminal) --- */
-/* Lock body scroll when modal is open */
-html.modal-open,
-html.modal-open body {
-    overflow: hidden !important;
-    height: 100% !important;
-    touch-action: none;
-}
-
-/* Allow scroll INSIDE the modal overlay */
-html.modal-open .mission-debrief-overlay {
-    touch-action: auto;
-}
-
 .mission-debrief-overlay {
     position: fixed;
     top: 0; left: 0;
