@@ -21,13 +21,8 @@
 
 <body>
 
-    <!-- Global Parallax Backgrounds -->
-    <div id="bg-base"
-        style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-10; background-color: var(--bg-color);">
-    </div>
-    <div id="p-layer-1" class="parallax-layer" data-speed="0.05"></div>
-    <div id="p-layer-2" class="parallax-layer" data-speed="0.15"></div>
-    <div id="p-layer-3" class="parallax-layer" data-speed="0.3"></div>
+    <!-- Global Canvas Starfield (replaces all parallax div layers) -->
+    <canvas id="globalStarfield"></canvas>
 
     <!-- Brand Logo -->
     <a href="#home" class="brand-logo">
@@ -76,9 +71,6 @@
 
     <!-- 1. HERO SECTION -->
     <section id="home">
-        <div id="star-container-hero" class="star-container"></div>
-        <div id="shooting-stars-container"></div>
-        <div class="nebula"></div>
 
         <div class="scene-container">
             <div class="solar-system">
@@ -160,7 +152,6 @@
 
     <!-- 2. ABOUT SECTION -->
     <section id="about">
-        <div class="section-bg bg-nebula"></div>
         <div class="container fade-up">
             <h2 class="section-title">About - The Astronaut</h2>
 
@@ -243,7 +234,6 @@
 
     <!-- 3. SKILLS SECTION -->
     <section id="skills">
-        <div class="section-bg bg-grid"></div>
         <div class="container fade-up" id="skills-layout-container">
             <div class="skills-left">
                 <div class="universe-container zoom-in">
@@ -363,39 +353,93 @@
 
     </section>
 
-    <!-- 4. PROJECTS SECTION -->
+    <!-- 4. PROJECTS SECTION — Missions Log -->
     <section id="projects">
-        <div class="section-bg bg-grid"></div>
+
+        <!-- Holographic Grid Background -->
+        <div class="holo-grid-plane"></div>
+
         <div class="container fade-up">
             <h2 class="section-title" style="text-align:center;">Missions Log</h2>
+            <p class="missions-subtitle">Classified Operations &mdash; Mission Archive</p>
 
-            <div class="filter-container">
-                <button class="filter-btn active" onclick="filterProjects('all', this)">All Missions</button>
-                <button class="filter-btn" onclick="filterProjects('react', this)">React</button>
-                <button class="filter-btn" onclick="filterProjects('python', this)">Python</button>
-                <button class="filter-btn" onclick="filterProjects('ai', this)">AI & ML</button>
-                <button class="filter-btn" onclick="filterProjects('web', this)">Web</button>
+            <!-- Frequency Scanner Filter Bar -->
+            <div class="freq-scanner">
+                <div class="scanner-line"></div>
+                <div class="freq-buttons">
+                    <button class="freq-btn active" onclick="filterProjects('all', this)">
+                        <span class="freq-dot"></span> All Missions
+                    </button>
+                    <button class="freq-btn" onclick="filterProjects('react', this)">
+                        <span class="freq-dot"></span> React
+                    </button>
+                    <button class="freq-btn" onclick="filterProjects('python', this)">
+                        <span class="freq-dot"></span> Python
+                    </button>
+                    <button class="freq-btn" onclick="filterProjects('ai', this)">
+                        <span class="freq-dot"></span> AI & ML
+                    </button>
+                    <button class="freq-btn" onclick="filterProjects('web', this)">
+                        <span class="freq-dot"></span> Web
+                    </button>
+                </div>
             </div>
 
-            <div class="projects-grid" id="projects-grid">
+            <!-- Scanning flash overlay on filter change -->
+            <div class="scan-flash" id="scanFlash"></div>
+
+            <div class="missions-grid" id="projects-grid">
                 <!-- Injected via JS -->
             </div>
 
-            <!-- Project Detail Modal -->
-            <div id="project-modal" class="project-modal" onclick="if(event.target === this) closeProjectModal()">
-                <div class="project-modal-content">
-                    <span class="close-modal" onclick="closeProjectModal()">&times;</span>
-                    <div class="modal-img-container">
-                        <img id="p-modal-img" src="" alt="Project Image">
+            <!-- Mission Debrief Modal (Terminal Style) -->
+            <div id="project-modal" class="mission-debrief-overlay" onclick="if(event.target === this) closeProjectModal()">
+                <div class="debrief-terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="t-dot red"></span>
+                            <span class="t-dot yellow"></span>
+                            <span class="t-dot green"></span>
+                        </div>
+                        <span class="terminal-title" id="p-modal-codename">MISSION DEBRIEF</span>
+                        <span class="close-terminal" onclick="closeProjectModal()"><i class="fas fa-times"></i></span>
                     </div>
-                    <div class="p-modal-body">
-                        <h3 class="p-modal-title" id="p-modal-title"></h3>
-                        <div class="tech-icons" id="p-modal-icons" style="margin-bottom: 15px;"></div>
-                        <div
-                            style="color:var(--neon-blue); font-size:0.85rem; font-weight:600; margin-bottom:15px; font-family:'Share Tech Mono', monospace;">
-                            TOOLS: <span id="p-modal-tools"
-                                style="color:white; font-family:'Inter', sans-serif; font-weight:400;"></span></div>
-                        <p class="p-modal-desc" id="p-modal-desc"></p>
+                    <div class="terminal-scanline"></div>
+                    <div class="terminal-img-wrap">
+                        <img id="p-modal-img" src="" alt="Mission Image">
+                        <div class="img-crosshair">
+                            <div class="ch-h"></div>
+                            <div class="ch-v"></div>
+                            <div class="ch-circle"></div>
+                        </div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="debrief-row">
+                            <span class="debrief-label">CODENAME</span>
+                            <span class="debrief-value" id="p-modal-title"></span>
+                        </div>
+                        <div class="debrief-row">
+                            <span class="debrief-label">STATUS</span>
+                            <span class="debrief-value" id="p-modal-status"></span>
+                        </div>
+                        <div class="debrief-row">
+                            <span class="debrief-label">CLASS</span>
+                            <span class="debrief-value" id="p-modal-class"></span>
+                        </div>
+                        <div class="debrief-row">
+                            <span class="debrief-label">PAYLOAD</span>
+                            <span class="debrief-value" id="p-modal-tools"></span>
+                        </div>
+                        <div class="debrief-divider"></div>
+                        <div class="debrief-row">
+                            <span class="debrief-label">BRIEF</span>
+                        </div>
+                        <p class="debrief-brief" id="p-modal-desc"></p>
+                        <div class="debrief-divider"></div>
+                        <div class="debrief-icons" id="p-modal-icons"></div>
+                        <button class="close-transmission-btn" onclick="closeProjectModal()">
+                            <i class="fas fa-satellite-dish"></i> CLOSE TRANSMISSION
+                        </button>
                     </div>
                 </div>
             </div>
@@ -403,114 +447,127 @@
         </div>
     </section>
 
-    <!-- 5. JOURNEY SECTION -->
-    <section id="journey" class="trajectory-container">
-        <div class="section-bg bg-grid"></div>
+    <!-- 5. JOURNEY SECTION — Stellar Trajectory -->
+    <section id="journey" class="stellar-trajectory">
+
         <div class="trajectory-header fade-up">
-            <h2 class="section-title" style="text-align:center; padding-bottom:0;">The Path Traveled</h2>
+            <h2 class="section-title" style="text-align:center; padding-bottom:0;">Stellar Trajectory</h2>
+            <p class="trajectory-subtitle">Flight Log — Mission Timeline</p>
         </div>
 
-        <div class="map-area fade-up">
-            <div class="trajectory-map">
-                <!-- Precise Vector Path matching the S-Curve loop style -->
-                <svg class="path-svg" viewBox="0 0 1100 400" preserveAspectRatio="xMidYMid meet">
-                    <defs>
-                        <linearGradient id="cyan-purple-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#00e0ff" />
-                            <stop offset="50%" stop-color="#a855f7" />
-                            <stop offset="100%" stop-color="#ec4899" />
-                        </linearGradient>
-                    </defs>
-                    <path class="path-glow"
-                        d="M 50,110 C 200,110 200,320 385,320 C 570,320 550,80 715,80 C 880,80 850,288 1050,288" />
-                    <path class="path-core"
-                        d="M 50,110 C 200,110 200,320 385,320 C 570,320 550,80 715,80 C 880,80 850,288 1050,288" />
-                </svg>
+        <!-- Warp Trail Canvas (particle stream between nodes) -->
+        <canvas id="warpTrailCanvas"></canvas>
 
-                <!-- 1. SSLC -->
-                <div class="node n1 zoom-in">
-                    <div class="node-ring">
-                        <div class="node-orbit"></div>
-                        <div class="node-core"><i class="fas fa-satellite"></i></div>
+        <div class="stellar-timeline fade-up">
+
+            <!-- Node 1: SSLC — Asteroid -->
+            <div class="stellar-node node-asteroid zoom-in">
+                <div class="celestial-body asteroid-body">
+                    <div class="body-surface"></div>
+                    <div class="body-glow"></div>
+                    <div class="body-icon"><i class="fas fa-meteor"></i></div>
+                </div>
+                <div class="stellar-info">
+                    <div class="mission-hud">
+                        <span class="hud-status complete">COMPLETE</span>
+                        <span class="hud-year">2020</span>
                     </div>
-                    <div class="info-block">
-                        <div class="progress-indicator">
-                            <div class="progress-fill"></div>
-                        </div>
-                        <div class="phase-name">SSLC</div>
-                        <div class="org-name">St.John's Matric Hr Sec School</div>
-                        <div class="skill-tags">
-                            <span class="tag">2020</span>
-                            <span class="tag">Foundation</span>
-                        </div>
+                    <h3 class="phase-title">SSLC</h3>
+                    <p class="phase-location">St. John's Matric Hr Sec School</p>
+                    <div class="phase-tags">
+                        <span class="phase-tag">Foundation</span>
                     </div>
                 </div>
-
-                <!-- 2. HSC -->
-                <div class="node n2 zoom-in" style="transition-delay: 0.2s;">
-                    <div class="node-ring">
-                        <div class="node-orbit" style="animation-duration: 20s; animation-direction: reverse;"></div>
-                        <div class="node-core"><i class="fas fa-space-shuttle"></i></div>
-                    </div>
-                    <div class="info-block">
-                        <div class="progress-indicator">
-                            <div class="progress-fill"></div>
-                        </div>
-                        <div class="phase-name">HSC</div>
-                        <div class="org-name">St.John's Matric Hr Sec School</div>
-                        <div class="skill-tags">
-                            <span class="tag">2022</span>
-                            <span class="tag">Computer Applications</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. BCA -->
-                <div class="node n3 zoom-in" style="transition-delay: 0.4s;">
-                    <div class="node-ring">
-                        <div class="node-orbit" style="animation-duration: 12s;"></div>
-                        <div class="node-core"><i class="fas fa-laptop-code"></i></div>
-                    </div>
-                    <div class="info-block">
-                        <div class="progress-indicator">
-                            <div class="progress-fill"></div>
-                        </div>
-                        <div class="phase-name">BCA</div>
-                        <div class="org-name">Sona College of Arts & Science</div>
-                        <div class="skill-tags">
-                            <span class="tag">2025</span>
-                            <span class="tag">Programming</span>
-                            <span class="tag">Web Basics</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. MCA -->
-                <div class="node n4 zoom-in" style="transition-delay: 0.6s;">
-                    <div class="node-ring">
-                        <div class="node-orbit" style="animation-duration: 18s;"></div>
-                        <div class="node-core"><i class="fas fa-user-astronaut"></i></div>
-                    </div>
-                    <div class="info-block">
-                        <div class="progress-indicator">
-                            <div class="progress-fill"></div>
-                        </div>
-                        <div class="phase-name">MCA</div>
-                        <div class="org-name">Sona College of Technology</div>
-                        <div class="skill-tags">
-                            <span class="tag">Present</span>
-                            <span class="tag">AI & ML</span>
-                            <span class="tag">Full-Stack dev</span>
-                            <span class="tag">System Design</span>
-                        </div>
-                    </div>
+                <div class="lightyear-connector">
+                    <div class="ly-line"></div>
+                    <span class="ly-label">2 LY</span>
                 </div>
             </div>
+
+            <!-- Node 2: HSC — Moon -->
+            <div class="stellar-node node-moon zoom-in" style="transition-delay: 0.15s;">
+                <div class="celestial-body moon-body">
+                    <div class="body-surface"></div>
+                    <div class="body-crater c1"></div>
+                    <div class="body-crater c2"></div>
+                    <div class="body-glow"></div>
+                    <div class="body-icon"><i class="fas fa-moon"></i></div>
+                    <div class="moon-orbit-ring"></div>
+                </div>
+                <div class="stellar-info">
+                    <div class="mission-hud">
+                        <span class="hud-status complete">COMPLETE</span>
+                        <span class="hud-year">2022</span>
+                    </div>
+                    <h3 class="phase-title">HSC</h3>
+                    <p class="phase-location">St. John's Matric Hr Sec School</p>
+                    <div class="phase-tags">
+                        <span class="phase-tag">Computer Applications</span>
+                    </div>
+                </div>
+                <div class="lightyear-connector">
+                    <div class="ly-line"></div>
+                    <span class="ly-label">3 LY</span>
+                </div>
+            </div>
+
+            <!-- Node 3: BCA — Planet -->
+            <div class="stellar-node node-planet zoom-in" style="transition-delay: 0.3s;">
+                <div class="celestial-body planet-body-j">
+                    <div class="body-surface"></div>
+                    <div class="planet-atmosphere"></div>
+                    <div class="planet-ring-belt"></div>
+                    <div class="body-glow"></div>
+                    <div class="body-icon"><i class="fas fa-globe-americas"></i></div>
+                </div>
+                <div class="stellar-info">
+                    <div class="mission-hud">
+                        <span class="hud-status complete">COMPLETE</span>
+                        <span class="hud-year">2025</span>
+                    </div>
+                    <h3 class="phase-title">BCA</h3>
+                    <p class="phase-location">Sona College of Arts & Science</p>
+                    <div class="phase-tags">
+                        <span class="phase-tag">Programming</span>
+                        <span class="phase-tag">Web Basics</span>
+                    </div>
+                </div>
+                <div class="lightyear-connector active-connector">
+                    <div class="ly-line"></div>
+                    <span class="ly-label blink-transit">In Transit...</span>
+                </div>
+            </div>
+
+            <!-- Node 4: MCA — Star (Active/Current) -->
+            <div class="stellar-node node-star zoom-in" style="transition-delay: 0.45s;">
+                <div class="celestial-body star-body">
+                    <div class="body-surface"></div>
+                    <div class="star-corona"></div>
+                    <div class="star-rays"></div>
+                    <div class="body-glow"></div>
+                    <div class="body-icon"><i class="fas fa-sun"></i></div>
+                </div>
+                <div class="stellar-info">
+                    <div class="mission-hud">
+                        <span class="hud-status active-status">ACTIVE</span>
+                        <span class="hud-year">Present</span>
+                    </div>
+                    <h3 class="phase-title">MCA</h3>
+                    <p class="phase-location">Sona College of Technology</p>
+                    <div class="phase-tags">
+                        <span class="phase-tag">AI & ML</span>
+                        <span class="phase-tag">Full-Stack Dev</span>
+                        <span class="phase-tag">System Design</span>
+                    </div>
+                </div>
+                <!-- No connector after last node -->
+            </div>
+
+        </div>
     </section>
 
 
     <section id="contact">
-        <div class="section-bg bg-signal"></div>
         <div class="container fade-up">
             <h2 class="section-title" style="text-align:center; margin-bottom:40px;">Mission Control</h2>
 

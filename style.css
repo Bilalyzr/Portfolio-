@@ -18,7 +18,7 @@
 }
 
 body {
-    /* background-color handled by #bg-base */
+    background-color: var(--bg-color);
     color: var(--text-main);
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
@@ -26,16 +26,45 @@ body {
     line-height: 1.6;
 }
 
-.parallax-layer {
+/* --- GLOBAL CANVAS STARFIELD --- */
+#globalStarfield {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 400vh;
-    /* Increased height for parallax scrolling range */
+    height: 100%;
     z-index: -1;
     pointer-events: none;
-    will-change: transform;
+}
+
+/* --- ORBITING SATELLITE --- */
+#orbitingSatellite {
+    position: fixed;
+    z-index: 999;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sat-blink {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #ff3030;
+    box-shadow: 0 0 6px rgba(255, 48, 48, 0.6);
+    animation: satBlink 1.2s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes satBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Hide satellite on mobile — too small to notice */
+@media (max-width: 768px) {
+    #orbitingSatellite { display: none; }
 }
 
 h1,
@@ -400,131 +429,85 @@ body.scroll-down .scroll-nav::before {
     height: 100vh;
 }
 
-#home .star-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-}
-
-
-
-/* --- SHOOTING STARS & COMETS --- */
-#shooting-stars-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.shooting-star {
-    position: absolute;
-    width: 4px;
-    /* Head size */
-    height: 4px;
-    background: #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #fff, 0 0 20px var(--neon-blue), 0 0 40px var(--neon-purple);
-    opacity: 0;
-    animation: shootingAnimation linear forwards;
-}
-
-/* Tail of the comet */
-.shooting-star::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 1px;
-    /* Attach to back of head */
-    width: 150px;
-    /* Tail length */
-    height: 1px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 1));
-}
-
-@keyframes shootingAnimation {
-    0% {
-        transform: translate(0, 0) rotate(var(--angle)) scale(0.5);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(var(--tx), var(--ty)) rotate(var(--angle)) scale(1);
-        opacity: 0;
-    }
-}
-
-#home .nebula {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background:
-        radial-gradient(circle at 20% 30%, rgba(0, 89, 255, 0.15) 0%, transparent 40%);
-    z-index: 0;
-    pointer-events: none;
-}
-
-/* --- SECTION BACKGROUNDS (Using Images) --- */
-
 /* Fix Content Stacking - Ensure text is above background */
 section .container {
     position: relative;
     z-index: 2;
 }
 
-.section-bg {
+/* --- CSS NEBULA ATMOSPHERE BLOBS (per-section) --- */
+/* Each section gets colored nebula clouds via pseudo-elements — no images needed */
+
+#home::before {
+    content: '';
     position: absolute;
-    top: -10%;
-    left: 0;
-    width: 100%;
-    height: 120%;
-    /* Extra height for parallax movement */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+        radial-gradient(ellipse at 20% 30%, rgba(0, 89, 255, 0.14) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(0, 210, 255, 0.08) 0%, transparent 45%);
     z-index: 0;
-    overflow: hidden;
     pointer-events: none;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.4;
-    mix-blend-mode: lighten;
-    will-change: transform;
 }
 
-/* 1. About: "Spiral Galaxy" */
-.bg-nebula {
-    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000');
-    opacity: 0.2;
+#about::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+        radial-gradient(ellipse at 70% 20%, rgba(0, 100, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 20% 80%, rgba(120, 50, 200, 0.08) 0%, transparent 45%);
+    z-index: 0;
+    pointer-events: none;
 }
 
-/* 2. Skills: "Asteroids / Network" */
-.bg-grid {
-    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000');
-    opacity: 0.2;
+#skills::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+        radial-gradient(ellipse at 30% 60%, rgba(140, 40, 200, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(200, 50, 150, 0.06) 0%, transparent 45%);
+    z-index: 0;
+    pointer-events: none;
 }
 
-/* 3. Projects: "Planet Rings" */
-.bg-void {
-    background-image: url('https://images.unsplash.com/photo-1614728853975-69c770c1e9a1?auto=format&fit=crop&q=80&w=2000');
-    opacity: 0.3;
+#projects::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+        radial-gradient(ellipse at 60% 40%, rgba(0, 210, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 15% 70%, rgba(0, 180, 180, 0.06) 0%, transparent 45%);
+    z-index: 0;
+    pointer-events: none;
 }
 
-/* 4. Journey: "Moon / Space" */
-.bg-flow {
-    background-image: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=2000');
-    opacity: 0.25;
+#journey::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+        radial-gradient(ellipse at 40% 30%, rgba(140, 60, 220, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 80%, rgba(255, 180, 50, 0.06) 0%, transparent 45%);
+    z-index: 0;
+    pointer-events: none;
 }
 
-/* 5. Contact: "Mission Control" (Same as Skills) */
-.bg-signal {
-    background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2000');
-    opacity: 0.4;
+#contact::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+        radial-gradient(ellipse at 50% 40%, rgba(0, 210, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(255, 255, 255, 0.04) 0%, transparent 40%);
+    z-index: 0;
+    pointer-events: none;
 }
 
 /* 3D Scene Container */
@@ -1169,26 +1152,23 @@ section .container {
 
 #about .container {
     max-width: 1400px;
-    /* Wider container for 4 columns */
     margin: 0 auto;
     padding: 40px 20px;
     width: 100%;
 }
 
-/* Global Section Title Style (Overrides specific if needed, or matches ref) */
+/* Global Section Title Style */
 .section-title,
 #about .section-title {
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 3rem;
-    /* Make it big like the ref image */
     margin-bottom: 20px;
     color: white;
     background: none;
     -webkit-text-fill-color: initial;
     text-shadow: none;
-    /* Clean look or subtle shadow? Ref looks clean. */
 }
 
 #about .subsection-title {
@@ -1201,28 +1181,6 @@ section .container {
     text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
 }
 
-#about .top-section {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    /* Center verically */
-    justify-content: center;
-    gap: 50px;
-    margin-bottom: 50px;
-}
-
-#about .astronaut-container {
-    flex: 0 0 350px;
-    /* Fixed width for astronaut */
-    height: 450px;
-    /* Fixed height for 3D model */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    /* Remove float animation from container as model rotates */
-}
-
 /* 3D Model Styling */
 model-viewer {
     width: 100%;
@@ -1231,7 +1189,25 @@ model-viewer {
     filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.2));
 }
 
-/* Speech Bubble "Say Hi" */
+#about .top-section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    margin-bottom: 50px;
+}
+
+#about .astronaut-container {
+    flex: 0 0 350px;
+    height: 450px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Speech Bubble */
 .speech-bubble {
     position: absolute;
     top: 30px;
@@ -1252,7 +1228,6 @@ model-viewer {
     pointer-events: none;
 }
 
-/* Show on Hover or Touch */
 .astronaut-container:hover .speech-bubble,
 .astronaut-container:active .speech-bubble {
     opacity: 1;
@@ -1273,32 +1248,15 @@ model-viewer {
 }
 
 @keyframes bubbleFloat {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-5px);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
 }
-
 
 @keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-20px);
-    }
-
-    100% {
-        transform: translateY(0px);
-    }
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
 }
-
 
 /* Holographic Card Designs */
 .holograph-card {
@@ -1316,21 +1274,18 @@ model-viewer {
 .holograph-card::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: radial-gradient(circle at top right, rgba(0, 210, 255, 0.1) 0%, transparent 60%);
     pointer-events: none;
     z-index: 0;
 }
 
-.holograph-card>* {
+.holograph-card > * {
     position: relative;
     z-index: 1;
 }
 
-/* Double border/glow effect simulation */
 .holograph-card::before {
     content: '';
     position: absolute;
@@ -1407,7 +1362,6 @@ model-viewer {
     margin-bottom: 15px;
     font-size: 1.1rem;
     min-height: 2.4rem;
-    /* For alignment */
     display: flex;
     align-items: center;
 }
@@ -1425,7 +1379,6 @@ model-viewer {
 
 #about .card-content ul.bullet-list {
     list-style: none;
-    /* Custom bullets */
     padding-left: 10px;
 }
 
@@ -1963,143 +1916,508 @@ model-viewer {
     background: radial-gradient(circle at 30% 30%, #f05032, #7a2211);
 }
 
-/* --- SECTION 4: PROJECTS (#projects) --- */
+/* --- SECTION 4: PROJECTS — MISSIONS LOG --- */
 
-/* Placehold to remove previous styles */
+#projects {
+    position: relative;
+}
 
-#projects .filter-container {
+/* --- Holographic Grid Background Plane --- */
+.holo-grid-plane {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background-image:
+        linear-gradient(rgba(0,210,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,210,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(500px) rotateX(55deg);
+    transform-origin: bottom center;
+    mask-image: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 80%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.missions-subtitle {
+    text-align: center;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--neon-blue);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 400;
+    opacity: 0.65;
+    margin-top: 8px;
+    margin-bottom: 30px;
+}
+
+/* --- FREQUENCY SCANNER FILTER BAR --- */
+.freq-scanner {
+    position: relative;
+    margin-bottom: 35px;
+}
+
+.scanner-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+}
+
+.scanner-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+    animation: scanSweep 3s linear infinite;
+    opacity: 0.5;
+}
+
+@keyframes scanSweep {
+    0% { left: -80px; }
+    100% { left: 100%; }
+}
+
+.freq-buttons {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 15px;
-    margin: 30px 0;
-}
-
-#projects .filter-btn {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--glass-border);
-    color: #ccc;
-    padding: 10px 25px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-family: 'Orbitron', sans-serif;
-    transition: all 0.3s ease;
-}
-
-#projects .filter-btn.active,
-#projects .filter-btn:hover {
-    background: rgba(0, 210, 255, 0.2);
-    border-color: var(--neon-blue);
-    color: white;
-}
-
-#projects .projects-grid {
-    display: flex;
-    overflow-x: auto;
-    overflow-y: hidden;
-    gap: 30px;
-    padding: 30px 10px;
-    max-width: 100%;
-    margin: 0 auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    /* Hidden scrollbar for Firefox */
-    /* Ensure padding doesn't cut off scroll */
-    scroll-padding: 0 5%;
-}
-
-/* Hide Custom Horizontal Scrollbar */
-#projects .projects-grid::-webkit-scrollbar {
-    display: none;
-    /* Hidden scrollbar for Chrome, Edge, Safari */
-}
-
-#projects .project-card {
-    flex: 0 0 320px;
-    width: 320px;
-    /* Ensure cards remain fixed at exactly the same size regardless of text content */
-    scroll-snap-align: center;
-    background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: 15px;
-    padding: 20px;
-    transition: all 0.4s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-#projects .project-card:hover {
-    transform: translateY(-10px);
-    border-color: var(--neon-blue);
-    box-shadow: 0 0 20px rgba(0, 210, 255, 0.2);
-}
-
-#projects .card-img-container {
-    height: 140px;
-    overflow: hidden;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-#projects .card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-#projects .project-card:hover .card-img {
-    transform: scale(1.1);
-}
-
-#projects .project-title {
-    font-size: 1.2rem;
-    line-height: 1.3;
-    color: white;
-    margin-bottom: 10px;
-}
-
-#projects .tech-icons {
-    display: flex;
     gap: 10px;
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+    padding-bottom: 15px;
 }
 
-#projects .card-buttons {
-    display: flex;
-    gap: 15px;
-    margin-top: auto;
+.freq-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.45);
+    padding: 9px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-#projects .btn-card {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    color: white;
-    text-decoration: none;
-    transition: 0.3s;
+.freq-btn:hover {
+    border-color: rgba(0,210,255,0.3);
+    color: rgba(255,255,255,0.75);
+    background: rgba(0,210,255,0.05);
 }
 
-#projects .btn-card:hover {
+.freq-btn.active {
+    background: rgba(0,210,255,0.12);
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(0,210,255,0.1), inset 0 0 15px rgba(0,210,255,0.05);
+}
+
+.freq-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.freq-btn.active .freq-dot {
     background: var(--neon-blue);
-    color: black;
+    box-shadow: 0 0 8px var(--neon-blue);
+    animation: freqPulse 1.5s ease-in-out infinite;
 }
 
-/* --- PROJECT MODAL --- */
-.project-modal {
-    position: fixed;
+@keyframes freqPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+}
+
+/* Scan flash on filter change */
+.scan-flash {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(5, 7, 10, 0.85);
-    /* Dark space blend */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: radial-gradient(ellipse at center, rgba(0,210,255,0.08) 0%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.15s ease;
+}
+
+.scan-flash.active {
+    opacity: 1;
+}
+
+/* --- BENTO GRID LAYOUT --- */
+.missions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 170px;
+    gap: 14px;
+    padding: 10px 0;
+    position: relative;
+    z-index: 2;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+/* --- BENTO CARD (Base) --- */
+.bento-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Stellar glow border on hover — animated conic trace */
+.bento-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 15px;
+    background: conic-gradient(from var(--glow-angle, 0deg),
+        transparent 0%,
+        var(--neon-blue) 8%,
+        transparent 16%,
+        transparent 50%,
+        var(--neon-purple) 58%,
+        transparent 66%,
+        transparent 100%
+    );
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    animation: glowTrace 4s linear infinite;
+}
+
+@property --glow-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes glowTrace {
+    from { --glow-angle: 0deg; }
+    to { --glow-angle: 360deg; }
+}
+
+.bento-card:hover::before { opacity: 1; }
+
+/* Nebula glow on hover */
+.bento-card::after {
+    content: '';
+    position: absolute;
+    top: -30%; left: -30%;
+    width: 160%; height: 160%;
+    background: radial-gradient(circle at center, rgba(0,210,255,0.06) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bento-card:hover::after { opacity: 1; }
+
+.bento-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0,210,255,0.2);
+    box-shadow: 0 15px 50px rgba(0,0,0,0.4), 0 0 40px rgba(0,210,255,0.06);
+}
+
+/* --- Featured Card (first card: 2 cols, 2 rows) --- */
+.bento-card.featured {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+/* --- Card Image Area --- */
+.bento-card .card-img-wrap {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.bento-card .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.3) brightness(0.7);
+    transition: filter 0.5s ease, transform 0.6s ease;
+}
+
+.bento-card:hover .card-img {
+    filter: saturate(1) brightness(1);
+    transform: scale(1.05);
+}
+
+.bento-card .card-img-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 65%;
+    background: linear-gradient(to top, rgba(5,5,5,1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+/* Featured card: animated star canvas */
+.bento-card.featured .card-img-wrap canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* HUD Crosshair overlay on hover */
+.bento-card .hud-reticle {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 60px; height: 60px;
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.bento-card:hover .hud-reticle {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.hud-reticle .ret-h,
+.hud-reticle .ret-v {
+    position: absolute;
+    background: var(--neon-blue);
+}
+
+.hud-reticle .ret-h { width: 100%; height: 1px; top: 50%; }
+.hud-reticle .ret-v { width: 1px; height: 100%; left: 50%; }
+
+.hud-reticle .ret-circle {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 30px; height: 30px;
+    border: 1px solid var(--neon-blue);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* --- Badges --- */
+.bento-card .mission-codename {
+    position: absolute;
+    top: 12px; left: 12px;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--neon-blue);
+    background: rgba(5,5,5,0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0,210,255,0.2);
+    padding: 4px 10px;
+    border-radius: 3px;
+    z-index: 4;
+}
+
+.bento-card .mission-status-badge {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 3px;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.mission-status-badge .status-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+}
+
+.mission-status-badge.status-complete {
+    color: #34d399;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.3);
+}
+
+.mission-status-badge.status-complete .status-dot {
+    background: #34d399;
+    box-shadow: 0 0 6px rgba(52,211,153,0.5);
+}
+
+.mission-status-badge.status-active {
+    color: #ffd700;
+    background: rgba(255,215,0,0.1);
+    border: 1px solid rgba(255,215,0,0.3);
+}
+
+.mission-status-badge.status-active .status-dot {
+    background: #ffd700;
+    animation: statusPulse 1.5s infinite;
+}
+
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* --- Card Body --- */
+.bento-card .bento-body {
+    padding: 14px;
+    position: relative;
+    z-index: 2;
+}
+
+.bento-card.featured .bento-body {
+    padding: 18px;
+}
+
+.bento-card .mission-class-tag {
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--neon-purple);
+    margin-bottom: 6px;
+    opacity: 0.8;
+}
+
+.bento-card .bento-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: white;
+    line-height: 1.3;
+    margin-bottom: 6px;
+}
+
+.bento-card.featured .bento-title {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.bento-card .bento-payload {
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.bento-card .bento-payload span {
+    color: var(--neon-blue);
+    font-weight: 600;
+}
+
+/* Brief: visible only on featured card, hidden on small tiles */
+.bento-card .bento-brief {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.6;
+    display: none;
+}
+
+.bento-card.featured .bento-brief {
+    display: block;
+    margin-bottom: 12px;
+}
+
+.bento-card .bento-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.bento-card .bento-icons {
+    display: flex;
+    gap: 8px;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.25);
+    transition: color 0.3s;
+}
+
+.bento-card:hover .bento-icons {
+    color: var(--neon-blue);
+}
+
+.bento-card .open-file-btn {
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--neon-blue);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: all 0.3s ease;
+}
+
+.bento-card:hover .open-file-btn {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* --- WARP-IN ANIMATION --- */
+@keyframes warpIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.6) translateY(30px);
+        filter: blur(12px) brightness(2);
+    }
+    60% {
+        filter: blur(0) brightness(1.3);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0) brightness(1);
+    }
+}
+
+.bento-card.warp-enter {
+    animation: warpIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* --- MISSION DEBRIEF MODAL (Terminal) --- */
+.mission-debrief-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(3,5,10,0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     z-index: 9999;
     display: flex;
     justify-content: center;
@@ -2109,520 +2427,1091 @@ model-viewer {
     transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
-.project-modal.open {
+.mission-debrief-overlay.open {
     opacity: 1;
     visibility: visible;
 }
 
-.project-modal-content {
-    background: rgba(10, 20, 40, 0.9);
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 210, 255, 0.1);
-    border-radius: 15px;
-    width: 90%;
-    max-width: 600px;
+.debrief-terminal {
+    background: linear-gradient(180deg, rgba(8,15,28,0.98) 0%, rgba(5,8,16,0.98) 100%);
+    border: 1px solid rgba(0,210,255,0.2);
+    border-radius: 10px;
+    width: 92%;
+    max-width: 580px;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
     opacity: 0;
-    transform: translateY(30px) scale(0.9);
+    transform: translateY(20px) scale(0.95);
     transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    /* Buttery smooth ease-out */
+    box-shadow:
+        0 0 60px rgba(0,0,0,0.6),
+        0 0 40px rgba(0,210,255,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
-.project-modal.open .project-modal-content {
+.mission-debrief-overlay.open .debrief-terminal {
     opacity: 1;
     transform: translateY(0) scale(1);
 }
 
-.close-modal {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 2rem;
-    color: white;
-    cursor: pointer;
-    z-index: 10;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-    transition: 0.3s;
+/* Terminal header bar */
+.terminal-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px 10px 0 0;
 }
 
-.close-modal:hover {
+.terminal-dots {
+    display: flex;
+    gap: 6px;
+    margin-right: 14px;
+}
+
+.t-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.t-dot.red { background: #ff5f57; }
+.t-dot.yellow { background: #febc2e; }
+.t-dot.green { background: #28c840; }
+
+.terminal-title {
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
     color: var(--neon-blue);
-    transform: scale(1.1);
+    text-transform: uppercase;
+    flex: 1;
 }
 
-.project-modal .modal-img-container {
+.close-terminal {
+    color: rgba(255,255,255,0.3);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+    padding: 4px;
+}
+
+.close-terminal:hover { color: #ff5f57; }
+
+/* CRT scanline overlay */
+.terminal-scanline {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,210,255,0.01) 2px,
+        rgba(0,210,255,0.01) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 10px;
+}
+
+/* Terminal image with crosshair */
+.terminal-img-wrap {
+    position: relative;
     width: 100%;
-    height: 250px;
+    height: 220px;
     overflow: hidden;
-    border-radius: 15px 15px 0 0;
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-.project-modal .modal-img-container img {
+.terminal-img-wrap img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.p-modal-body {
-    padding: 30px;
+.img-crosshair {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 2;
 }
 
-.p-modal-title {
-    font-size: 1.6rem;
-    margin-bottom: 15px;
-    color: white;
+.img-crosshair .ch-h {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(0,210,255,0.15);
 }
 
-.p-modal-desc {
-    color: #b3c5ef;
-    /* Matches secondary text */
-    font-size: 1rem;
-    line-height: 1.6;
+.img-crosshair .ch-v {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background: rgba(0,210,255,0.15);
 }
 
-/* Custom Scrollbar for Modal if text overflows */
-.project-modal-content::-webkit-scrollbar {
-    width: 6px;
+.img-crosshair .ch-circle {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 50px; height: 50px;
+    border: 1px solid rgba(0,210,255,0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.project-modal-content::-webkit-scrollbar-thumb {
-    background: var(--neon-blue);
+/* Terminal body: data rows */
+.terminal-body {
+    padding: 24px;
+    position: relative;
+    z-index: 2;
+}
+
+.debrief-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+.debrief-label {
+    color: var(--neon-blue);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    min-width: 80px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* Dotted leader between label and value */
+.debrief-label::after {
+    content: ' ........';
+    color: rgba(255,255,255,0.1);
+    letter-spacing: 0;
+}
+
+.debrief-value {
+    color: rgba(255,255,255,0.85);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+
+.debrief-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,210,255,0.15), transparent);
+    margin: 16px 0;
+}
+
+.debrief-brief {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    margin-bottom: 10px;
+    padding-left: 0;
+}
+
+.debrief-icons {
+    display: flex;
+    gap: 12px;
+    color: var(--neon-blue);
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.close-transmission-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(0,210,255,0.2);
+    border-radius: 6px;
+    color: var(--neon-blue);
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.close-transmission-btn:hover {
+    background: rgba(0,210,255,0.1);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 20px rgba(0,210,255,0.1);
+}
+
+/* Custom scrollbar for terminal */
+.debrief-terminal::-webkit-scrollbar { width: 4px; }
+.debrief-terminal::-webkit-scrollbar-thumb {
+    background: rgba(0,210,255,0.3);
     border-radius: 10px;
 }
 
-/* --- SECTION 5: JOURNEY (#journey) --- */
-#journey.trajectory-container {
+/* ==============================
+   RESPONSIVE — BENTO MISSIONS LOG
+   ============================== */
+
+/* Tablet: 2 equal columns, featured loses span */
+@media (max-width: 900px) {
+    .missions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 160px;
+        gap: 12px;
+        max-width: 100%;
+    }
+
+    .bento-card.featured {
+        grid-column: span 2;
+        grid-row: span 1;
+    }
+
+    .bento-card.featured .bento-title {
+        font-size: 0.95rem;
+    }
+}
+
+/* Small tablet / large phone */
+@media (max-width: 700px) {
+    .missions-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+        gap: 18px;
+    }
+
+    .bento-card.featured {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+
+    .bento-card .card-img-wrap {
+        height: 130px;
+        flex: none;
+    }
+
+    /* Show brief on all cards when single column */
+    .bento-card .bento-brief {
+        display: block;
+    }
+
+    .freq-buttons {
+        gap: 6px;
+    }
+
+    .freq-btn {
+        padding: 7px 14px;
+        font-size: 0.6rem;
+    }
+
+    .terminal-img-wrap {
+        height: 180px;
+    }
+
+    .debrief-row {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .debrief-label::after {
+        content: '';
+    }
+}
+
+/* Phone */
+@media (max-width: 480px) {
+    .missions-subtitle {
+        font-size: 0.65rem;
+        letter-spacing: 2px;
+    }
+
+    .freq-btn {
+        padding: 6px 10px;
+        font-size: 0.55rem;
+        letter-spacing: 1px;
+    }
+
+    .bento-card .bento-body {
+        padding: 14px;
+    }
+
+    .bento-card .card-img-wrap {
+        height: 110px;
+    }
+
+    .bento-card .bento-title {
+        font-size: 0.82rem;
+    }
+}
+
+/* --- SECTION 5: JOURNEY — STELLAR TRAJECTORY --- */
+#journey.stellar-trajectory {
     --glow-cyan: #00e0ff;
     --glow-purple: #a855f7;
     --glow-pink: #ec4899;
+    --glow-gold: #ffd700;
     --text-main: #f8fafc;
     --text-dim: #94a3b8;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 60px 20px 40px 20px;
+    padding: 80px 20px 60px;
     position: relative;
+    overflow: visible;
 }
 
 #journey .trajectory-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
     position: relative;
     z-index: 10;
 }
 
-#journey .trajectory-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: 4px;
-    margin: 0 0 10px 0;
-    text-transform: uppercase;
-    background: linear-gradient(to right, #fff, var(--glow-cyan));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(0, 224, 255, 0.3);
-}
-
 #journey .trajectory-subtitle {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1.2rem;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
     color: var(--glow-cyan);
-    letter-spacing: 6px;
+    letter-spacing: 4px;
     text-transform: uppercase;
-    font-weight: 500;
-    opacity: 0.8;
+    font-weight: 400;
+    opacity: 0.7;
+    margin-top: 10px;
 }
 
-/* --- THE S-CURVE PATH --- */
-#journey .map-area {
-    position: relative;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    height: 400px;
-    margin-bottom: 80px;
-    /* Hide scrollbar natively */
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-#journey .map-area::-webkit-scrollbar {
-    display: none;
-}
-
-#journey .trajectory-map {
-    position: relative;
-    width: 1100px;
-    height: 400px;
-    transform: scale(0.9);
-    /* Native scaling down slightly so no overflow occurs on large but standard screens */
-    transform-origin: center;
-}
-
-#journey .path-svg {
+/* --- WARP TRAIL CANVAS --- */
+#warpTrailCanvas {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: visible;
     z-index: 1;
-}
-
-/* Glowing aura around the path */
-#journey .path-glow {
-    fill: none;
-    stroke: url(#cyan-purple-gradient);
-    stroke-width: 12;
-    filter: blur(8px);
-    opacity: 0.5;
-}
-
-/* The crisp core line */
-#journey .path-core {
-    fill: none;
-    stroke: #fff;
-    stroke-width: 2;
-    opacity: 0.8;
-    stroke-dasharray: 4, 8;
-    animation: flowDash 30s linear infinite;
-}
-
-@keyframes flowDash {
-    from {
-        stroke-dashoffset: 1000;
-    }
-
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-/* --- THE NODES (Milestones) --- */
-#journey .node {
-    position: absolute;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 250px;
-    transform: translate(-50%, -55px);
-    /* Centers the 110px height ring perfectly on the (left, top) coordinate */
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-#journey .node:hover {
-    transform: translate(-50%, -60px);
-    /* 5px hover lift */
-}
-
-#journey .node-ring {
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 224, 255, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    box-shadow:
-        inset 0 0 20px rgba(0, 224, 255, 0.1),
-        0 0 30px rgba(0, 224, 255, 0.2);
-    margin-bottom: 25px;
-    background: radial-gradient(circle at center, rgba(15, 23, 42, 0.9), rgba(3, 7, 18, 0.9));
-    backdrop-filter: blur(5px);
-    cursor: pointer;
-}
-
-#journey .node-core {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    border: 1px solid var(--glow-cyan);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.8rem;
-    color: #fff;
-    box-shadow: inset 0 0 15px rgba(0, 224, 255, 0.5);
-    background: rgba(0, 224, 255, 0.05);
-    transition: all 0.3s ease;
-}
-
-#journey .node:hover .node-core {
-    box-shadow: inset 0 0 25px rgba(0, 224, 255, 0.8), 0 0 20px var(--glow-cyan);
-    color: var(--glow-cyan);
-    text-shadow: 0 0 10px var(--glow-cyan);
-}
-
-#journey .node-orbit {
-    position: absolute;
-    width: 140%;
-    height: 140%;
-    border-radius: 50%;
-    border: 1px dashed rgba(255, 255, 255, 0.2);
-    animation: spin 15s linear infinite;
     pointer-events: none;
 }
 
-#journey .node-orbit::before {
-    content: '';
-    position: absolute;
-    top: -3px;
-    left: 50%;
-    width: 6px;
-    height: 6px;
-    background: var(--glow-cyan);
-    border-radius: 50%;
-    box-shadow: 0 0 10px var(--glow-cyan);
+/* --- STELLAR TIMELINE LAYOUT --- */
+.stellar-timeline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    position: relative;
+    z-index: 5;
+    padding: 20px 0;
 }
 
-/* --- INFO BLOCK COMPONENT --- */
-#journey .info-block {
+/* --- STELLAR NODE (Each Milestone) --- */
+.stellar-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    width: 100%;
-    opacity: 0.85;
-    transition: opacity 0.3s ease;
+    position: relative;
+    flex: 1;
+    max-width: 280px;
+    padding: 0 10px;
 }
 
-#journey .node:hover .info-block {
+.stellar-node:hover .celestial-body {
+    transform: translateY(-8px);
+}
+
+.stellar-node:hover .stellar-info {
     opacity: 1;
 }
 
-#journey .progress-indicator {
-    width: 100px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    margin: 0 auto 12px auto;
-    border-radius: 2px;
-    overflow: hidden;
+/* --- CELESTIAL BODIES (3D CSS Spheres) --- */
+.celestial-body {
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    margin-bottom: 28px;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
 }
 
-#journey .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--glow-cyan), #fff);
-    box-shadow: 0 0 10px var(--glow-cyan);
+/* Surface: shared 3D sphere effect */
+.body-surface {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    z-index: 1;
 }
 
-#journey .phase-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1.1rem;
+/* Glow aura behind each body */
+.body-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.body-icon {
+    position: relative;
+    z-index: 5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* -------- 1. ASTEROID (Smallest) -------- */
+.asteroid-body {
+    width: 70px;
+    height: 70px;
+}
+
+.asteroid-body .body-surface {
+    background: radial-gradient(circle at 30% 25%, #8a8a7a 0%, #5c5c4e 40%, #2a2a20 100%);
+    box-shadow:
+        inset -8px -8px 20px rgba(0,0,0,0.9),
+        inset 5px 5px 10px rgba(200,200,180,0.3);
+}
+
+.asteroid-body .body-glow {
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(150,150,130,0.15) 0%, transparent 70%);
+}
+
+.asteroid-body .body-icon {
+    font-size: 1.4rem;
+    color: #c8c8b0;
+}
+
+.node-asteroid:hover .asteroid-body {
+    box-shadow: 0 0 30px rgba(150,150,130,0.3);
+}
+
+/* -------- 2. MOON -------- */
+.moon-body {
+    width: 90px;
+    height: 90px;
+}
+
+.moon-body .body-surface {
+    background: radial-gradient(circle at 35% 30%, #e8e4d8 0%, #b0aaa0 40%, #4a4540 100%);
+    box-shadow:
+        inset -10px -10px 25px rgba(0,0,0,0.8),
+        inset 6px 6px 12px rgba(255,255,255,0.4);
+}
+
+/* Crater details */
+.body-crater {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, transparent 70%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.body-crater.c1 {
+    width: 18px; height: 18px;
+    top: 20%; right: 22%;
+}
+
+.body-crater.c2 {
+    width: 12px; height: 12px;
+    bottom: 30%; left: 20%;
+}
+
+.moon-body .body-glow {
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(200,195,180,0.15) 0%, transparent 70%);
+}
+
+.moon-body .body-icon {
+    font-size: 1.6rem;
+    color: #ddd8cc;
+}
+
+/* Mini orbit ring around moon */
+.moon-orbit-ring {
+    position: absolute;
+    width: 130%;
+    height: 130%;
+    border: 1px dashed rgba(255,255,255,0.15);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotateX(70deg);
+    animation: moonOrbitSpin 12s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.moon-orbit-ring::before {
+    content: '';
+    position: absolute;
+    top: -3px; left: 50%;
+    width: 5px; height: 5px;
+    background: var(--glow-purple);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--glow-purple);
+}
+
+@keyframes moonOrbitSpin {
+    from { transform: translate(-50%, -50%) rotateX(70deg) rotateZ(0deg); }
+    to { transform: translate(-50%, -50%) rotateX(70deg) rotateZ(360deg); }
+}
+
+.node-moon:hover .moon-body {
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+}
+
+/* -------- 3. PLANET -------- */
+.planet-body-j {
+    width: 110px;
+    height: 110px;
+}
+
+.planet-body-j .body-surface {
+    background: radial-gradient(circle at 30% 25%, #6eb5ff 0%, #2978c4 40%, #0a2d5c 100%);
+    box-shadow:
+        inset -12px -12px 30px rgba(0,0,0,0.8),
+        inset 8px 8px 16px rgba(150,210,255,0.4);
+}
+
+/* Atmosphere haze */
+.planet-atmosphere {
+    position: absolute;
+    top: -6px; left: -6px;
+    right: -6px; bottom: -6px;
+    border-radius: 50%;
+    border: 2px solid rgba(100,180,255,0.2);
+    box-shadow: inset 0 0 15px rgba(100,180,255,0.1), 0 0 20px rgba(100,180,255,0.1);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Ring belt */
+.planet-ring-belt {
+    position: absolute;
+    width: 170%;
+    height: 40%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotateX(75deg);
+    border: 2px solid rgba(236, 72, 153, 0.4);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(236, 72, 153, 0.2);
+    z-index: 3;
+    pointer-events: none;
+}
+
+.planet-body-j .body-glow {
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(100,180,255,0.15) 0%, transparent 70%);
+}
+
+.planet-body-j .body-icon {
+    font-size: 2rem;
+    color: #a8d8ff;
+}
+
+.node-planet:hover .planet-body-j {
+    box-shadow: 0 0 50px rgba(100,180,255,0.3);
+}
+
+/* -------- 4. STAR (Active — Brightest) -------- */
+.star-body {
+    width: 130px;
+    height: 130px;
+}
+
+.star-body .body-surface {
+    background: radial-gradient(circle at 35% 30%, #fff9e0 0%, #ffcc00 35%, #ff8800 70%, #cc4400 100%);
+    box-shadow:
+        inset -12px -12px 25px rgba(150,50,0,0.6),
+        inset 8px 8px 15px rgba(255,255,200,0.6),
+        0 0 40px rgba(255,200,50,0.4);
+}
+
+/* Corona (solar flare aura) */
+.star-corona {
+    position: absolute;
+    top: -15px; left: -15px;
+    right: -15px; bottom: -15px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,200,50,0.2);
+    box-shadow:
+        0 0 40px rgba(255,200,50,0.2),
+        0 0 80px rgba(255,150,0,0.1);
+    animation: coronaPulse 3s ease-in-out infinite alternate;
+    z-index: 0;
+    pointer-events: none;
+}
+
+@keyframes coronaPulse {
+    from { transform: scale(1); opacity: 0.6; box-shadow: 0 0 40px rgba(255,200,50,0.2), 0 0 80px rgba(255,150,0,0.1); }
+    to { transform: scale(1.08); opacity: 1; box-shadow: 0 0 60px rgba(255,200,50,0.4), 0 0 120px rgba(255,150,0,0.2); }
+}
+
+/* Radiating light rays */
+.star-rays {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 250px; height: 250px;
+    transform: translate(-50%, -50%);
+    background:
+        conic-gradient(
+            from 0deg,
+            transparent 0deg, rgba(255,220,100,0.06) 5deg, transparent 10deg,
+            transparent 30deg, rgba(255,220,100,0.04) 35deg, transparent 40deg,
+            transparent 60deg, rgba(255,220,100,0.06) 65deg, transparent 70deg,
+            transparent 90deg, rgba(255,220,100,0.04) 95deg, transparent 100deg,
+            transparent 120deg, rgba(255,220,100,0.06) 125deg, transparent 130deg,
+            transparent 150deg, rgba(255,220,100,0.04) 155deg, transparent 160deg,
+            transparent 180deg, rgba(255,220,100,0.06) 185deg, transparent 190deg,
+            transparent 210deg, rgba(255,220,100,0.04) 215deg, transparent 220deg,
+            transparent 240deg, rgba(255,220,100,0.06) 245deg, transparent 250deg,
+            transparent 270deg, rgba(255,220,100,0.04) 275deg, transparent 280deg,
+            transparent 300deg, rgba(255,220,100,0.06) 305deg, transparent 310deg,
+            transparent 330deg, rgba(255,220,100,0.04) 335deg, transparent 340deg,
+            transparent 360deg
+        );
+    border-radius: 50%;
+    animation: raysSpin 60s linear infinite;
+    z-index: 0;
+    pointer-events: none;
+}
+
+@keyframes raysSpin {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.star-body .body-glow {
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(255,200,50,0.2) 0%, rgba(255,150,0,0.08) 40%, transparent 70%);
+    animation: starGlowPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes starGlowPulse {
+    from { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.star-body .body-icon {
+    font-size: 2.4rem;
+    color: #fff5d6;
+    text-shadow: 0 0 15px rgba(255,200,50,0.8);
+}
+
+.node-star:hover .star-body {
+    box-shadow:
+        inset -12px -12px 25px rgba(150,50,0,0.6),
+        inset 8px 8px 15px rgba(255,255,200,0.6),
+        0 0 60px rgba(255,200,50,0.6),
+        0 0 100px rgba(255,150,0,0.2);
+}
+
+/* --- STELLAR INFO (Mission HUD Panel) --- */
+.stellar-info {
+    width: 100%;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.mission-hud {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+}
+
+.hud-status {
+    padding: 3px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.hud-status.complete {
+    color: #34d399;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.25);
+}
+
+.hud-status.active-status {
+    color: var(--glow-gold);
+    background: rgba(255,215,0,0.1);
+    border: 1px solid rgba(255,215,0,0.3);
+    animation: activeStatusPulse 2s ease-in-out infinite;
+}
+
+@keyframes activeStatusPulse {
+    0%, 100% { box-shadow: 0 0 5px rgba(255,215,0,0.1); }
+    50% { box-shadow: 0 0 15px rgba(255,215,0,0.3); }
+}
+
+.hud-year {
+    color: var(--text-dim);
+}
+
+.phase-title {
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
+    font-size: 1.3rem;
     color: var(--text-main);
     letter-spacing: 2px;
     text-transform: uppercase;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
-#journey .org-name {
-    font-size: 0.85rem;
+.phase-location {
+    font-size: 0.82rem;
     color: #b3c5ef;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-style: italic;
-    opacity: 0.9;
+    opacity: 0.85;
 }
 
-#journey .skill-tags {
+.phase-tags {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 6px;
 }
 
-#journey .tag {
+.phase-tag {
     font-family: 'Inter', sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: var(--text-dim);
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 3px 8px;
+    padding: 4px 10px;
     border-radius: 4px;
     text-transform: capitalize;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
 }
 
-#journey .node:hover .tag {
-    color: var(--glow-cyan);
-    border-color: rgba(0, 224, 255, 0.3);
-    background: rgba(0, 224, 255, 0.05);
+/* Tag hover glow per node type */
+.node-asteroid:hover .phase-tag {
+    color: #c8c8b0;
+    border-color: rgba(150,150,130,0.3);
+    background: rgba(150,150,130,0.05);
 }
 
-/* Assuming a 1100x400 container for the SVG */
-#journey .n1 {
-    top: 110px;
-    left: 50px;
-}
-
-#journey .n2 {
-    top: 320px;
-    left: 385px;
-}
-
-#journey .n3 {
-    top: 80px;
-    left: 715px;
-}
-
-#journey .n4 {
-    top: 288px;
-    left: 1050px;
-}
-
-#journey .n1 .progress-fill {
-    width: 30%;
-}
-
-#journey .n2 .progress-fill {
-    width: 50%;
-}
-
-#journey .n2 .node-core {
-    border-color: var(--glow-purple);
-    box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.5);
-}
-
-#journey .n2 .node-ring {
-    border-color: rgba(168, 85, 247, 0.3);
-    box-shadow: inset 0 0 20px rgba(168, 85, 247, 0.1), 0 0 30px rgba(168, 85, 247, 0.2);
-}
-
-#journey .n2 .node-orbit::before {
-    background: var(--glow-purple);
-    box-shadow: 0 0 10px var(--glow-purple);
-}
-
-#journey .n2:hover .node-core {
-    box-shadow: inset 0 0 25px rgba(168, 85, 247, 0.8), 0 0 20px var(--glow-purple);
-    color: var(--glow-purple);
-    text-shadow: 0 0 10px var(--glow-purple);
-}
-
-#journey .n2 .progress-fill {
-    background: linear-gradient(90deg, var(--glow-purple), #fff);
-    box-shadow: 0 0 10px var(--glow-purple);
-}
-
-#journey .n2:hover .tag {
+.node-moon:hover .phase-tag {
     color: #d8b4fe;
-    border-color: rgba(168, 85, 247, 0.3);
-    background: rgba(168, 85, 247, 0.05);
+    border-color: rgba(168,85,247,0.3);
+    background: rgba(168,85,247,0.05);
 }
 
-#journey .n3 .progress-fill {
-    width: 75%;
+.node-planet:hover .phase-tag {
+    color: #93c5fd;
+    border-color: rgba(100,180,255,0.3);
+    background: rgba(100,180,255,0.05);
 }
 
-#journey .n3 .node-core {
-    border-color: var(--glow-pink);
-    box-shadow: inset 0 0 15px rgba(236, 72, 153, 0.5);
+.node-star:hover .phase-tag {
+    color: var(--glow-gold);
+    border-color: rgba(255,215,0,0.3);
+    background: rgba(255,215,0,0.05);
 }
 
-#journey .n3 .node-ring {
-    border-color: rgba(236, 72, 153, 0.3);
-    box-shadow: inset 0 0 20px rgba(236, 72, 153, 0.1), 0 0 30px rgba(236, 72, 153, 0.2);
+/* --- LIGHT-YEAR CONNECTORS --- */
+.lightyear-connector {
+    position: absolute;
+    top: 50%;
+    right: -36px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+    /* Centered between nodes visually */
+    width: 72px;
 }
 
-#journey .n3 .node-orbit::before {
-    background: var(--glow-pink);
-    box-shadow: 0 0 10px var(--glow-pink);
-}
-
-#journey .n3:hover .node-core {
-    box-shadow: inset 0 0 25px rgba(236, 72, 153, 0.8), 0 0 20px var(--glow-pink);
-    color: var(--glow-pink);
-    text-shadow: 0 0 10px var(--glow-pink);
-}
-
-#journey .n3 .progress-fill {
-    background: linear-gradient(90deg, var(--glow-pink), #fff);
-    box-shadow: 0 0 10px var(--glow-pink);
-}
-
-#journey .n3:hover .tag {
-    color: #fbcfe8;
-    border-color: rgba(236, 72, 153, 0.3);
-    background: rgba(236, 72, 153, 0.05);
-}
-
-#journey .n4 .progress-fill {
+.ly-line {
     width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(0,224,255,0.5), rgba(168,85,247,0.3), rgba(0,224,255,0.5));
+    position: relative;
+    overflow: visible;
 }
 
-@media (max-width: 1200px) {
-    #journey .trajectory-map {
-        transform: scale(0.85);
-        transform-origin: center;
-        margin: 40px 0;
+/* Animated flowing particles on the line */
+.ly-line::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 16px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--glow-cyan), transparent);
+    border-radius: 2px;
+    animation: flowParticle 2s linear infinite;
+    box-shadow: 0 0 8px var(--glow-cyan);
+}
+
+@keyframes flowParticle {
+    0% { left: -16px; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: calc(100% + 16px); opacity: 0; }
+}
+
+.ly-label {
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--glow-cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    opacity: 0.7;
+    white-space: nowrap;
+}
+
+.blink-transit {
+    animation: blinkTransit 1.5s ease-in-out infinite;
+    color: var(--glow-gold);
+}
+
+@keyframes blinkTransit {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+/* --- LOCALIZED NEBULA per Node --- */
+.node-asteroid::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(50,80,120,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.node-moon::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(120,60,180,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.node-planet::before {
+    content: '';
+    position: absolute;
+    top: -35px;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(60,130,220,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.node-star::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,200,50,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* ==============================
+   RESPONSIVE — STELLAR TRAJECTORY
+   ============================== */
+
+/* Large Tablets (1024px) */
+@media (max-width: 1100px) {
+    .stellar-timeline {
+        gap: 0;
+        padding: 20px 10px;
     }
+
+    .stellar-node {
+        max-width: 240px;
+    }
+
+    .lightyear-connector {
+        right: -24px;
+        width: 48px;
+    }
+
+    .star-body { width: 110px; height: 110px; }
+    .planet-body-j { width: 95px; height: 95px; }
+    .star-rays { width: 210px; height: 210px; }
 }
 
+/* Tablets — Switch to Vertical Layout */
 @media (max-width: 900px) {
-    #journey .map-area {
+    .stellar-timeline {
+        flex-direction: column;
+        align-items: center;
+        gap: 50px;
+        padding: 0 20px;
+    }
+
+    .stellar-node {
+        max-width: 340px;
+        flex-direction: row;
+        text-align: left;
+        gap: 20px;
+    }
+
+    .stellar-info {
+        text-align: left;
+    }
+
+    .mission-hud {
         justify-content: flex-start;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-left: 20px;
-        padding-bottom: 20px;
     }
 
-    #journey .trajectory-map {
-        transform: scale(0.8);
-        transform-origin: left center;
-        min-width: 1100px;
-        margin: 40px 0;
+    .phase-tags {
+        justify-content: flex-start;
     }
 
-    #journey.trajectory-container {
-        padding: 40px 10px;
-        min-height: 60vh;
+    .celestial-body {
+        flex-shrink: 0;
+        margin-bottom: 0;
+    }
+
+    /* Rotate connectors vertical */
+    .lightyear-connector {
+        position: relative;
+        top: auto;
+        right: auto;
+        transform: none;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .ly-line {
+        flex: 1;
+        height: 1px;
+    }
+
+    .ly-label {
+        margin-top: 0;
+    }
+
+    /* Bring back localized nebula centering */
+    .node-asteroid::before,
+    .node-moon::before,
+    .node-planet::before,
+    .node-star::before {
+        left: -20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    #journey.stellar-trajectory {
+        padding: 60px 10px;
     }
 }
 
+/* Small Phones */
 @media (max-width: 600px) {
-    #journey .map-area {
-        justify-content: flex-start;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-left: 20px;
-        padding-bottom: 60px;
-        height: 450px;
-        /* Enhanced height for node expansion */
+    .stellar-node {
+        flex-direction: column;
+        text-align: center;
+        max-width: 100%;
+        gap: 10px;
     }
 
-    #journey .trajectory-map {
-        transform: scale(0.65);
-        transform-origin: left top;
-        min-width: 1100px;
-        margin: 30px 0;
+    .stellar-info {
+        text-align: center;
     }
 
-    /* Expand node targets for mobile readability while keeping them locked on the trajectory curve */
-    #journey .node-core {
-        transform: scale(1.4);
+    .mission-hud {
+        justify-content: center;
     }
 
-    #journey .node-ring {
-        transform: scale(1.4);
-        margin-bottom: 30px;
+    .phase-tags {
+        justify-content: center;
     }
 
-    #journey .info-block {
-        transform: scale(1.2);
+    .celestial-body {
+        margin-bottom: 16px;
     }
 
-    #journey.trajectory-container {
-        padding: 20px 5px;
-        min-height: 50vh;
+    /* Scale down bodies slightly */
+    .asteroid-body { width: 55px; height: 55px; }
+    .moon-body { width: 72px; height: 72px; }
+    .planet-body-j { width: 88px; height: 88px; }
+    .star-body { width: 100px; height: 100px; }
+
+    .star-rays { width: 180px; height: 180px; }
+    .planet-ring-belt { width: 150%; }
+
+    .phase-title { font-size: 1.1rem; }
+    .phase-location { font-size: 0.78rem; }
+
+    .lightyear-connector {
+        flex-direction: column;
+        align-items: center;
     }
+
+    .ly-line {
+        width: 1px;
+        height: 30px;
+        flex: none;
+        background: linear-gradient(to bottom, rgba(0,224,255,0.5), rgba(168,85,247,0.3));
+    }
+
+    .ly-line::before {
+        width: 3px;
+        height: 10px;
+        top: 0;
+        left: -1px;
+        animation: flowParticleV 2s linear infinite;
+    }
+
+    @keyframes flowParticleV {
+        0% { top: -10px; opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { top: calc(100% + 10px); opacity: 0; }
+    }
+
+    #journey.stellar-trajectory {
+        padding: 40px 5px;
+        min-height: auto;
+    }
+}
+
+@media (max-width: 380px) {
+    .asteroid-body { width: 48px; height: 48px; }
+    .moon-body { width: 60px; height: 60px; }
+    .planet-body-j { width: 74px; height: 74px; }
+    .star-body { width: 88px; height: 88px; }
+    .star-rays { width: 150px; height: 150px; }
+    .phase-title { font-size: 1rem; }
 }
 
 /* --- SECTION 7: CONTACT (#contact) --- */
@@ -3152,10 +4041,8 @@ model-viewer {
     }
 
     #about .container,
-    #projects .projects-grid,
     #resume .blueprint-container {
         padding: 0 40px;
-        /* Increase side padding */
     }
 
     #about .grid-section {
@@ -3192,10 +4079,8 @@ model-viewer {
         transform: scale(0.65);
     }
 
-    /* Layout Changes */
     #about .grid-section {
         grid-template-columns: repeat(2, 1fr);
-        /* 2 Columns for cards */
     }
 
     #about .top-section {
@@ -3215,20 +4100,7 @@ model-viewer {
         width: 100%;
     }
 
-    #journey .journey-container {
-        flex-direction: column;
-        padding-top: 50px;
-    }
-
-    #journey .path-column {
-        display: none;
-    }
-
-    #journey .cards-column {
-        width: 100%;
-        border-left: 2px dashed rgba(0, 210, 255, 0.3);
-        padding-left: 30px;
-    }
+    /* Journey handled in its own responsive block above */
 
     #contact .mission-control-container {
         flex-direction: column;
@@ -3270,11 +4142,7 @@ model-viewer {
         /* Smaller headings */
     }
 
-    #projects .projects-grid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        /* Smaller cards */
-        padding: 0 20px;
-    }
+    /* Projects grid handled in Missions Log responsive block */
 }
 
 /* Mobile Phones (< 600px) */
@@ -3305,13 +4173,9 @@ model-viewer {
     /* Stack Everything */
     #about .grid-section {
         grid-template-columns: 1fr;
-        /* 1 Column */
     }
 
-    #projects .projects-grid {
-        grid-template-columns: 1fr;
-        padding: 0 15px;
-    }
+    /* Projects grid handled in Missions Log responsive block */
 
     #contact {
         justify-content: flex-start;

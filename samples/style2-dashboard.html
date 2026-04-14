@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Style 2 — Mission Control Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@300;400;500&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050505;color:#fff;font-family:'Inter',sans-serif;min-height:100vh}
+.section{max-width:1200px;margin:0 auto;padding:60px 20px}
+h2{font-family:'Montserrat',sans-serif;font-size:2.8rem;text-align:center;margin-bottom:8px;font-weight:800}
+.subtitle{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#00d2ff;letter-spacing:4px;text-transform:uppercase;opacity:.6;margin-bottom:40px}
+.filters{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-bottom:30px}
+.filters button{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);padding:8px 20px;border-radius:4px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;transition:all .3s}
+.filters button:hover{border-color:rgba(0,210,255,.3);color:rgba(255,255,255,.75)}
+.filters button.active{background:rgba(0,210,255,.12);border-color:#00d2ff;color:#00d2ff}
+.dashboard{display:flex;gap:0;border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden;min-height:420px;background:rgba(255,255,255,.02)}
+/* Sidebar */
+.sidebar{width:260px;flex-shrink:0;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column}
+.sidebar-title{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:2px;color:rgba(255,255,255,.25);text-transform:uppercase;padding:16px 20px 10px;border-bottom:1px solid rgba(255,255,255,.04)}
+.mission-item{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.03);transition:all .3s;position:relative}
+.mission-item:hover{background:rgba(0,210,255,.03)}
+.mission-item.active{background:rgba(0,210,255,.06)}
+.mission-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:#00d2ff;box-shadow:0 0 8px rgba(0,210,255,.5)}
+.mi-dot{width:8px;height:8px;border-radius:50%;background:#34d399;flex-shrink:0;box-shadow:0 0 6px rgba(52,211,153,.4)}
+.mi-info{flex:1}
+.mi-code{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#00d2ff;letter-spacing:1.5px}
+.mi-name{font-size:.82rem;color:rgba(255,255,255,.7);margin-top:2px;line-height:1.3}
+.mission-item.active .mi-name{color:#fff}
+/* Detail Panel */
+.detail-panel{flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.detail-img{width:100%;height:200px;position:relative;overflow:hidden}
+.detail-img-bg{width:100%;height:100%;object-fit:cover;transition:opacity .4s}
+.detail-img-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#0a1628 0%,#0d2847 50%,#061224 100%)}
+.detail-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to top,#050505,transparent);pointer-events:none}
+.detail-body{padding:30px;flex:1}
+.db-codename{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#00d2ff;letter-spacing:2px;margin-bottom:8px}
+.db-status{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:3px 10px;border-radius:3px;color:#34d399;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);margin-bottom:14px}
+.db-status-dot{width:5px;height:5px;border-radius:50%;background:#34d399}
+.db-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:1.4rem;margin-bottom:16px;line-height:1.3}
+.db-row{display:flex;gap:10px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:.78rem}
+.db-label{color:#00d2ff;min-width:70px;flex-shrink:0;letter-spacing:1px}
+.db-label::after{content:' .......';color:rgba(255,255,255,.1)}
+.db-value{color:rgba(255,255,255,.7)}
+.db-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,210,255,.15),transparent);margin:18px 0}
+.db-brief{font-size:.9rem;color:rgba(255,255,255,.55);line-height:1.7}
+/* Responsive */
+@media(max-width:768px){
+    .dashboard{flex-direction:column}
+    .sidebar{width:100%;flex-direction:column;border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}
+    .sidebar-title{display:none}
+    .sidebar-scroll{display:flex;overflow-x:auto;scrollbar-width:none}
+    .sidebar-scroll::-webkit-scrollbar{display:none}
+    .mission-item{white-space:nowrap;border-bottom:none;border-right:1px solid rgba(255,255,255,.03);min-width:150px;padding:12px 16px}
+    .mission-item.active::before{left:0;right:0;top:auto;bottom:0;width:100%;height:2px}
+    h2{font-size:2rem}
+}
+</style>
+</head>
+<body>
+<div class="section">
+    <h2>Missions Log</h2>
+    <p class="subtitle">Mission Control &mdash; Dashboard View</p>
+    <div class="filters">
+        <button class="active" data-filter="all">All Missions</button>
+        <button data-filter="react">React</button>
+        <button data-filter="python">Python</button>
+        <button data-filter="ai">AI & ML</button>
+        <button data-filter="web">Web</button>
+    </div>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="sidebar-title">Mission Index</div>
+            <div class="sidebar-scroll" id="sidebarScroll"></div>
+        </div>
+        <div class="detail-panel" id="detailPanel">
+            <div class="detail-img"><div class="detail-img-placeholder" id="detailImg"></div></div>
+            <div class="detail-body" id="detailBody"></div>
+        </div>
+    </div>
+</div>
+<script>
+const projects=[
+    {id:1,codename:"ALPHA-01",name:"Control Mouse with Hand Gesture Detection",tools:"Python, OpenCV, MediaPipe",categories:["python","ai"],status:"complete",brief:"Computer vision system for touchless interaction recognizing real-time hand gestures.",gradient:"linear-gradient(135deg,#1a0a2e 0%,#0d2847 50%,#0a2818 100%)"},
+    {id:2,codename:"BETA-02",name:"Credit Card Fraud Detection Using ML",tools:"Python, Scikit-learn, Pandas, NumPy",categories:["python","ai"],status:"complete",brief:"ML classification model to detect fraudulent financial transactions.",gradient:"linear-gradient(135deg,#0d2847 0%,#1a0a2e 50%,#2d1810 100%)"},
+    {id:3,codename:"GAMMA-03",name:"Tutor LMS Platform",tools:"React JS, WordPress, HTML/CSS",categories:["web","react"],status:"complete",brief:"Developed responsive interfaces and customized platform modules with AI-driven tools.",gradient:"linear-gradient(135deg,#061224 0%,#0a2818 50%,#0d2847 100%)"},
+    {id:4,codename:"DELTA-04",name:"Conference Website",tools:"HTML, CSS, JavaScript, Figma",categories:["web"],status:"complete",brief:"Designed and developed a static web page for an international conference.",gradient:"linear-gradient(135deg,#0a1628 0%,#0d2847 50%,#1a0a2e 100%)"}
+];
+
+let activeFilter='all';
+let selectedId=1;
+
+function getFiltered(){return activeFilter==='all'?projects:projects.filter(p=>p.categories.includes(activeFilter))}
+
+function renderSidebar(){
+    const container=document.getElementById('sidebarScroll');
+    container.innerHTML='';
+    const filtered=getFiltered();
+    if(filtered.length&&!filtered.find(p=>p.id===selectedId))selectedId=filtered[0].id;
+    filtered.forEach(p=>{
+        const item=document.createElement('div');
+        item.className='mission-item'+(p.id===selectedId?' active':'');
+        item.innerHTML=`<div class="mi-dot"></div><div class="mi-info"><div class="mi-code">${p.codename}</div><div class="mi-name">${p.name}</div></div>`;
+        item.addEventListener('click',()=>{selectedId=p.id;renderSidebar();renderDetail()});
+        container.appendChild(item);
+    });
+}
+
+function renderDetail(){
+    const p=projects.find(pr=>pr.id===selectedId);
+    if(!p)return;
+    document.getElementById('detailImg').style.background=p.gradient;
+    document.getElementById('detailBody').innerHTML=`
+        <div class="db-codename">${p.codename}</div>
+        <div class="db-status"><span class="db-status-dot"></span>COMPLETE</div>
+        <div class="db-title">${p.name}</div>
+        <div class="db-row"><span class="db-label">PAYLOAD</span><span class="db-value">${p.tools}</span></div>
+        <div class="db-divider"></div>
+        <p class="db-brief">${p.brief}</p>
+    `;
+}
+
+document.querySelectorAll('.filters button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+        document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter=btn.dataset.filter;
+        renderSidebar();renderDetail();
+    });
+});
+renderSidebar();renderDetail();
+</script>
+</body>
+</html>
