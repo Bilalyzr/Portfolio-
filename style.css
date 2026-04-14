@@ -2421,7 +2421,10 @@ model-viewer {
     z-index: 9999;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.4s ease, visibility 0.4s ease;
@@ -2436,10 +2439,10 @@ model-viewer {
     background: linear-gradient(180deg, rgba(8,15,28,0.98) 0%, rgba(5,8,16,0.98) 100%);
     border: 1px solid rgba(0,210,255,0.2);
     border-radius: 10px;
-    width: 92%;
+    width: 100%;
     max-width: 580px;
-    max-height: 90vh;
-    overflow-y: auto;
+    margin: auto;
+    overflow: visible;
     position: relative;
     opacity: 0;
     transform: translateY(20px) scale(0.95);
@@ -2719,8 +2722,23 @@ model-viewer {
         font-size: 0.6rem;
     }
 
+    /* Modal mobile fixes */
+    .mission-debrief-overlay {
+        padding: 10px;
+        align-items: flex-start;
+    }
+
+    .debrief-terminal {
+        width: 100%;
+        border-radius: 8px;
+    }
+
     .terminal-img-wrap {
-        height: 180px;
+        height: 160px;
+    }
+
+    .terminal-body {
+        padding: 18px;
     }
 
     .debrief-row {
@@ -2730,6 +2748,11 @@ model-viewer {
 
     .debrief-label::after {
         content: '';
+    }
+
+    .close-transmission-btn {
+        font-size: 0.6rem;
+        padding: 10px;
     }
 }
 
@@ -2744,6 +2767,31 @@ model-viewer {
         padding: 6px 10px;
         font-size: 0.55rem;
         letter-spacing: 1px;
+    }
+
+    /* Modal phone fixes */
+    .mission-debrief-overlay {
+        padding: 8px;
+    }
+
+    .terminal-img-wrap {
+        height: 140px;
+    }
+
+    .terminal-body {
+        padding: 16px;
+    }
+
+    .terminal-header {
+        padding: 10px 14px;
+    }
+
+    .terminal-title {
+        font-size: 0.55rem;
+    }
+
+    .debrief-brief {
+        font-size: 0.82rem;
     }
 
     .bento-card .bento-body {
