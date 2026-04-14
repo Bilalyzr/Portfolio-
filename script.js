@@ -153,50 +153,299 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- 2. HERO: Background Stars ---
-    createStars('star-container-hero', 200);
+    // --- 2. GLOBAL CANVAS STARFIELD + INTERACTIVE SPACE OBSTACLES ---
+    (function initGlobalStarfield() {
+        const canvas = document.getElementById('globalStarfield');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
 
-    // --- GLOBAL PARALLAX BACKGROUND ---
-    // Multi-layer star field
-    createStars('p-layer-1', 200);
-    createStars('p-layer-2', 300);
-    createStars('p-layer-3', 150);
+        // --- Star Layers (3 depth levels) ---
+        const LAYER_CONFIG = [
+            { count: 200, speedFactor: 0.02, minSize: 0.3, maxSize: 1.0, baseOpacity: 0.25 },
+            { count: 150, speedFactor: 0.06, minSize: 0.5, maxSize: 1.5, baseOpacity: 0.4 },
+            { count: 80,  speedFactor: 0.12, minSize: 0.8, maxSize: 2.2, baseOpacity: 0.6 }
+        ];
 
-    // --- GLOBAL & SECTION PARALLAX ENGINE ---
-    const parallaxLayers = document.querySelectorAll('.parallax-layer');
-    const sectionBgs = document.querySelectorAll('.section-bg');
+        let layers = [];
+        let shootingStars = [];
+        let meteorBursts = []; // Meteor click bursts
+        let scrollY = 0;
 
-    function updateParallax() {
-        const scrolled = window.pageYOffset;
+        // Mouse position for black hole gravity
+        let mouseX = -9999, mouseY = -9999;
+        const GRAVITY_RADIUS = 120;
+        const GRAVITY_STRENGTH = 0.6;
 
-        // 1. Global Star Layers (Background)
-        parallaxLayers.forEach(layer => {
-            const speed = parseFloat(layer.getAttribute('data-speed'));
-            const yPos = -(scrolled * speed);
-            layer.style.transform = `translateY(${yPos}px)`;
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initLayers();
+        }
+
+        function initLayers() {
+            layers = LAYER_CONFIG.map(cfg => {
+                const stars = [];
+                for (let i = 0; i < cfg.count; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        baseX: 0, // set after
+                        y: Math.random() * canvas.height * 4,
+                        size: Math.random() * (cfg.maxSize - cfg.minSize) + cfg.minSize,
+                        opacity: cfg.baseOpacity + Math.random() * 0.3,
+                        twinkleSpeed: Math.random() * 0.003 + 0.001,
+                        twinklePhase: Math.random() * Math.PI * 2,
+                        // Gravity displacement
+                        dx: 0, dy: 0
+                    });
+                    stars[stars.length - 1].baseX = stars[stars.length - 1].x;
+                }
+                return { stars, speedFactor: cfg.speedFactor };
+            });
+        }
+
+        window.addEventListener('scroll', () => { scrollY = window.pageYOffset; });
+
+        // Track mouse for black hole cursor
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        document.addEventListener('mouseleave', () => {
+            mouseX = -9999;
+            mouseY = -9999;
         });
 
-        // 2. Section Backgrounds (Images)
-        sectionBgs.forEach(bg => {
-            const section = bg.closest('section');
-            if (section) {
-                const speed = 0.2; // Moderate parallax intensity
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.offsetHeight;
+        // --- FEATURE: Meteor Click Burst ---
+        canvas.style.pointerEvents = 'none'; // Canvas doesn't block clicks
+        document.addEventListener('click', (e) => {
+            // Don't trigger on interactive elements
+            const tag = e.target.tagName.toLowerCase();
+            const isInteractive = e.target.closest('a, button, .bento-card, .planet, .skill-tile, .freq-btn, .scroll-nav li, model-viewer, .debrief-terminal, input, textarea, .mobile-menu-btn, .mobile-nav-overlay');
+            if (isInteractive || tag === 'a' || tag === 'button') return;
 
-                // Optimization: Only animate if relatively near viewport
-                if (scrolled + window.innerHeight > sectionTop && scrolled < sectionTop + sectionHeight) {
-                    // Calculate offset relative to when section hits top of viewport
-                    const distance = (scrolled - sectionTop) * speed;
-                    bg.style.transform = `translateY(${distance}px)`;
-                }
+            const count = 6 + Math.floor(Math.random() * 4);
+            for (let i = 0; i < count; i++) {
+                const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.5;
+                const speed = Math.random() * 4 + 2;
+                meteorBursts.push({
+                    x: e.clientX,
+                    y: e.clientY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 1.0,
+                    decay: Math.random() * 0.02 + 0.015,
+                    size: Math.random() * 1.5 + 0.8,
+                    trail: []
+                });
             }
         });
-    }
 
-    window.addEventListener('scroll', () => {
-        window.requestAnimationFrame(updateParallax);
-    });
+        // --- Shooting Stars ---
+        function spawnShootingStar() {
+            const startX = Math.random() * canvas.width;
+            const startY = Math.random() * canvas.height * 0.5;
+            const angle = (Math.random() * 40 + 140) * (Math.PI / 180);
+            const speed = Math.random() * 8 + 6;
+            shootingStars.push({
+                x: startX, y: startY,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 1.0,
+                decay: Math.random() * 0.015 + 0.01,
+                length: Math.random() * 80 + 60
+            });
+        }
+
+        // --- Nebula Clouds ---
+        const nebulae = [
+            { cx: 0.2, cy: 0.3, r: 0.35, color: [0, 60, 180], drift: 0.00003 },
+            { cx: 0.75, cy: 0.65, r: 0.3, color: [100, 0, 160], drift: -0.00002 }
+        ];
+
+        function drawNebulae(time) {
+            nebulae.forEach(n => {
+                const cx = (n.cx + Math.sin(time * n.drift) * 0.05) * canvas.width;
+                const cy = (n.cy + Math.cos(time * n.drift * 0.7) * 0.04) * canvas.height;
+                const r = n.r * Math.max(canvas.width, canvas.height);
+                const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+                grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.06)`);
+                grad.addColorStop(0.5, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.025)`);
+                grad.addColorStop(1, 'transparent');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            });
+        }
+
+        // --- Main Render Loop ---
+        function render(time) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Nebula clouds
+            drawNebulae(time);
+
+            // 2. Star layers with parallax + BLACK HOLE CURSOR GRAVITY
+            layers.forEach(layer => {
+                const parallaxOffset = scrollY * layer.speedFactor;
+                layer.stars.forEach(star => {
+                    const y = (star.y - parallaxOffset) % (canvas.height * 4);
+                    const screenY = ((y % canvas.height) + canvas.height) % canvas.height;
+                    const drawX = star.baseX + star.dx;
+
+                    // Black hole gravity: pull star toward cursor
+                    const distX = mouseX - drawX;
+                    const distY = mouseY - screenY;
+                    const dist = Math.sqrt(distX * distX + distY * distY);
+
+                    if (dist < GRAVITY_RADIUS && dist > 1) {
+                        const force = (1 - dist / GRAVITY_RADIUS) * GRAVITY_STRENGTH;
+                        star.dx += (distX / dist) * force;
+                        star.dy += (distY / dist) * force;
+                    } else {
+                        // Spring back to original position
+                        star.dx *= 0.95;
+                        star.dy *= 0.95;
+                    }
+
+                    const finalX = drawX;
+                    const finalY = screenY + star.dy;
+                    const twinkle = Math.sin(time * star.twinkleSpeed + star.twinklePhase) * 0.3 + 0.7;
+                    const alpha = star.opacity * twinkle;
+
+                    // Star stretched toward cursor (subtle elongation)
+                    if (dist < GRAVITY_RADIUS && dist > 1) {
+                        const stretchFactor = 1 + (1 - dist / GRAVITY_RADIUS) * 1.5;
+                        const stretchAngle = Math.atan2(distY, distX);
+                        ctx.save();
+                        ctx.translate(finalX, finalY);
+                        ctx.rotate(stretchAngle);
+                        ctx.scale(stretchFactor, 1);
+                        ctx.beginPath();
+                        ctx.arc(0, 0, star.size, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(200, 220, 255, ${alpha})`;
+                        ctx.fill();
+                        ctx.restore();
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(finalX, finalY, star.size, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(200, 220, 255, ${alpha})`;
+                        ctx.fill();
+                    }
+
+                    // Glow for larger stars
+                    if (star.size > 1.5) {
+                        ctx.beginPath();
+                        ctx.arc(finalX, finalY, star.size * 3, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(0, 210, 255, ${alpha * 0.04})`;
+                        ctx.fill();
+                    }
+                });
+            });
+
+            // 3. Shooting stars
+            for (let i = shootingStars.length - 1; i >= 0; i--) {
+                const s = shootingStars[i];
+                s.x += s.vx; s.y += s.vy; s.life -= s.decay;
+                if (s.life <= 0) { shootingStars.splice(i, 1); continue; }
+
+                const mag = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
+                const tailX = s.x - (s.vx / mag) * s.length;
+                const tailY = s.y - (s.vy / mag) * s.length;
+
+                const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
+                grad.addColorStop(0, 'rgba(255,255,255,0)');
+                grad.addColorStop(0.7, `rgba(200,230,255,${s.life * 0.5})`);
+                grad.addColorStop(1, `rgba(255,255,255,${s.life})`);
+                ctx.beginPath(); ctx.moveTo(tailX, tailY); ctx.lineTo(s.x, s.y);
+                ctx.strokeStyle = grad; ctx.lineWidth = 1.5; ctx.stroke();
+
+                ctx.beginPath(); ctx.arc(s.x, s.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${s.life})`; ctx.fill();
+            }
+
+            // 4. METEOR CLICK BURSTS
+            for (let i = meteorBursts.length - 1; i >= 0; i--) {
+                const m = meteorBursts[i];
+                m.x += m.vx; m.y += m.vy;
+                m.vx *= 0.98; m.vy *= 0.98;
+                m.life -= m.decay;
+
+                // Store trail positions
+                m.trail.push({ x: m.x, y: m.y });
+                if (m.trail.length > 8) m.trail.shift();
+
+                if (m.life <= 0) { meteorBursts.splice(i, 1); continue; }
+
+                // Draw trail
+                for (let j = 0; j < m.trail.length - 1; j++) {
+                    const trailAlpha = (j / m.trail.length) * m.life * 0.4;
+                    ctx.beginPath();
+                    ctx.moveTo(m.trail[j].x, m.trail[j].y);
+                    ctx.lineTo(m.trail[j + 1].x, m.trail[j + 1].y);
+                    ctx.strokeStyle = `rgba(0, 210, 255, ${trailAlpha})`;
+                    ctx.lineWidth = m.size * (j / m.trail.length);
+                    ctx.stroke();
+                }
+
+                // Draw head
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(200, 240, 255, ${m.life})`;
+                ctx.fill();
+
+                // Head glow
+                ctx.beginPath();
+                ctx.arc(m.x, m.y, m.size * 4, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 210, 255, ${m.life * 0.15})`;
+                ctx.fill();
+            }
+
+            // Spawn shooting stars
+            if (Math.random() > 0.993) spawnShootingStar();
+
+            requestAnimationFrame(render);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        requestAnimationFrame(render);
+    })();
+
+    // --- SATELLITE ORBIT (DOM element orbiting viewport edges) ---
+    (function initSatellite() {
+        const sat = document.createElement('div');
+        sat.id = 'orbitingSatellite';
+        sat.innerHTML = '<i class="fas fa-satellite" style="font-size:10px;color:rgba(200,220,255,0.5);"></i><span class="sat-blink"></span>';
+        document.body.appendChild(sat);
+
+        let angle = 0;
+        const speed = 0.0006; // ~60s per orbit
+
+        function updateSatellite() {
+            angle += speed;
+            if (angle > Math.PI * 2) angle -= Math.PI * 2;
+
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const margin = 30;
+
+            // Elliptical path along viewport edges
+            const rx = vw / 2 - margin;
+            const ry = vh / 2 - margin;
+            const x = vw / 2 + Math.cos(angle) * rx;
+            const y = vh / 2 + Math.sin(angle) * ry;
+
+            sat.style.left = x + 'px';
+            sat.style.top = y + 'px';
+
+            // Rotation to face direction of travel
+            const deg = angle * (180 / Math.PI) + 90;
+            sat.style.transform = `translate(-50%, -50%) rotate(${deg}deg)`;
+
+            requestAnimationFrame(updateSatellite);
+        }
+
+        requestAnimationFrame(updateSatellite);
+    })();
 
 
     // --- 3. SKILLS: Interaction ---
@@ -245,68 +494,190 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // --- 4. PROJECTS: Filtering & Rendering ---
+    // --- 4. PROJECTS: Missions Log — Dossier System ---
 
     const projects = [
-        { id: 1, name: "Control Mouse with Hand Gesture Detection", tools: "Python, OpenCV, MediaPipe", category: ["python", "ai"], icon: ["fab fa-python", "fas fa-robot"], brief: "Computer vision system for touchless interaction recognizing real-time hand gestures.", img: "assets/images/hand_gestures.png" },
-        { id: 2, name: "Credit Card Fraud Detection Using ML", tools: "Python, Scikit-learn, Pandas, NumPy", category: ["python", "ai"], icon: ["fab fa-python", "fas fa-robot"], brief: "Machine learning classification model built to detect fraudulent financial transactions.", img: "assets/images/fraud_detection.png" },
-        { id: 3, name: "Tutor LMS Platform (Internship)", tools: "React JS, WordPress, HTML/CSS", category: ["web", "react"], icon: ["fab fa-react", "fab fa-wordpress"], brief: "Developed responsive interfaces and customized platform modules with AI-driven tools.", img: "assets/images/tutor_lms.png" },
-        { id: 4, name: "Department Conference Website Development", tools: "HTML, CSS, JavaScript, Figma", category: ["web"], icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-figma"], brief: "Designed and developed a static web page for an international conference organized by the department.", img: "assets/images/conference_website.png" }
+        {
+            id: 1,
+            codename: "ALPHA-01",
+            name: "Control Mouse with Hand Gesture Detection",
+            tools: "Python, OpenCV, MediaPipe",
+            category: ["python", "ai"],
+            missionClass: "RECON",
+            status: "complete",
+            icon: ["fab fa-python", "fas fa-robot"],
+            brief: "Computer vision system for touchless interaction recognizing real-time hand gestures.",
+            img: "assets/images/hand_gestures.png"
+        },
+        {
+            id: 2,
+            codename: "BETA-02",
+            name: "Credit Card Fraud Detection Using ML",
+            tools: "Python, Scikit-learn, Pandas, NumPy",
+            category: ["python", "ai"],
+            missionClass: "RECON",
+            status: "complete",
+            icon: ["fab fa-python", "fas fa-robot"],
+            brief: "Machine learning classification model built to detect fraudulent financial transactions.",
+            img: "assets/images/fraud_detection.png"
+        },
+        {
+            id: 3,
+            codename: "GAMMA-03",
+            name: "Tutor LMS Platform (Internship)",
+            tools: "React JS, WordPress, HTML/CSS",
+            category: ["web", "react"],
+            missionClass: "ORBITAL",
+            status: "complete",
+            icon: ["fab fa-react", "fab fa-wordpress"],
+            brief: "Developed responsive interfaces and customized platform modules with AI-driven tools.",
+            img: "assets/images/tutor_lms.png"
+        },
+        {
+            id: 4,
+            codename: "DELTA-04",
+            name: "Department Conference Website Development",
+            tools: "HTML, CSS, JavaScript, Figma",
+            category: ["web"],
+            missionClass: "CONSTRUCT",
+            status: "complete",
+            icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-figma"],
+            brief: "Designed and developed a static web page for an international conference organized by the department.",
+            img: "assets/images/conference_website.png"
+        }
     ];
 
     const projectsGrid = document.getElementById('projects-grid');
+    const scanFlash = document.getElementById('scanFlash');
+
+    // Animated star canvas for featured card
+    function initFeaturedStars(canvas) {
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+        resize();
+        const stars = [];
+        for (let i = 0; i < 40; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                s: Math.random() * 1.2 + 0.3,
+                o: Math.random(),
+                sp: Math.random() * 0.015 + 0.005,
+                ph: Math.random() * Math.PI * 2
+            });
+        }
+        function draw(t) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(s => {
+                const a = s.o * (Math.sin(t * s.sp + s.ph) * 0.3 + 0.7);
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.s, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(180,210,255,${a})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+        requestAnimationFrame(draw);
+        window.addEventListener('resize', resize);
+    }
 
     window.filterProjects = function (category, btn) {
-        // Active Class
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        // Update active filter button
+        document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // Render
+        // Trigger scan flash
+        if (scanFlash) {
+            scanFlash.classList.add('active');
+            setTimeout(() => scanFlash.classList.remove('active'), 300);
+        }
+
+        // Render bento cards
         projectsGrid.innerHTML = '';
         const filtered = category === 'all' ? projects : projects.filter(p => p.category.includes(category));
 
-        filtered.forEach(p => {
+        filtered.forEach((p, index) => {
             const iconsHtml = p.icon.map(i => `<i class="${i}"></i>`).join(' ');
+            const isFeatured = index === 0;
+
+            const statusLabel = p.status === 'active' ? 'ACTIVE' :
+                                p.status === 'classified' ? 'CLASSIFIED' : 'COMPLETE';
+            const statusClass = 'status-' + p.status;
+
             const card = document.createElement('div');
-            card.className = 'project-card fade-up visible'; // Add visible immediately for filter re-render
-            card.style.cursor = 'pointer'; // Make it clear it's clickable
-            card.onclick = () => openProjectModal(p.id); // Trigger modal
+            card.className = 'bento-card warp-enter' + (isFeatured ? ' featured' : '');
+            card.style.animationDelay = (index * 0.1) + 's';
+            card.onclick = () => openProjectModal(p.id);
+
             card.innerHTML = `
-                <div class="card-img-container"><img src="${p.img}" class="card-img" alt="${p.name}"></div>
-                <div class="project-title">${p.name}</div>
-                <div class="tech-icons" style="margin-bottom:8px;">${iconsHtml}</div>
-                <div style="color:var(--neon-blue); font-size:0.85rem; font-weight:600; margin-bottom:8px; font-family:'Share Tech Mono', monospace;">TOOLS: <span style="color:white; font-family:'Inter', sans-serif; font-weight:400;">${p.tools}</span></div>
-                <div style="flex-grow:1; color:#bbb; margin-bottom:5px; font-size:0.9rem;">${p.brief}</div>
+                <div class="card-img-wrap">
+                    <img src="${p.img}" class="card-img" alt="${p.name}">
+                    ${isFeatured ? '<canvas class="featured-stars-canvas"></canvas>' : ''}
+                    <span class="mission-codename">${p.codename}</span>
+                    <span class="mission-status-badge ${statusClass}">
+                        <span class="status-dot"></span> ${statusLabel}
+                    </span>
+                    <div class="hud-reticle">
+                        <div class="ret-h"></div>
+                        <div class="ret-v"></div>
+                        <div class="ret-circle"></div>
+                    </div>
+                </div>
+                <div class="bento-body">
+                    <div class="mission-class-tag">${p.missionClass}</div>
+                    <div class="bento-title">${p.name}</div>
+                    <div class="bento-payload"><span>PAYLOAD:</span> ${p.tools}</div>
+                    <div class="bento-brief">${p.brief}</div>
+                    <div class="bento-footer">
+                        <div class="bento-icons">${iconsHtml}</div>
+                        <div class="open-file-btn">OPEN FILE <i class="fas fa-chevron-right" style="font-size:0.5rem;"></i></div>
+                    </div>
+                </div>
             `;
             projectsGrid.appendChild(card);
         });
+
+        // Init star canvas on featured card
+        const featuredCanvas = projectsGrid.querySelector('.featured-stars-canvas');
+        if (featuredCanvas) initFeaturedStars(featuredCanvas);
     };
 
-    // Modal interaction logic
+    // Mission Debrief Modal
     window.openProjectModal = function (id) {
         const project = projects.find(p => p.id === id);
         if (!project) return;
 
-        // Populate modal data
+        document.getElementById('p-modal-codename').innerText = 'MISSION DEBRIEF — ' + project.codename;
         document.getElementById('p-modal-title').innerText = project.name;
         document.getElementById('p-modal-icons').innerHTML = project.icon.map(i => `<i class="${i}"></i>`).join(' ');
         document.getElementById('p-modal-tools').innerText = project.tools;
-        // In the future you can swap .brief for a deeper .description text property on the array too!
         document.getElementById('p-modal-desc').innerText = project.brief;
         document.getElementById('p-modal-img').src = project.img;
 
-        // Open modal & lock background scrolling
+        const statusEl = document.getElementById('p-modal-status');
+        if (statusEl) {
+            const label = project.status === 'active' ? 'ACTIVE' :
+                          project.status === 'classified' ? 'CLASSIFIED' : 'COMPLETE';
+            statusEl.innerText = label;
+            statusEl.style.color = project.status === 'active' ? '#ffd700' :
+                                   project.status === 'classified' ? '#f87171' : '#34d399';
+        }
+
+        const classEl = document.getElementById('p-modal-class');
+        if (classEl) classEl.innerText = project.missionClass;
+
         document.getElementById('project-modal').classList.add('open');
         document.body.style.overflow = 'hidden';
     };
 
     window.closeProjectModal = function () {
         document.getElementById('project-modal').classList.remove('open');
-        document.body.style.overflow = ''; // Restore scrolling
+        document.body.style.overflow = '';
     };
 
     // Initial Load
-    filterProjects('all', document.querySelector('.filter-btn.active'));
+    filterProjects('all', document.querySelector('.freq-btn.active'));
 
 
 
@@ -318,25 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.classList.toggle('active');
     };
 
-    // --- Utility: Star Generator ---
-    function createStars(containerId, count) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        for (let i = 0; i < count; i++) {
-            const star = document.createElement('div');
-            const size = Math.random() * 2 + 1;
-            star.style.width = `${size}px`;
-            star.style.height = `${size}px`;
-            star.style.position = 'absolute';
-            star.style.background = 'white';
-            star.style.borderRadius = '50%';
-            star.style.left = `${Math.random() * 100}%`;
-            star.style.top = `${Math.random() * 100}%`;
-            star.style.opacity = Math.random();
-            star.style.animation = `twinkle ${Math.random() * 3 + 2}s infinite ease-in-out`;
-            container.appendChild(star);
-        }
-    }
+    // Stars + shooting stars now handled by #globalStarfield canvas
 
     // --- 7. INTERACTIVE HEADINGS (Giggle Effect) ---
     const interactiveTargets = document.querySelectorAll('.hero-role, .section-title, .skills-heading');
@@ -459,61 +812,7 @@ document.body.addEventListener('scroll', enableAudio, { once: true });
 document.body.addEventListener('keydown', enableAudio, { once: true });
 
 
-// --- 9. HERO: Shooting Stars & Comets ---
-function initShootingStars() {
-    const container = document.getElementById('shooting-stars-container');
-    if (!container) return;
-
-    function createShootingStar() {
-        const star = document.createElement('div');
-        star.classList.add('shooting-star');
-
-        // Random Start Position
-        const startX = Math.random() * window.innerWidth;
-        const startY = Math.random() * window.innerHeight * 0.5; // Top half mostly
-
-        // Random Angle (Downwards diagonal)
-        const angle = Math.random() * 45 + 135; // 135 to 180 degrees (approx) representing top-left to bottom-right or similar
-
-        // Random Length/Distance
-        const length = Math.random() * 300 + 500; // 500px to 800px travel
-
-        // Calculate End Position based on angle
-        // Angle is in degrees, convert to radians
-        const rad = angle * (Math.PI / 180);
-        const tx = Math.cos(rad) * length;
-        const ty = Math.sin(rad) * length;
-
-        // Random Duration
-        const duration = Math.random() * 1.5 + 1; // 1s to 2.5s
-
-        // Set Styles
-        star.style.left = `${startX}px`;
-        star.style.top = `${startY}px`;
-        star.style.setProperty('--angle', `${angle}deg`);
-        star.style.setProperty('--tx', `${tx}px`);
-        star.style.setProperty('--ty', `${ty}px`);
-        star.style.animationDuration = `${duration}s`;
-
-        container.appendChild(star);
-
-        // Remove after animation
-        setTimeout(() => {
-            star.remove();
-        }, duration * 1000);
-    }
-
-    // Launch a new star every random interval
-    setInterval(() => {
-        if (Math.random() > 0.3) { // 70% chance to spawn, prevents flood
-            createShootingStar();
-        }
-    }, 800); // Check every 800ms
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    initShootingStars();
-});
+// Shooting stars now handled by #globalStarfield canvas
 
 // --- 10. HERO: Button 3D Tilt Effect ---
 function initButtonTilt() {
@@ -550,5 +849,190 @@ function initButtonTilt() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initButtonTilt();
+});
+
+// --- 11. STELLAR TRAJECTORY: Warp Trail Particle Canvas ---
+function initWarpTrail() {
+    const canvas = document.getElementById('warpTrailCanvas');
+    if (!canvas) return;
+
+    const section = document.getElementById('journey');
+    if (!section) return;
+
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationId;
+    let isVisible = false;
+
+    function resizeCanvas() {
+        const rect = section.getBoundingClientRect();
+        canvas.width = section.offsetWidth;
+        canvas.height = section.offsetHeight;
+    }
+
+    // Get center positions of each celestial body
+    function getNodePositions() {
+        const nodes = section.querySelectorAll('.celestial-body');
+        const sectionRect = section.getBoundingClientRect();
+        const positions = [];
+
+        nodes.forEach(node => {
+            const rect = node.getBoundingClientRect();
+            positions.push({
+                x: rect.left + rect.width / 2 - sectionRect.left,
+                y: rect.top + rect.height / 2 - sectionRect.top
+            });
+        });
+
+        return positions;
+    }
+
+    // Cubic bezier point between two positions with slight curve
+    function bezierPoint(p0, p1, t, curveAmount) {
+        const mx = (p0.x + p1.x) / 2;
+        const my = (p0.y + p1.y) / 2;
+        const cp = { x: mx, y: my - curveAmount };
+
+        const u = 1 - t;
+        return {
+            x: u * u * p0.x + 2 * u * t * cp.x + t * t * p1.x,
+            y: u * u * p0.y + 2 * u * t * cp.y + t * t * p1.y
+        };
+    }
+
+    function createParticle(positions) {
+        if (positions.length < 2) return null;
+
+        // Pick a random segment
+        const segIndex = Math.floor(Math.random() * (positions.length - 1));
+        const from = positions[segIndex];
+        const to = positions[segIndex + 1];
+
+        // Color based on segment
+        const colors = [
+            { r: 0, g: 224, b: 255 },    // Cyan (asteroid->moon)
+            { r: 168, g: 85, b: 247 },   // Purple (moon->planet)
+            { r: 255, g: 200, b: 50 }    // Gold (planet->star)
+        ];
+        const color = colors[segIndex] || colors[0];
+
+        return {
+            from: from,
+            to: to,
+            t: 0,
+            speed: 0.003 + Math.random() * 0.006,
+            size: Math.random() * 2 + 0.8,
+            color: color,
+            curve: (Math.random() - 0.5) * 60,
+            trail: [],
+            maxTrail: 12 + Math.floor(Math.random() * 8)
+        };
+    }
+
+    function updateAndDraw(time) {
+        if (!isVisible) {
+            animationId = requestAnimationFrame(updateAndDraw);
+            return;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const positions = getNodePositions();
+
+        // Spawn new particles
+        if (particles.length < 30 && Math.random() > 0.85) {
+            const p = createParticle(positions);
+            if (p) particles.push(p);
+        }
+
+        // Update and draw
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.t += p.speed;
+
+            if (p.t >= 1) {
+                particles.splice(i, 1);
+                continue;
+            }
+
+            const pos = bezierPoint(p.from, p.to, p.t, p.curve);
+            p.trail.push({ x: pos.x, y: pos.y });
+
+            if (p.trail.length > p.maxTrail) {
+                p.trail.shift();
+            }
+
+            // Draw trail
+            if (p.trail.length > 1) {
+                for (let j = 0; j < p.trail.length - 1; j++) {
+                    const alpha = (j / p.trail.length) * 0.4;
+                    const width = (j / p.trail.length) * p.size;
+                    ctx.beginPath();
+                    ctx.moveTo(p.trail[j].x, p.trail[j].y);
+                    ctx.lineTo(p.trail[j + 1].x, p.trail[j + 1].y);
+                    ctx.strokeStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${alpha})`;
+                    ctx.lineWidth = width;
+                    ctx.stroke();
+                }
+            }
+
+            // Draw head
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0.9)`;
+            ctx.fill();
+
+            // Glow
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, p.size * 3, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0.1)`;
+            ctx.fill();
+        }
+
+        // Draw faint constellation lines between nodes
+        if (positions.length > 1) {
+            for (let i = 0; i < positions.length - 1; i++) {
+                const from = positions[i];
+                const to = positions[i + 1];
+
+                ctx.beginPath();
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x, to.y);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 8]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Tiny constellation dots at each node
+            positions.forEach(pos => {
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                ctx.fill();
+            });
+        }
+
+        animationId = requestAnimationFrame(updateAndDraw);
+    }
+
+    // Visibility observer to pause when offscreen
+    const visObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            isVisible = entry.isIntersecting;
+            if (isVisible) resizeCanvas();
+        });
+    }, { threshold: 0.1 });
+
+    visObserver.observe(section);
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    animationId = requestAnimationFrame(updateAndDraw);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initWarpTrail();
 });
 
