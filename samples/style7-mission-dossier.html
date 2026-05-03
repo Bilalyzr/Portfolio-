@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Style 7 — Mission Dossier Cards</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#05070a;color:#fff;font-family:'Inter',sans-serif;min-height:100vh}
+.section{max-width:1150px;margin:0 auto;padding:60px 20px}
+h2{font-family:'Montserrat',sans-serif;font-size:2.6rem;text-align:center;font-weight:800}
+.subtitle{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#00d2ff;letter-spacing:3px;text-transform:uppercase;opacity:.7;margin:10px 0 35px}
+.filters{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.filters button{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.5);padding:8px 16px;border-radius:5px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:1.3px;text-transform:uppercase;transition:.25s}
+.filters button.active{background:rgba(0,210,255,.12);border-color:#00d2ff;color:#00d2ff}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.dossier{background:linear-gradient(160deg,rgba(8,15,30,.95),rgba(7,12,24,.88));border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 40px rgba(0,0,0,.35);transition:.3s}
+.dossier:hover{transform:translateY(-3px);border-color:rgba(0,210,255,.25);box-shadow:0 22px 55px rgba(0,0,0,.45),0 0 35px rgba(0,210,255,.08)}
+
+.head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.code{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#00d2ff;letter-spacing:1.8px}
+.meta{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:1.2px}
+.status{color:#34d399;border:1px solid rgba(52,211,153,.3);padding:3px 7px;border-radius:3px;background:rgba(52,211,153,.08)}
+.year{color:rgba(255,255,255,.55)}
+
+.preview{height:170px;position:relative;overflow:hidden}
+.preview img{width:100%;height:100%;object-fit:cover;filter:saturate(.7) brightness(.78)}
+.preview::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(6,10,20,.95),transparent 60%)}
+.preview-badge{position:absolute;top:10px;left:10px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:.53rem;letter-spacing:1.2px;color:#fff;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);padding:4px 8px;border-radius:3px}
+
+.body{padding:15px 15px 14px;display:flex;flex-direction:column;gap:10px}
+.title{font-family:'Montserrat',sans-serif;font-size:1.02rem;line-height:1.35}
+.brief{font-size:.85rem;color:rgba(255,255,255,.62);line-height:1.55}
+
+.payload{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:.58rem;padding:5px 8px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.78)}
+
+.metric{border:1px solid rgba(0,210,255,.2);background:rgba(0,210,255,.06);border-radius:8px;padding:10px}
+.metric-label{font-family:'JetBrains Mono',monospace;font-size:.57rem;letter-spacing:1.2px;color:#00d2ff;margin-bottom:3px}
+.metric-value{font-size:.83rem;color:#d6e5ff}
+
+.actions{display:flex;gap:8px;margin-top:2px}
+.btn{flex:1;text-align:center;text-decoration:none;font-size:.73rem;font-weight:600;padding:9px 8px;border-radius:8px;transition:.25s}
+.btn-demo{background:#00d2ff;color:#041018}
+.btn-code{background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(255,255,255,.15)}
+.btn-case{background:rgba(189,0,255,.12);color:#e3bbff;border:1px solid rgba(189,0,255,.32)}
+.btn:hover{transform:translateY(-1px)}
+
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+@media(max-width:560px){
+  h2{font-size:2rem}
+  .actions{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="section">
+  <h2>Missions Log</h2>
+  <p class="subtitle">Mission Dossier Representation</p>
+
+  <div class="filters">
+    <button class="active" data-filter="all">All Missions</button>
+    <button data-filter="web">Web</button>
+    <button data-filter="ai">AI & ML</button>
+    <button data-filter="python">Python</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const missions = [
+  {
+    code: "ALPHA-01", year: "2025", status: "COMPLETE", category: ["python","ai"],
+    title: "Hand Gesture Mouse Controller",
+    brief: "Converted webcam hand landmarks into real-time cursor and click controls for touchless desktop interaction.",
+    payload: ["Python","OpenCV","MediaPipe","PyAutoGUI"],
+    metric: "Gesture-to-action latency reduced to ~110ms.",
+    img: "../assets/images/hand_gestures.png"
+  },
+  {
+    code: "BETA-02", year: "2025", status: "COMPLETE", category: ["python","ai"],
+    title: "Credit Card Fraud Detection",
+    brief: "Built and evaluated a classification pipeline to identify fraud patterns from imbalanced transaction data.",
+    payload: ["Python","Scikit-learn","Pandas","NumPy"],
+    metric: "Fraud recall improved to 92% after feature tuning.",
+    img: "../assets/images/fraud_detection.png"
+  },
+  {
+    code: "GAMMA-03", year: "2024", status: "COMPLETE", category: ["web"],
+    title: "Tutor LMS Platform",
+    brief: "Implemented responsive UI flows and customized LMS modules for better student and tutor navigation.",
+    payload: ["React JS","WordPress","HTML/CSS"],
+    metric: "Navigation task completion time reduced by 34%.",
+    img: "../assets/images/tutor_lms.png"
+  },
+  {
+    code: "DELTA-04", year: "2024", status: "COMPLETE", category: ["web"],
+    title: "Conference Website",
+    brief: "Designed and developed an event-ready static website with clean sections for schedule, speakers, and registration.",
+    payload: ["HTML","CSS","JavaScript","Figma"],
+    metric: "First contentful paint under 1.6s on desktop.",
+    img: "../assets/images/conference_website.png"
+  }
+];
+
+const grid = document.getElementById("grid");
+let activeFilter = "all";
+
+function render() {
+  const list = activeFilter === "all" ? missions : missions.filter(m => m.category.includes(activeFilter));
+  grid.innerHTML = "";
+  list.forEach(m => {
+    const card = document.createElement("article");
+    card.className = "dossier";
+    card.innerHTML = `
+      <div class="head">
+        <div class="code">${m.code}</div>
+        <div class="meta"><span class="status">${m.status}</span><span class="year">${m.year}</span></div>
+      </div>
+      <div class="preview">
+        <img src="${m.img}" alt="${m.title}">
+        <span class="preview-badge">MISSION PREVIEW</span>
+      </div>
+      <div class="body">
+        <h3 class="title">${m.title}</h3>
+        <p class="brief">${m.brief}</p>
+        <div class="payload">${m.payload.map(t => `<span class="chip">${t}</span>`).join("")}</div>
+        <div class="metric"><div class="metric-label">IMPACT METRIC</div><div class="metric-value">${m.metric}</div></div>
+        <div class="actions">
+          <a class="btn btn-demo" href="#" onclick="return false;">Live Demo</a>
+          <a class="btn btn-code" href="#" onclick="return false;">Source Code</a>
+          <a class="btn btn-case" href="#" onclick="return false;">Case Study</a>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+document.querySelectorAll(".filters button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filters button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.dataset.filter;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
+

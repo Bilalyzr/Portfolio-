@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const LAYER_CONFIG = [
             { count: 200, speedFactor: 0.02, minSize: 0.3, maxSize: 1.0, baseOpacity: 0.25 },
             { count: 150, speedFactor: 0.06, minSize: 0.5, maxSize: 1.5, baseOpacity: 0.4 },
-            { count: 80,  speedFactor: 0.12, minSize: 0.8, maxSize: 2.2, baseOpacity: 0.6 }
+            { count: 80, speedFactor: 0.12, minSize: 0.8, maxSize: 2.2, baseOpacity: 0.6 }
         ];
 
         let layers = [];
@@ -590,10 +590,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Enhanced 3D stacking
             if (window.innerWidth > 768) {
                 // More dramatic spread for active card
-                const spreadX = offset * 60; 
+                const spreadX = offset * 60;
                 const spreadZ = -Math.abs(offset) * 120;
                 const rotY = offset * -15;
-                
+
                 card.style.transform = `translateX(${spreadX}px) translateZ(${spreadZ}px) rotateY(${rotY}deg)`;
                 card.style.opacity = Math.abs(offset) > 2 ? 0 : 1 - Math.abs(offset) * 0.3;
                 card.style.zIndex = 10 - Math.abs(offset);
@@ -623,10 +623,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         const text = p.brief;
                         briefEl.textContent = '';
                         let charIndex = 0;
-                        
+
                         // Cancel any previous typing on this element if it exists
                         if (briefEl.typingTimeout) clearTimeout(briefEl.typingTimeout);
-                        
+
                         function type() {
                             if (charIndex < text.length) {
                                 briefEl.textContent += text.charAt(charIndex);
