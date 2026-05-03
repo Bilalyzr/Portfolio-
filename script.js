@@ -587,15 +587,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'stack-card' + (i === activeStackIndex ? ' active' : '');
 
-            // 3D stacking on desktop
+            // Enhanced 3D stacking
             if (window.innerWidth > 768) {
-                card.style.transform = `translateX(${offset * 30}px) translateZ(${-Math.abs(offset) * 80}px) rotateY(${offset * -5}deg)`;
-                card.style.opacity = Math.abs(offset) > 2 ? 0 : 1 - Math.abs(offset) * 0.2;
+                // More dramatic spread for active card
+                const spreadX = offset * 60; 
+                const spreadZ = -Math.abs(offset) * 120;
+                const rotY = offset * -15;
+                
+                card.style.transform = `translateX(${spreadX}px) translateZ(${spreadZ}px) rotateY(${rotY}deg)`;
+                card.style.opacity = Math.abs(offset) > 2 ? 0 : 1 - Math.abs(offset) * 0.3;
                 card.style.zIndex = 10 - Math.abs(offset);
             }
 
             card.innerHTML = `
                 <div class="sc-img">
+                    <div class="scanlines"></div>
                     <img src="${p.img}" alt="${p.name}">
                     <span class="sc-codename">${p.codename}</span>
                     <span class="sc-status"><span class="sc-status-dot"></span>COMPLETE</span>
@@ -604,14 +610,40 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="sc-class">${p.missionClass}</div>
                     <div class="sc-name">${p.name}</div>
                     <div class="sc-tools"><span>PAYLOAD:</span> ${p.tools}</div>
-                    <div class="sc-brief">${p.brief}</div>
+                    <div class="sc-brief" id="brief-${p.id}">${p.brief}</div>
                     <div class="sc-icons">${iconsHtml}</div>
                 </div>
             `;
 
+            // Terminal Typing Effect for active card
+            if (i === activeStackIndex) {
+                setTimeout(() => {
+                    const briefEl = card.querySelector('.sc-brief');
+                    if (briefEl) {
+                        const text = p.brief;
+                        briefEl.textContent = '';
+                        let charIndex = 0;
+                        
+                        // Cancel any previous typing on this element if it exists
+                        if (briefEl.typingTimeout) clearTimeout(briefEl.typingTimeout);
+                        
+                        function type() {
+                            if (charIndex < text.length) {
+                                briefEl.textContent += text.charAt(charIndex);
+                                charIndex++;
+                                briefEl.typingTimeout = setTimeout(type, 20);
+                            }
+                        }
+                        type();
+                    }
+                }, 400);
+            }
+
             card.addEventListener('click', () => {
-                activeStackIndex = i;
-                renderStack();
+                if (activeStackIndex !== i) {
+                    activeStackIndex = i;
+                    renderStack();
+                }
             });
 
             stackContainer.appendChild(card);
