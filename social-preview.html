@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Media Style Preview</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:#05070a; --neon-blue:#00d2ff; --neon-purple:#bd00ff;
+  --glass-border:rgba(0,210,255,0.3); --card-bg:rgba(10,20,40,0.6);
+}
+body { background:var(--bg); color:#fff; font-family:'Inter',sans-serif; padding:40px 20px; }
+h1 { text-align:center; font-family:'Montserrat'; font-size:1.8rem; margin-bottom:60px; color:var(--neon-blue); }
+.style-section { max-width:700px; margin:0 auto 80px; }
+.style-section h2 { font-family:'Orbitron'; font-size:1rem; color:var(--neon-purple); margin-bottom:8px; letter-spacing:2px; }
+.style-section p { font-size:0.85rem; color:#b3c5ef; margin-bottom:25px; }
+.style-label { display:inline-block; background:rgba(189,0,255,0.15); border:1px solid rgba(189,0,255,0.4); padding:3px 12px; border-radius:20px; font-size:0.7rem; color:var(--neon-purple); font-family:'JetBrains Mono'; margin-bottom:15px; }
+hr.divider { border:none; height:1px; background:linear-gradient(90deg,transparent,var(--glass-border),transparent); margin:0 auto 80px; max-width:500px; }
+
+/* ===== STYLE 1: SATELLITE DOCK ===== */
+.satellite-dock {
+  display:flex; justify-content:center; gap:30px; padding:20px 40px;
+  background:rgba(10,20,40,0.5); border:1px solid var(--glass-border);
+  border-radius:50px; width:fit-content; margin:0 auto;
+  backdrop-filter:blur(10px); position:relative;
+}
+.satellite-dock::before {
+  content:''; position:absolute; inset:-1px; border-radius:50px;
+  background:linear-gradient(90deg,transparent,rgba(0,210,255,0.1),transparent);
+  animation:dockScan 3s linear infinite; pointer-events:none;
+}
+@keyframes dockScan { 0%{opacity:0} 50%{opacity:1} 100%{opacity:0} }
+.sat-icon {
+  width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:rgba(0,210,255,0.08); border:1px solid rgba(0,210,255,0.2);
+  font-size:1.2rem; color:var(--neon-blue); cursor:pointer;
+  transition:all 0.4s cubic-bezier(0.25,0.46,0.45,0.94); position:relative;
+}
+.sat-icon::after {
+  content:''; position:absolute; width:100%; height:100%; border-radius:50%;
+  border:1px dashed rgba(0,210,255,0.15); animation:satOrbit 4s linear infinite;
+  pointer-events:none; opacity:0; transition:opacity 0.3s;
+}
+@keyframes satOrbit { from{transform:rotate(0deg) scale(1.4)} to{transform:rotate(360deg) scale(1.4)} }
+.sat-icon:hover { transform:translateY(-8px); background:rgba(0,210,255,0.2);
+  box-shadow:0 0 20px rgba(0,210,255,0.3), 0 10px 30px rgba(0,0,0,0.4); }
+.sat-icon:hover::after { opacity:1; }
+.sat-icon .sat-label {
+  position:absolute; bottom:-28px; font-size:0.6rem; font-family:'JetBrains Mono';
+  color:var(--neon-blue); opacity:0; transition:opacity 0.3s; white-space:nowrap;
+  letter-spacing:1px; text-transform:uppercase;
+}
+.sat-icon:hover .sat-label { opacity:1; }
+
+/* ===== STYLE 2: CONSTELLATION ===== */
+.constellation-box {
+  position:relative; width:100%; height:280px; display:flex; align-items:center; justify-content:center;
+}
+.constellation-box svg.lines {
+  position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;
+}
+.constellation-box svg.lines line {
+  stroke:rgba(0,210,255,0.15); stroke-width:1; stroke-dasharray:4 4;
+  transition:stroke 0.4s;
+}
+.constellation-box:hover svg.lines line { stroke:rgba(0,210,255,0.5); }
+.const-star {
+  position:absolute; width:52px; height:52px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:all 0.3s;
+}
+.const-star .star-core {
+  width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle,rgba(0,210,255,0.15),rgba(0,210,255,0.02));
+  border:1px solid rgba(0,210,255,0.25); font-size:1.1rem; color:var(--neon-blue);
+  transition:all 0.3s; position:relative;
+}
+.const-star .star-core::before {
+  content:''; position:absolute; width:6px; height:6px; border-radius:50%;
+  background:var(--neon-blue); box-shadow:0 0 8px var(--neon-blue); top:-3px; right:-3px;
+  animation:starTwinkle 2s ease-in-out infinite alternate;
+}
+@keyframes starTwinkle { from{opacity:0.3;transform:scale(0.8)} to{opacity:1;transform:scale(1.2)} }
+.const-star:hover .star-core {
+  background:radial-gradient(circle,rgba(0,210,255,0.3),rgba(0,210,255,0.05));
+  box-shadow:0 0 25px rgba(0,210,255,0.3); transform:scale(1.15);
+}
+.const-star .c-label {
+  position:absolute; bottom:-22px; font-size:0.6rem; font-family:'JetBrains Mono';
+  color:rgba(0,210,255,0.5); letter-spacing:1px; white-space:nowrap;
+  transition:color 0.3s;
+}
+.const-star:hover .c-label { color:var(--neon-blue); }
+
+/* ===== STYLE 3: MISSION PATCHES ===== */
+.patches-grid { display:flex; justify-content:center; gap:25px; flex-wrap:wrap; }
+.mission-patch {
+  width:100px; height:115px; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:8px; cursor:pointer; position:relative;
+  transition:transform 0.3s;
+}
+.patch-hex {
+  width:70px; height:70px; position:relative; display:flex; align-items:center; justify-content:center;
+}
+.patch-hex .hex-bg {
+  position:absolute; width:100%; height:100%;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  background:linear-gradient(135deg,rgba(0,210,255,0.12),rgba(189,0,255,0.08));
+  border:none; transition:all 0.3s;
+}
+.patch-hex .hex-border {
+  position:absolute; width:calc(100% + 4px); height:calc(100% + 4px);
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  background:linear-gradient(135deg,rgba(0,210,255,0.4),rgba(189,0,255,0.3));
+  z-index:-1; transition:all 0.3s;
+}
+.patch-hex .hex-scanline {
+  position:absolute; width:100%; height:100%;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,210,255,0.03) 2px,rgba(0,210,255,0.03) 4px);
+  pointer-events:none;
+}
+.patch-hex i { font-size:1.4rem; color:var(--neon-blue); z-index:2; transition:all 0.3s; }
+.mission-patch:hover { transform:translateY(-5px); }
+.mission-patch:hover .hex-bg { background:linear-gradient(135deg,rgba(0,210,255,0.25),rgba(189,0,255,0.15)); }
+.mission-patch:hover .hex-border { background:linear-gradient(135deg,rgba(0,210,255,0.7),rgba(189,0,255,0.5)); }
+.mission-patch:hover .patch-hex i { color:#fff; text-shadow:0 0 15px var(--neon-blue); }
+.patch-name {
+  font-family:'JetBrains Mono'; font-size:0.6rem; color:rgba(255,255,255,0.4);
+  letter-spacing:1.5px; text-transform:uppercase; transition:color 0.3s;
+}
+.mission-patch:hover .patch-name { color:var(--neon-blue); }
+.patch-status {
+  font-size:0.5rem; font-family:'Share Tech Mono'; color:rgba(0,210,255,0.3);
+  letter-spacing:1px; transition:color 0.3s;
+}
+.mission-patch:hover .patch-status { color:rgba(0,210,255,0.8); }
+
+/* ===== STYLE 4: COMM FREQUENCY CARDS ===== */
+.comm-grid { display:flex; flex-direction:column; gap:15px; max-width:500px; margin:0 auto; }
+.comm-card {
+  display:flex; align-items:center; gap:18px; padding:16px 22px;
+  background:rgba(10,20,40,0.5); border:1px solid rgba(0,210,255,0.15);
+  border-radius:8px; cursor:pointer; position:relative; overflow:hidden;
+  transition:all 0.4s;
+}
+.comm-card::before {
+  content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background:linear-gradient(90deg,transparent,rgba(0,210,255,0.05),transparent);
+  transition:left 0.6s;
+}
+.comm-card:hover::before { left:100%; }
+.comm-card::after {
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,210,255,0.015) 3px,rgba(0,210,255,0.015) 6px);
+  pointer-events:none;
+}
+.comm-card:hover { border-color:rgba(0,210,255,0.4);
+  box-shadow:0 0 20px rgba(0,210,255,0.08), inset 0 0 30px rgba(0,210,255,0.03); }
+.comm-icon {
+  width:42px; height:42px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  background:rgba(0,210,255,0.08); border:1px solid rgba(0,210,255,0.2);
+  font-size:1.1rem; color:var(--neon-blue); flex-shrink:0; transition:all 0.3s;
+}
+.comm-card:hover .comm-icon { background:rgba(0,210,255,0.15); box-shadow:0 0 12px rgba(0,210,255,0.2); }
+.comm-info { flex:1; }
+.comm-label {
+  font-family:'JetBrains Mono'; font-size:0.6rem; color:rgba(0,210,255,0.5);
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:2px;
+}
+.comm-value { font-size:0.9rem; color:#dbe4ff; font-weight:500; }
+.comm-status {
+  display:flex; align-items:center; gap:6px; font-family:'Share Tech Mono';
+  font-size:0.6rem; color:rgba(0,210,255,0.4); letter-spacing:1px;
+}
+.comm-status .ping {
+  width:6px; height:6px; border-radius:50%; background:#00ff88;
+  box-shadow:0 0 6px rgba(0,255,136,0.5); animation:pingPulse 1.5s infinite;
+}
+@keyframes pingPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+.comm-card:hover .comm-status { color:rgba(0,210,255,0.8); }
+.comm-signal {
+  position:absolute; right:20px; display:flex; align-items:flex-end; gap:2px; height:16px;
+  opacity:0.3; transition:opacity 0.3s;
+}
+.comm-signal span {
+  width:3px; background:var(--neon-blue); border-radius:1px;
+}
+.comm-signal span:nth-child(1){height:4px} .comm-signal span:nth-child(2){height:8px}
+.comm-signal span:nth-child(3){height:12px} .comm-signal span:nth-child(4){height:16px}
+.comm-card:hover .comm-signal { opacity:1; }
+</style>
+</head>
+<body>
+
+<h1>🛸 Social Media Style Preview</h1>
+
+<!-- STYLE 1 -->
+<div class="style-section">
+  <span class="style-label">CONCEPT 01</span>
+  <h2>SATELLITE DOCK</h2>
+  <p>Floating bottom bar with orbital hover animations — minimal and sleek.</p>
+  <div class="satellite-dock">
+    <div class="sat-icon"><i class="fas fa-envelope"></i><span class="sat-label">Email</span></div>
+    <div class="sat-icon"><i class="fab fa-linkedin-in"></i><span class="sat-label">LinkedIn</span></div>
+    <div class="sat-icon"><i class="fab fa-github"></i><span class="sat-label">GitHub</span></div>
+    <div class="sat-icon"><i class="fab fa-instagram"></i><span class="sat-label">Instagram</span></div>
+    <div class="sat-icon"><i class="fab fa-x-twitter"></i><span class="sat-label">Twitter</span></div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- STYLE 2 -->
+<div class="style-section">
+  <span class="style-label">CONCEPT 02</span>
+  <h2>CONSTELLATION LINKS</h2>
+  <p>Icons positioned as stars connected by glowing lines — hover to illuminate.</p>
+  <div class="constellation-box">
+    <svg class="lines" viewBox="0 0 700 280">
+      <line x1="170" y1="60" x2="350" y2="140"/>
+      <line x1="350" y1="140" x2="530" y2="50"/>
+      <line x1="350" y1="140" x2="220" y2="220"/>
+      <line x1="350" y1="140" x2="480" y2="230"/>
+      <line x1="170" y1="60" x2="220" y2="220"/>
+      <line x1="530" y1="50" x2="480" y2="230"/>
+    </svg>
+    <div class="const-star" style="left:145px;top:35px">
+      <div class="star-core"><i class="fas fa-envelope"></i></div><span class="c-label">EMAIL</span>
+    </div>
+    <div class="const-star" style="left:325px;top:115px">
+      <div class="star-core"><i class="fab fa-linkedin-in"></i></div><span class="c-label">LINKEDIN</span>
+    </div>
+    <div class="const-star" style="left:505px;top:25px">
+      <div class="star-core"><i class="fab fa-github"></i></div><span class="c-label">GITHUB</span>
+    </div>
+    <div class="const-star" style="left:195px;top:195px">
+      <div class="star-core"><i class="fab fa-instagram"></i></div><span class="c-label">INSTAGRAM</span>
+    </div>
+    <div class="const-star" style="left:455px;top:205px">
+      <div class="star-core"><i class="fab fa-x-twitter"></i></div><span class="c-label">TWITTER</span>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- STYLE 3 -->
+<div class="style-section">
+  <span class="style-label">CONCEPT 03</span>
+  <h2>MISSION PATCHES</h2>
+  <p>Hexagonal emblems with scanline overlays — like NASA mission badges.</p>
+  <div class="patches-grid">
+    <div class="mission-patch">
+      <div class="patch-hex">
+        <div class="hex-border"></div><div class="hex-bg"></div><div class="hex-scanline"></div>
+        <i class="fas fa-envelope"></i>
+      </div>
+      <span class="patch-name">Email</span><span class="patch-status">LINKED</span>
+    </div>
+    <div class="mission-patch">
+      <div class="patch-hex">
+        <div class="hex-border"></div><div class="hex-bg"></div><div class="hex-scanline"></div>
+        <i class="fab fa-linkedin-in"></i>
+      </div>
+      <span class="patch-name">LinkedIn</span><span class="patch-status">LINKED</span>
+    </div>
+    <div class="mission-patch">
+      <div class="patch-hex">
+        <div class="hex-border"></div><div class="hex-bg"></div><div class="hex-scanline"></div>
+        <i class="fab fa-github"></i>
+      </div>
+      <span class="patch-name">GitHub</span><span class="patch-status">LINKED</span>
+    </div>
+    <div class="mission-patch">
+      <div class="patch-hex">
+        <div class="hex-border"></div><div class="hex-bg"></div><div class="hex-scanline"></div>
+        <i class="fab fa-instagram"></i>
+      </div>
+      <span class="patch-name">Instagram</span><span class="patch-status">LINKED</span>
+    </div>
+    <div class="mission-patch">
+      <div class="patch-hex">
+        <div class="hex-border"></div><div class="hex-bg"></div><div class="hex-scanline"></div>
+        <i class="fab fa-x-twitter"></i>
+      </div>
+      <span class="patch-name">Twitter</span><span class="patch-status">LINKED</span>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- STYLE 4 -->
+<div class="style-section">
+  <span class="style-label">CONCEPT 04</span>
+  <h2>COMM FREQUENCY CARDS</h2>
+  <p>Enhanced holographic cards with signal indicators and scan-line effects.</p>
+  <div class="comm-grid">
+    <div class="comm-card">
+      <div class="comm-icon"><i class="fas fa-envelope"></i></div>
+      <div class="comm-info">
+        <div class="comm-label">EMAIL</div>
+        <div class="comm-value">althafbilal1968@gmail.com</div>
+      </div>
+      <div class="comm-status"><span class="ping"></span>ACTIVE</div>
+      <div class="comm-signal"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="comm-card">
+      <div class="comm-icon"><i class="fab fa-linkedin-in"></i></div>
+      <div class="comm-info">
+        <div class="comm-label">LINKEDIN</div>
+        <div class="comm-value">Mohammed Bilal A</div>
+      </div>
+      <div class="comm-status"><span class="ping"></span>ACTIVE</div>
+      <div class="comm-signal"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="comm-card">
+      <div class="comm-icon"><i class="fab fa-github"></i></div>
+      <div class="comm-info">
+        <div class="comm-label">GITHUB</div>
+        <div class="comm-value">Bilalyzr</div>
+      </div>
+      <div class="comm-status"><span class="ping"></span>ACTIVE</div>
+      <div class="comm-signal"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="comm-card">
+      <div class="comm-icon"><i class="fab fa-instagram"></i></div>
+      <div class="comm-info">
+        <div class="comm-label">INSTAGRAM</div>
+        <div class="comm-value">@_.bxnny_4</div>
+      </div>
+      <div class="comm-status"><span class="ping"></span>ACTIVE</div>
+      <div class="comm-signal"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="comm-card">
+      <div class="comm-icon"><i class="fab fa-x-twitter"></i></div>
+      <div class="comm-info">
+        <div class="comm-label">TWITTER / X</div>
+        <div class="comm-value">@MohammedBilal</div>
+      </div>
+      <div class="comm-status"><span class="ping"></span>ACTIVE</div>
+      <div class="comm-signal"><span></span><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

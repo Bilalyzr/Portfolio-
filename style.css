@@ -167,29 +167,6 @@ section {
     }
 }
 
-.nav-contact-btn {
-    position: fixed;
-    top: 55px;
-    right: 50px;
-    z-index: 1000;
-    color: white;
-    text-decoration: none;
-    border: 1px solid white;
-    padding: 8px 25px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(5px);
-}
-
-.nav-contact-btn:hover {
-    background: white;
-    color: black;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-}
 
 /* --- SCROLL TRACKER (Sidebar) --- */
 .scroll-tracker {
@@ -376,11 +353,7 @@ body.scroll-down .scroll-nav::before {
 }
 
 /* Hide Tracker on Mobile */
-@media (max-width: 768px) {
-    .scroll-tracker {
-        display: none;
-    }
-}
+/* Scroll tracker removed display:none */
 
 /* --- SCROLL ANIMATIONS: ZERO-G HOLOGRAPHIC REVEAL --- */
 .fade-up,
@@ -3446,22 +3419,6 @@ model-viewer {
 
 /* RESPONSIVE */
 /* --- MOBILE NAVIGATION --- */
-.mobile-menu-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    /* Changed from left: 20px to right for standard placement */
-    z-index: 2000;
-    font-size: 1.8rem;
-    color: var(--neon-blue);
-    background: rgba(0, 0, 0, 0.6);
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: 1px solid var(--glass-border);
-    cursor: pointer;
-    display: none;
-    /* Hidden on desktop */
-}
 
 .mobile-nav-overlay {
     position: fixed;
@@ -3544,12 +3501,23 @@ model-viewer {
 @media (max-width: 900px) {
 
     /* Existing Logic maintained: Mobile Menu ON, Tracker OFF */
-    .mobile-menu-btn {
-        display: block;
-    }
 
     .scroll-tracker {
-        display: none;
+        display: flex !important; /* Force visibility */
+        right: 15px;
+        transform: translateY(-50%) scale(0.8);
+        z-index: 2000; /* Just below mobile overlay but above everything else */
+    }
+
+    .scroll-nav {
+        gap: 8px; /* Tighter for mobile */
+        padding-right: 10px;
+    }
+
+    .scroll-label {
+        font-size: 0.65rem;
+        gap: 4px;
+        color: rgba(255, 255, 255, 0.9) !important;
     }
 
     /* Scaling */
@@ -3697,12 +3665,6 @@ model-viewer {
         font-size: 1.5rem;
     }
 
-    .mobile-menu-btn {
-        top: 15px;
-        right: 15px;
-        padding: 8px 12px;
-        font-size: 1.5rem;
-    }
 }
 
 /* --- TOP HERO NAVIGATION --- */
