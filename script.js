@@ -536,14 +536,15 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 4,
             codename: "DELTA-04",
-            name: "Department Conference Website Development",
+            name: "AISCCT Conference website for my department",
             tools: "HTML, CSS, JavaScript, Figma",
             category: ["web"],
             missionClass: "CONSTRUCT",
             status: "complete",
             icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-figma"],
             brief: "Designed and developed a static web page for an international conference organized by the department.",
-            img: "assets/images/conference_website.png"
+            img: "assets/images/conference_website.png",
+            preview_url: "https://www.sonatech.ac.in/aiscct-26/"
         },
         {
             id: 5,
@@ -556,11 +557,33 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-js", "fab fa-figma"],
             brief: "Developed a fully static website for the SAST Organization, featuring a clean UI designed in Figma and brought to life with HTML, CSS, and JavaScript.",
             img: "assets/images/sast_website.png"
+        },
+        {
+            id: 6,
+            codename: "FOXTROT-06",
+            name: "Nexora Startup Landing Page",
+            tools: "HTML, CSS, JavaScript, Figma",
+            category: ["web"],
+            missionClass: "CONSTRUCT",
+            status: "complete",
+            icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-js", "fab fa-figma"],
+            brief: "Designed and developed a premium landing page for my startup company to showcase the Niral Thiruvizha 3.0 project.",
+            img: "assets/images/niral_landing.png",
+            preview_url: "https://nexora-indusio.netlify.app/"
+        },
+        {
+            id: 7,
+            codename: "GOLF-07",
+            name: "THOZHIRPORUL – Smart Industrial Monitoring System",
+            tools: "React.js, Node.js, Express.js, PostgreSQL, JWT, AI Integration",
+            category: ["web", "react", "ai"],
+            missionClass: "COMMAND",
+            status: "complete",
+            icon: ["fab fa-react", "fab fa-node-js", "fas fa-database", "fas fa-brain"],
+            brief: "AI-powered industrial governance platform for SIPCOT featuring real-time monitoring, compliance tracking, and intelligent decision support.",
+            img: "assets/images/thozhirporul.png"
         }
     ];
-
-    const projectsGrid = document.getElementById('projects-grid');
-    const scanFlash = document.getElementById('scanFlash');
 
     // --- Holographic File Stack Carousel ---
     const stackContainer = document.getElementById('stackContainer');
@@ -612,6 +635,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="sc-tools"><span>PAYLOAD:</span> ${p.tools}</div>
                     <div class="sc-brief" id="brief-${p.id}">${p.brief}</div>
                     <div class="sc-icons">${iconsHtml}</div>
+                    ${p.preview_url ? `
+                    <div class="sc-actions">
+                        <a href="${p.preview_url}" target="_blank" class="sc-btn">
+                            <i class="fas fa-external-link-alt"></i> MISSION PREVIEW
+                        </a>
+                    </div>` : ''}
                 </div>
             `;
 
@@ -628,6 +657,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (briefEl.typingTimeout) clearTimeout(briefEl.typingTimeout);
 
                         function type() {
+                            // Bug Fix: Check if element still exists in DOM to avoid wasted cycles
+                            if (!document.contains(briefEl)) return;
+                            
                             if (charIndex < text.length) {
                                 briefEl.textContent += text.charAt(charIndex);
                                 charIndex++;
