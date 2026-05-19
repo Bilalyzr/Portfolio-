@@ -4,10 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const lenis = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        direction: 'vertical',
-        gestureDirection: 'vertical',
-        smooth: true,
-        mouseMultiplier: 1,
         smoothTouch: false,
         touchMultiplier: 2,
         infinite: false,
@@ -109,6 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Only run transition if target is a valid ID on this page
             if (targetId && targetId.startsWith('#') && document.querySelector(targetId)) {
                 e.preventDefault(); // Stop default instant scroll
+
+                // Bug #6 fix: Close mobile nav if it's open before starting warp
+                const mobileNav = document.getElementById('mobileNav');
+                if (mobileNav && mobileNav.classList.contains('active')) {
+                    mobileNav.classList.remove('active');
+                }
 
                 // 1. Start Warp Effect
                 warpContainer.classList.add('active');
@@ -903,7 +905,6 @@ function initWarpTrail() {
     let isVisible = false;
 
     function resizeCanvas() {
-        const rect = section.getBoundingClientRect();
         canvas.width = section.offsetWidth;
         canvas.height = section.offsetHeight;
     }

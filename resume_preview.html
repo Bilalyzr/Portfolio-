@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Display Concepts Preview</title>
+    <style>
+        /* Base Dark Tech Theme */
+        :root {
+            --bg: #050505;
+            --neon-blue: #00d2ff;
+            --neon-purple: #9d00ff;
+            --text: #e0e0e0;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h2 { 
+            color: var(--neon-blue); 
+            text-transform: uppercase; 
+            border-bottom: 1px solid var(--neon-purple); 
+            padding-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+        
+        /* Idea 1: Classified Dossier */
+        .dossier {
+            border: 2px solid #444;
+            padding: 2rem;
+            position: relative;
+            background: #111;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .dossier:hover { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(157, 0, 255, 0.3);}
+        .stamp { 
+            color: #ff3333; 
+            border: 2px solid #ff3333; 
+            display: inline-block; 
+            padding: 0.5rem; 
+            font-weight: bold; 
+            transform: rotate(-10deg); 
+            text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+            box-shadow: 0 0 5px rgba(255, 51, 51, 0.5) inset;
+        }
+        .redacted {
+            filter: blur(5px);
+            transition: filter 1s ease;
+        }
+        .dossier.declassified .redacted {
+            filter: blur(0px);
+        }
+        
+        /* Idea 2: Galactic Passport Flip */
+        .passport-container { perspective: 1000px; width: 350px; height: 220px; }
+        .passport-card { width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; cursor: pointer; position: relative;}
+        .passport-container:hover .passport-card { transform: rotateY(180deg); }
+        .passport-front, .passport-back { 
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
+            border: 1px solid var(--neon-blue); padding: 1.5rem; box-sizing: border-box; 
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(0,0,0,0.8)); 
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.2);
+        }
+        .passport-back { 
+            transform: rotateY(180deg); 
+            background: linear-gradient(135deg, rgba(157, 0, 255, 0.1), rgba(0,0,0,0.8)); 
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.2);
+        }
+
+        /* Idea 3: Terminal Stream */
+        .terminal { 
+            background: #050505; padding: 1.5rem; border: 1px solid #333; font-family: monospace; 
+            color: #0f0; min-height: 150px; border-radius: 5px; box-shadow: inset 0 0 20px rgba(0,255,0,0.05);
+        }
+        .terminal-btn {
+            background: transparent; color: #0f0; border: 1px solid #0f0; padding: 0.5rem; cursor: pointer; font-family: monospace;
+        }
+        .terminal-btn:hover { background: rgba(0,255,0,0.2); }
+        
+        /* Idea 4: Hologram HUD */
+        .hud-panel {
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2), inset 0 0 15px rgba(0, 210, 255, 0.1);
+            padding: 2.5rem;
+            position: relative;
+            background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(0,30,50,0.8));
+            overflow: hidden;
+        }
+        .hud-panel::before, .hud-panel::after {
+            content: ''; position: absolute; width: 30px; height: 30px; border: 2px solid var(--neon-blue);
+        }
+        .hud-panel::before { top: 0; left: 0; border-right: none; border-bottom: none; }
+        .hud-panel::after { bottom: 0; right: 0; border-left: none; border-top: none; }
+        
+        .scanline {
+            width: 100%; height: 5px; background: rgba(0, 210, 255, 0.3);
+            position: absolute; top: -10px; left: 0;
+            animation: scan 4s linear infinite;
+        }
+        @keyframes scan { 0% { top: -10px; } 100% { top: 100%; } }
+
+        /* Idea 5: Warp Modal Button */
+        .warp-btn {
+            background: transparent; border: 1px solid var(--neon-purple); color: var(--neon-purple);
+            padding: 1rem 2rem; font-size: 1.2rem; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(157, 0, 255, 0.3); transition: all 0.3s;
+            letter-spacing: 2px; border-radius: 30px;
+        }
+        .warp-btn:hover { 
+            background: rgba(157, 0, 255, 0.2); 
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.6), inset 0 0 15px rgba(157, 0, 255, 0.4); 
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: white; text-shadow: 0 0 10px white;">🚀 Resume Display Concepts</h1>
+    <p style="text-align: center; color: #aaa;">A preview of the 5 ideas tailored for the My Galaxy Portfolio.</p>
+
+    <!-- IDEA 1 -->
+    <section>
+        <h2>1. Mission Dossier</h2>
+        <div class="dossier" id="dossier-box" onclick="this.classList.toggle('declassified')">
+            <div class="stamp">CLASSIFIED</div>
+            <div style="margin-top:1.5rem; display: flex; justify-content: space-between;">
+                <div>
+                    <p class="redacted"><strong>NAME:</strong> MOHAMMED BILAL</p>
+                    <p class="redacted"><strong>ROLE:</strong> JUNIOR WEB DEVELOPER</p>
+                    <p class="redacted"><strong>CLEARANCE:</strong> LEVEL 5 (FRONTEND)</p>
+                </div>
+                <div><p class="redacted" style="border: 1px dashed #555; padding: 2rem;">[ PHOTO ID ]</p></div>
+            </div>
+            <p style="color: var(--neon-purple); margin-top: 1rem;"><i>[ Click Anywhere to Declassify ]</i></p>
+        </div>
+    </section>
+
+    <!-- IDEA 2 -->
+    <section>
+        <h2>2. Galactic Passport (Hover to Flip)</h2>
+        <div class="passport-container">
+            <div class="passport-card">
+                <div class="passport-front">
+                    <h3 style="margin-top:0; color: var(--neon-blue);">🌌 GALACTIC PASSPORT</h3>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="width: 80px; height: 100px; background: rgba(255,255,255,0.1); border: 1px solid #444; display: flex; align-items: center; justify-content: center;">PHOTO</div>
+                        <div>
+                            <p style="margin: 0.2rem 0;"><strong>ID:</strong> MB-404</p>
+                            <p style="margin: 0.2rem 0;"><strong>AGENT:</strong> BILAL</p>
+                            <p style="margin: 0.2rem 0;"><strong>RANK:</strong> DEV</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="passport-back">
+                    <h3 style="margin-top:0; color: var(--neon-purple);">⚡ SKILLS VERIFIED</h3>
+                    <p style="margin: 0.2rem 0; font-size: 0.9rem;">HTML/CSS [████████] 100%</p>
+                    <p style="margin: 0.2rem 0; font-size: 0.9rem;">JS/REACT [██████░░] 80%</p>
+                    <button style="margin-top:1.5rem; background: var(--neon-purple); color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; border-radius: 5px;">DOWNLOAD PDF ↓</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IDEA 3 -->
+    <section>
+        <h2>3. Signal Intercept (Terminal Stream)</h2>
+        <div class="terminal" id="term-output">
+            > WAITING FOR INCOMING SIGNAL...<br><br>
+            <button class="terminal-btn" onclick="startTerminal()">[ INITIATE HANDSHAKE ]</button>
+        </div>
+    </section>
+
+    <!-- IDEA 4 -->
+    <section>
+        <h2>4. Hologram HUD Panel (Slide-In Style)</h2>
+        <div class="hud-panel">
+            <div class="scanline"></div>
+            <h3 style="color: var(--neon-blue); margin-top:0; font-family: sans-serif; letter-spacing: 2px;">[ SYSTEM_DATA :: RESUME.DAT ]</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                <div>
+                    <p style="color: #888; font-size: 0.8rem; margin: 0;">PRIMARY DIRECTIVE</p>
+                    <p style="margin-top: 0.2rem;">Full-Stack Development</p>
+                </div>
+                <div>
+                    <p style="color: #888; font-size: 0.8rem; margin: 0;">CORE SYSTEMS</p>
+                    <p style="margin-top: 0.2rem;">React, Node, MongoDB</p>
+                </div>
+            </div>
+            <div style="text-align: right; margin-top: 2rem;">
+                <button style="border:1px solid var(--neon-blue); background:transparent; color:var(--neon-blue); padding: 0.8rem 1.5rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(0, 210, 255, 0.2)'" onmouseout="this.style.background='transparent'">[ BEAM DOWN PDF ]</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- IDEA 5 -->
+    <section>
+        <h2>5. Warp Jump Modal</h2>
+        <div style="text-align: center; padding: 2rem; border: 1px dashed #333;">
+            <p style="color: #888; margin-bottom: 2rem;">Clicking this button would trigger the full-screen warp speed animation before revealing the resume.</p>
+            <button class="warp-btn" onclick="alert('WOOSH! 🚀\nImagine the stars streaking past you in hyper-drive, and then a sleek, full-screen holographic resume fades in over the dark universe background.')">
+                📄 INITIATE MISSION FILE
+            </button>
+        </div>
+    </section>
+
+    <script>
+        function startTerminal() {
+            const term = document.getElementById('term-output');
+            term.innerHTML = '> ESTABLISHING CONNECTION...<br>';
+            setTimeout(() => term.innerHTML += '> ENCRYPTION KEY ACCEPTED.<br>', 800);
+            setTimeout(() => term.innerHTML += '> DOWNLOADING PROFILE: MOHAMMED BILAL...<br><br>', 1600);
+            setTimeout(() => term.innerHTML += '<span style="color: #fff;">ROLE:</span> Junior Web Developer<br>', 2400);
+            setTimeout(() => term.innerHTML += '<span style="color: #fff;">LOC:</span> Earth Sector<br>', 2800);
+            setTimeout(() => term.innerHTML += '<br>> <button class="terminal-btn" style="border-color: #fff; color: #fff;">[ EXTRACT PDF ]</button><br>', 3600);
+        }
+    </script>
+</body>
+</html>
