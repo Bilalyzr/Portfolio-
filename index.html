@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Raleway:wght@500&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Raleway:wght@500&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&family=Rajdhani:wght@500;600&family=Space+Grotesk:wght@300;400;500&display=swap"
         rel="stylesheet">
     <!-- Model Viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
@@ -23,6 +23,54 @@
 
     <!-- Global Canvas Starfield (replaces all parallax div layers) -->
     <canvas id="globalStarfield"></canvas>
+
+    <!-- SPACE PRELOADER (COSMIC SOLAR SYSTEM) -->
+    <div id="space-loader" class="space-loader-overlay">
+        <!-- Faint space stars in loader are inherited from globalStarfield behind, but we add a nice cosmic nebula glow -->
+        <div class="loader-nebula"></div>
+        <div class="loader-scanlines"></div>
+        
+        <!-- Central Solar System Loader Graphics -->
+        <div class="loader-solar-system">
+            <!-- Miniature Sun -->
+            <div class="loader-sun"></div>
+
+            <!-- Orbit 1 & Planet 1 (React / Ice-Blue) -->
+            <div class="loader-orbit orbit-1">
+                <div class="loader-track track-1">
+                    <div class="loader-planet planet-react"><i class="fab fa-react"></i></div>
+                </div>
+            </div>
+
+            <!-- Orbit 2 & Planet 2 (NodeJS / Green) -->
+            <div class="loader-orbit orbit-2">
+                <div class="loader-track track-2">
+                    <div class="loader-planet planet-node"><i class="fab fa-node-js"></i></div>
+                </div>
+            </div>
+
+            <!-- Orbit 3 & Planet 3 (Python / Golden-Orange) -->
+            <div class="loader-orbit orbit-3">
+                <div class="loader-track track-3">
+                    <div class="loader-planet planet-python"><i class="fab fa-python"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Telemetry Data & Bootup Sequence -->
+        <div class="loader-terminal">
+            <div class="terminal-header">
+                <span class="terminal-status">ORBITAL SYSTEM BOOT // ACTIVE</span>
+                <span class="terminal-cursor"></span>
+            </div>
+            <div class="loader-percentage">00%</div>
+            <!-- Golden Tech Progress Bar -->
+            <div class="loader-bar-container">
+                <div class="loader-bar-fill" id="loaderBarFill"></div>
+            </div>
+            <div class="loader-telemetry">Initializing Space Grid...</div>
+        </div>
+    </div>
 
     <!-- Brand Logo -->
     <a href="#home" class="brand-logo">
@@ -138,9 +186,9 @@
             </div>
         </div>
 
-        <div class="cta-container">
+        <div class="cta-container" id="btnWrapper">
             <div class="galaxy-button">
-                <button class="space-button" onclick="window.lenis ? window.lenis.scrollTo('#projects') : document.querySelector('#projects').scrollIntoView({behavior:'smooth'})">
+                <button id="btn" class="space-button" data-target="#projects">
                     <span class="backdrop"></span>
                     <span class="galaxy"></span>
                     <label class="text">EXPLORE MY UNIVERSE &nbsp;<i class="fas fa-rocket"></i></label>
@@ -188,6 +236,18 @@
                         Artificial Intelligence to deliver innovative, high-performance, and intelligent user
                         experiences.
                     </p>
+
+                    <!-- Resume Download Button -->
+                    <div class="resume-download-wrap">
+                        <a href="assets/Mohammed_Bilal_Resume.pdf" download="Mohammed_Bilal_Resume.pdf" class="resume-holo-btn" id="resumeDownloadBtn">
+                            <span class="resume-btn-icon"><i class="fas fa-file-download"></i></span>
+                            <span class="resume-btn-content">
+                                <span class="resume-btn-label">DOWNLOAD MISSION FILE</span>
+                                <span class="resume-btn-sub">Resume · PDF</span>
+                            </span>
+                            <span class="resume-btn-arrow"><i class="fas fa-chevron-right"></i></span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
