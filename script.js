@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const warpContainer = document.getElementById('warp-transition');
 
     // Select all navigation links (Sidebar + Top Contact + CTA Buttons)
-    const allNavLinks = document.querySelectorAll('.scroll-nav li, .nav-contact-btn, .cta-btn, .mobile-nav-links a');
+    const allNavLinks = document.querySelectorAll('.scroll-nav li, .nav-contact-btn, .cta-btn, .space-button, .mobile-nav-links a');
 
     allNavLinks.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -113,19 +113,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // 1. Start Warp Effect
-                warpContainer.classList.add('active');
+                if (warpContainer) {
+                    warpContainer.classList.add('active');
+                }
 
                 // 2. Teleport (Scroll) to section during the flash (at 800ms)
                 setTimeout(() => {
-                    document.querySelector(targetId).scrollIntoView({
-                        behavior: 'auto', // INSTANT jump while screen is white
-                        block: 'start'
-                    });
+                    if (window.lenis) {
+                        window.lenis.scrollTo(targetId, { immediate: true });
+                    } else {
+                        document.querySelector(targetId).scrollIntoView({
+                            behavior: 'auto', // INSTANT jump while screen is white
+                            block: 'start'
+                        });
+                    }
                 }, 800);
 
                 // 3. End Warp Effect
                 setTimeout(() => {
-                    warpContainer.classList.remove('active');
+                    if (warpContainer) {
+                        warpContainer.classList.remove('active');
+                    }
                 }, 1300);
             }
         });
@@ -464,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const skillCard = document.getElementById('skill-info-card');
-    const planetsWrapper = document.getElementById('planets-wrapper');
+    const universeContainer = document.querySelector('#skills .universe-container');
 
     // Expose openSkill to global scope for HTML onclick
     window.openSkill = function (key) {
@@ -482,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
         skillProgress.style.width = '0%';
 
         skillCard.classList.add('open');
-        if (planetsWrapper) planetsWrapper.classList.add('paused');
+        if (universeContainer) universeContainer.classList.add('paused-orbit');
 
         // Animate Progress Bar after card is visible
         setTimeout(() => {
@@ -492,7 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.closeSkillCard = function () {
         skillCard.classList.remove('open');
-        if (planetsWrapper) planetsWrapper.classList.remove('paused');
+        if (universeContainer) universeContainer.classList.remove('paused-orbit');
     };
 
 
@@ -558,7 +566,8 @@ document.addEventListener('DOMContentLoaded', () => {
             status: "complete",
             icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-js", "fab fa-figma"],
             brief: "Developed a fully static website for the SAST Organization, featuring a clean UI designed in Figma and brought to life with HTML, CSS, and JavaScript.",
-            img: "assets/images/sast_website.png"
+            img: "assets/images/sast_website.png",
+            preview_url: "https://sast-tech.netlify.app/"
         },
         {
             id: 6,
@@ -860,7 +869,7 @@ function initButtonTilt() {
     const btn = document.getElementById('btn');
     const planet = document.querySelector('.saturn-container');
 
-    if (!wrapper || !btn || !planet) return;
+    if (!wrapper || !btn) return;
 
     wrapper.addEventListener('mousemove', (e) => {
         const rect = wrapper.getBoundingClientRect();
@@ -877,13 +886,17 @@ function initButtonTilt() {
 
         // Move planet slightly differently for 3D parallax depth
         // Maintain the base rotation (20deg) + parallax translation
-        planet.style.transform = `rotate(20deg) translate(${x * 0.1}px, ${y * 0.1}px)`;
+        if (planet) {
+            planet.style.transform = `rotate(20deg) translate(${x * 0.1}px, ${y * 0.1}px)`;
+        }
     });
 
     // Reset positions when mouse leaves the area
     wrapper.addEventListener('mouseleave', () => {
         btn.style.transform = 'rotateX(0) rotateY(0)';
-        planet.style.transform = 'rotate(20deg) translate(0, 0)';
+        if (planet) {
+            planet.style.transform = 'rotate(20deg) translate(0, 0)';
+        }
     });
 }
 
@@ -1074,4 +1087,96 @@ function initWarpTrail() {
 document.addEventListener('DOMContentLoaded', () => {
     initWarpTrail();
 });
+
+// --- 12. SPACE PRELOADER (STARGATE HUD) SEQUENCER ---
+function initSpaceLoader() {
+    const loader = document.getElementById('space-loader');
+    if (!loader) return;
+
+    const percentEl = loader.querySelector('.loader-percentage');
+    const telemetryEl = loader.querySelector('.loader-telemetry');
+    const barFillEl = loader.querySelector('.loader-bar-fill');
+    
+    let currentPercent = 0;
+    let isFullyLoaded = false;
+
+    const telemetryStages = [
+        { limit: 15, text: "LOCATING CELESTIAL COORDINATES..." },
+        { limit: 30, text: "MAPPING PLANETARY TRAJECTORIES..." },
+        { limit: 45, text: "ALIGNING ORBITAL PATHWAYS..." },
+        { limit: 60, text: "ESTABLISHING STELLAR TRAJECTORY..." },
+        { limit: 75, text: "APPROACHING THE SYSTEM STAR..." },
+        { limit: 90, text: "SYNCHRONIZING TELEMETRY BASE..." },
+        { limit: 100, text: "WELCOME TO THE UNIVERSE!" }
+    ];
+
+    function updateTelemetry(pct) {
+        const stage = telemetryStages.find(s => pct <= s.limit);
+        if (stage && telemetryEl.textContent !== stage.text) {
+            telemetryEl.textContent = stage.text;
+        }
+    }
+
+    // Block Lenis smooth scroll during preloader
+    if (window.lenis) {
+        window.lenis.stop();
+    }
+    
+    // Fallback if window already loaded
+    if (document.readyState === 'complete') {
+        isFullyLoaded = true;
+    } else {
+        window.addEventListener('load', () => {
+            isFullyLoaded = true;
+        });
+    }
+
+    function animateProgress() {
+        let increment = Math.floor(Math.random() * 3) + 1; // 1% to 3% increments
+        
+        // Slow down near completion (90%) if assets are still loading
+        if (currentPercent >= 88 && !isFullyLoaded) {
+            increment = 0.3; // Crawl forward to allow load event
+        }
+
+        currentPercent = Math.min(100, currentPercent + increment);
+        
+        // Print progress
+        const displayVal = Math.floor(currentPercent);
+        percentEl.textContent = displayVal.toString().padStart(2, '0') + '%';
+        updateTelemetry(displayVal);
+        
+        // Dynamic bar filling
+        if (barFillEl) {
+            barFillEl.style.width = displayVal + '%';
+        }
+
+        if (currentPercent < 100) {
+            const delay = Math.random() * 40 + 20; // 20ms to 60ms delay for natural pacing
+            setTimeout(animateProgress, delay);
+        } else {
+            // Loader reached 100%, initiate flash and fade
+            setTimeout(() => {
+                loader.classList.add('loaded');
+                
+                // Resume Lenis smooth scroll
+                if (window.lenis) {
+                    window.lenis.start();
+                }
+
+                // Clean up DOM after transition to avoid rendering load
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 800); // Matches CSS transition duration
+            }, 600); // Hold at 100% for a dramatic pause
+        }
+    }
+
+    // Start boot sequence
+    setTimeout(animateProgress, 100);
+}
+
+// Run preloader immediately
+initSpaceLoader();
+
 
