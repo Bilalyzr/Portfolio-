@@ -185,7 +185,7 @@ section {
 .scroll-tracker {
     position: fixed;
     top: 50%;
-    right: 25px;
+    right: 15px;
     transform: translateY(-50%);
     z-index: 1000;
     display: flex;
@@ -4169,7 +4169,7 @@ model-viewer {
 
     .scroll-tracker {
         display: flex !important; /* Force visibility */
-        right: 15px;
+        right: -5px; /* Shifted slightly right to avoid overlapping orbits and content on mobile/tablets */
         transform: translateY(-50%) scale(0.8);
         z-index: 2000; /* Just below mobile overlay but above everything else */
     }
