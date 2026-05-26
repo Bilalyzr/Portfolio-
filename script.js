@@ -21,69 +21,97 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Smooth Scroll for Nav Links handled by scroll-nav click listeners below
 
-    // Scroll Spy (Active Scroll Indicator)
+    // Scroll Spy (Active Scroll Indicator) - Cached for performance to avoid reflow thrashing
     const sections = document.querySelectorAll('section');
     const scrollLinks = document.querySelectorAll('.scroll-nav li');
     const scrollNavBox = document.querySelector('.scroll-nav');
 
     let lastScrollTop = 0;
+    let currentActiveIndex = -1;
+    let sectionPositions = [];
+
+    // Cache section layout properties once to eliminate read reflow thrashes on scroll
+    function cacheSectionPositions() {
+        sectionPositions = Array.from(sections).map(section => ({
+            id: '#' + section.getAttribute('id'),
+            top: section.offsetTop,
+            height: section.clientHeight
+        }));
+    }
+    
+    // Initial caching and refresh on resize
+    cacheSectionPositions();
+    window.addEventListener('resize', cacheSectionPositions);
 
     function updateActiveScroll() {
         let current = '';
         const st = window.pageYOffset || document.documentElement.scrollTop;
 
-        // Determine Scroll Direction
+        // Determine Scroll Direction with class check to avoid layout thrashing
         if (st > lastScrollTop) {
-            document.body.classList.add('scroll-down');
-            document.body.classList.remove('scroll-up');
+            if (!document.body.classList.contains('scroll-down')) {
+                document.body.classList.add('scroll-down');
+                document.body.classList.remove('scroll-up');
+            }
         } else if (st < lastScrollTop) {
-            document.body.classList.add('scroll-up');
-            document.body.classList.remove('scroll-down');
-        }
-        lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
-
-
-        // Determine active section
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            if (scrollY >= (sectionTop - sectionHeight / 3)) {
-                current = '#' + section.getAttribute('id');
+            if (!document.body.classList.contains('scroll-up')) {
+                document.body.classList.add('scroll-up');
+                document.body.classList.remove('scroll-down');
             }
-        });
+        }
+        lastScrollTop = st <= 0 ? 0 : st;
 
-        // Update UI
+        // Determine active section using our high-performance cached layout array
+        const windowScrollY = window.pageYOffset || document.documentElement.scrollTop;
+        for (let i = 0; i < sectionPositions.length; i++) {
+            const pos = sectionPositions[i];
+            if (windowScrollY >= (pos.top - pos.height / 3)) {
+                current = pos.id;
+            }
+        }
+
+        // Find the active index
         let activeIndex = 0;
-        scrollLinks.forEach((link, index) => {
-            link.classList.remove('active');
-            if (link.dataset.target === current) {
-                link.classList.add('active');
-                activeIndex = index;
+        for (let i = 0; i < scrollLinks.length; i++) {
+            if (scrollLinks[i].dataset.target === current) {
+                activeIndex = i;
+                break;
             }
-        });
-
-        // Move the visual line indicator
-        const activeLink = document.querySelector('.scroll-nav li.active');
-        if (activeLink && scrollNavBox) {
-            const itemHeight = activeLink.offsetHeight + 20; // 20 is gap
-            scrollNavBox.style.setProperty('--active-pos', `${activeLink.offsetTop}px`);
         }
-        // Toggle Scroll Label based on position
-        const scrollLabel = document.getElementById('scrollLabel');
-        if (scrollLabel) {
-            if (current === '#contact') {
-                // Back To Top (Arrow First = Top in vertical mode)
-                scrollLabel.innerHTML = '<i class="fas fa-chevron-up"></i><span>Back To Top</span>';
-                scrollLabel.onclick = () => window.lenis.scrollTo(0);
-            } else {
-                // Scroll Down (Text First = Top in vertical mode)
-                scrollLabel.innerHTML = '<span>Scroll Down</span><i class="fas fa-chevron-down"></i>';
-                scrollLabel.onclick = () => {
-                    const nextIndex = activeIndex + 1;
-                    if (nextIndex < sections.length) {
-                        window.lenis.scrollTo(sections[nextIndex]);
-                    }
-                };
+
+        // Only trigger DOM writes and layout property reads if active index changes
+        if (activeIndex !== currentActiveIndex) {
+            currentActiveIndex = activeIndex;
+
+            scrollLinks.forEach((link, index) => {
+                if (index === activeIndex) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+
+            const activeLink = scrollLinks[activeIndex];
+            if (activeLink && scrollNavBox) {
+                // Update CSS variable only when active section switches
+                scrollNavBox.style.setProperty('--active-pos', `${activeLink.offsetTop}px`);
+            }
+
+            // Toggle Scroll Label based on position
+            const scrollLabel = document.getElementById('scrollLabel');
+            if (scrollLabel) {
+                if (current === '#contact') {
+                    scrollLabel.innerHTML = '<i class="fas fa-chevron-up"></i><span>Back To Top</span>';
+                    scrollLabel.onclick = () => window.lenis.scrollTo(0);
+                } else {
+                    scrollLabel.innerHTML = '<span>Scroll Down</span><i class="fas fa-chevron-down"></i>';
+                    scrollLabel.onclick = () => {
+                        const nextIndex = activeIndex + 1;
+                        if (nextIndex < sections.length) {
+                            window.lenis.scrollTo(sections[nextIndex]);
+                        }
+                    };
+                }
             }
         }
     }
@@ -272,17 +300,28 @@ document.addEventListener('DOMContentLoaded', () => {
             { cx: 0.75, cy: 0.65, r: 0.3, color: [100, 0, 160], drift: -0.00002 }
         ];
 
-        function drawNebulae(time) {
+        let nebulaCanvas = null;
+        let nebulaCtx = null;
+
+        // Pre-render stationary nebulae once to eliminate radial gradient calculations every frame
+        function preRenderNebulae() {
+            if (!nebulaCanvas) {
+                nebulaCanvas = document.createElement('canvas');
+            }
+            nebulaCanvas.width = canvas.width;
+            nebulaCanvas.height = canvas.height;
+            nebulaCtx = nebulaCanvas.getContext('2d');
+            
             nebulae.forEach(n => {
-                const cx = (n.cx + Math.sin(time * n.drift) * 0.05) * canvas.width;
-                const cy = (n.cy + Math.cos(time * n.drift * 0.7) * 0.04) * canvas.height;
-                const r = n.r * Math.max(canvas.width, canvas.height);
-                const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+                const cx = n.cx * nebulaCanvas.width;
+                const cy = n.cy * nebulaCanvas.height;
+                const r = n.r * Math.max(nebulaCanvas.width, nebulaCanvas.height);
+                const grad = nebulaCtx.createRadialGradient(cx, cy, 0, cx, cy, r);
                 grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.06)`);
                 grad.addColorStop(0.5, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.025)`);
                 grad.addColorStop(1, 'transparent');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                nebulaCtx.fillStyle = grad;
+                nebulaCtx.fillRect(0, 0, nebulaCanvas.width, nebulaCanvas.height);
             });
         }
 
@@ -290,10 +329,14 @@ document.addEventListener('DOMContentLoaded', () => {
         function render(time) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 1. Nebula clouds
-            drawNebulae(time);
+            // 1. Draw Pre-rendered Nebula clouds (Fast GPU blit)
+            if (nebulaCanvas) {
+                ctx.drawImage(nebulaCanvas, 0, 0);
+            }
 
-            // 2. Star layers with parallax + BLACK HOLE CURSOR GRAVITY
+            // 2. Star layers with parallax + BLACK HOLE CURSOR GRAVITY (Optimized Math)
+            const gravityRadiusSq = GRAVITY_RADIUS * GRAVITY_RADIUS;
+
             layers.forEach(layer => {
                 const parallaxOffset = scrollY * layer.speedFactor;
                 layer.stars.forEach(star => {
@@ -301,12 +344,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     const screenY = ((y % canvas.height) + canvas.height) % canvas.height;
                     const drawX = star.baseX + star.dx;
 
-                    // Black hole gravity: pull star toward cursor
+                    // Black hole gravity: Bounding check using squared distance to bypass heavy Math.sqrt
                     const distX = mouseX - drawX;
                     const distY = mouseY - screenY;
-                    const dist = Math.sqrt(distX * distX + distY * distY);
+                    const distSq = distX * distX + distY * distY;
 
-                    if (dist < GRAVITY_RADIUS && dist > 1) {
+                    let isNearMouse = false;
+                    let dist = 9999;
+
+                    if (distSq < gravityRadiusSq && distSq > 1) {
+                        isNearMouse = true;
+                        dist = Math.sqrt(distSq); // Only calculate square root when within gravity pull radius
                         const force = (1 - dist / GRAVITY_RADIUS) * GRAVITY_STRENGTH;
                         star.dx += (distX / dist) * force;
                         star.dy += (distY / dist) * force;
@@ -321,8 +369,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const twinkle = Math.sin(time * star.twinkleSpeed + star.twinklePhase) * 0.3 + 0.7;
                     const alpha = star.opacity * twinkle;
 
-                    // Star stretched toward cursor (subtle elongation)
-                    if (dist < GRAVITY_RADIUS && dist > 1) {
+                    // Render: use fast rect blits for background stars, and only circular paths for interactive gravity-stretched stars
+                    if (isNearMouse) {
                         const stretchFactor = 1 + (1 - dist / GRAVITY_RADIUS) * 1.5;
                         const stretchAngle = Math.atan2(distY, distX);
                         ctx.save();
@@ -335,18 +383,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         ctx.fill();
                         ctx.restore();
                     } else {
-                        ctx.beginPath();
-                        ctx.arc(finalX, finalY, star.size, 0, Math.PI * 2);
                         ctx.fillStyle = `rgba(200, 220, 255, ${alpha})`;
-                        ctx.fill();
+                        ctx.fillRect(finalX - star.size / 2, finalY - star.size / 2, star.size, star.size);
                     }
 
-                    // Glow for larger stars
+                    // Glow for larger stars drawn fast using simple fillRect blits
                     if (star.size > 1.5) {
-                        ctx.beginPath();
-                        ctx.arc(finalX, finalY, star.size * 3, 0, Math.PI * 2);
                         ctx.fillStyle = `rgba(0, 210, 255, ${alpha * 0.04})`;
-                        ctx.fill();
+                        ctx.fillRect(finalX - star.size * 1.5, finalY - star.size * 1.5, star.size * 3, star.size * 3);
                     }
                 });
             });
