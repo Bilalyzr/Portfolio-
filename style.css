@@ -31,7 +31,7 @@ body {
     line-height: 1.6;
 }
 
-p, .sc-brief {
+p, .sc-brief, .bullet-list li {
     font-family: 'Space Grotesk', sans-serif;
 }
 
@@ -289,7 +289,7 @@ body.scroll-down .scroll-nav::before {
     position: relative;
     width: 100%;
     text-align: right;
-    padding-right: 48px; /* Pushes numbers beautifully to the left of the track line */
+    padding-right: 54px; /* Pushes numbers beautifully to the left of the track line */
     padding-top: 5px;
     padding-bottom: 5px;
     color: rgba(255, 255, 255, 0.3);
@@ -316,7 +316,7 @@ body.scroll-down .scroll-nav::before {
 .scroll-nav li::before {
     content: attr(data-label);
     position: absolute;
-    right: 85px; /* Neatly spaced on the left side of the numbers */
+    right: 91px; /* Neatly spaced on the left side of the numbers */
     top: 50%;
     transform: translateY(-50%) translateX(-12px);
     opacity: 0;
@@ -695,7 +695,7 @@ section .container {
 }
 
 #home .hero-desc {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 1.1rem;
     color: #cbd5e1;
     line-height: 1.6;
@@ -1888,6 +1888,10 @@ model-viewer {
 }
 
 #skills-layout-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1908,7 +1912,7 @@ model-viewer {
 .skills-right {
     flex: 1;
     color: white;
-    padding: 20px;
+    padding: 20px 80px 20px 20px;
     max-width: 600px;
 }
 
@@ -1965,7 +1969,7 @@ model-viewer {
     .skills-right {
         width: 100%;
         text-align: center;
-        padding-top: 0;
+        padding: 0 20px 20px 20px;
     }
 
     .skills-heading {
@@ -2613,12 +2617,22 @@ model-viewer {
     align-items: center;
     gap: 4px;
 }
-
 .stack-card .sc-status-dot {
     width: 4px; height: 4px;
     border-radius: 50%;
     background: #34d399;
     box-shadow: 0 0 4px rgba(52,211,153,0.5);
+}
+
+.stack-card .sc-status.in-progress {
+    color: #fb923c;
+    background: rgba(251, 146, 60, 0.08);
+    border: 1px solid rgba(251, 146, 60, 0.25);
+}
+
+.stack-card .sc-status.in-progress .sc-status-dot {
+    background: #fb923c;
+    box-shadow: 0 0 4px rgba(251, 146, 60, 0.5);
 }
 
 /* Card Body */
@@ -2660,7 +2674,7 @@ model-viewer {
 }
 
 .stack-card .sc-brief {
-    font-family: 'Share Tech Mono', 'JetBrains Mono', monospace;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.8rem;
     color: rgba(219, 228, 255, 0.6);
     line-height: 1.4;
@@ -3726,7 +3740,7 @@ model-viewer {
 #contact .contact-subtext {
     font-size: 1.1rem;
     color: #ccc;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     margin-bottom: 40px;
     line-height: 1.9;
     letter-spacing: 0.5px;

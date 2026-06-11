@@ -611,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-js", "fab fa-figma"],
             brief: "Developed a fully static website for the SAST Organization, featuring a clean UI designed in Figma and brought to life with HTML, CSS, and JavaScript.",
             img: "assets/images/sast_website.png",
-            preview_url: "https://sast-tech.netlify.app/"
+            preview_url: "https://sast.org.in/"
         },
         {
             id: 6,
@@ -633,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tools: "React.js, Node.js, Express.js, PostgreSQL, JWT, AI Integration",
             category: ["web", "react", "ai"],
             missionClass: "COMMAND",
-            status: "complete",
+            status: "in progress",
             icon: ["fab fa-react", "fab fa-node-js", "fas fa-database", "fas fa-brain"],
             brief: "AI-powered industrial governance platform for SIPCOT featuring real-time monitoring, compliance tracking, and intelligent decision support.",
             img: "assets/images/thozhirporul.png"
@@ -682,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="scanlines"></div>
                     <img src="${p.img}" alt="${p.name}">
                     <span class="sc-codename">${p.codename}</span>
-                    <span class="sc-status"><span class="sc-status-dot"></span>COMPLETE</span>
+                    <span class="sc-status ${p.status === 'in progress' ? 'in-progress' : 'complete'}"><span class="sc-status-dot"></span>${p.status.toUpperCase()}</span>
                 </div>
                 <div class="sc-body">
                     <div class="sc-class">${p.missionClass}</div>
