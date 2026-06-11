@@ -3951,7 +3951,6 @@ model-viewer {
     0 0 70px rgba(0, 80, 255, 0.2), 
     -10px 0px 15px #c3f4ff inset,
     25px 2px 35px #000 inset, 
-    -35px -2px 45px rgba(0, 210, 255, 0.35) inset,
     350px 0px 44px #00000066 inset, 
     210px 0px 38px #000000aa inset;
   z-index: 1;
