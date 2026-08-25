@@ -3874,8 +3874,11 @@ model-viewer {
   bottom: 0px;
   border-radius: 50%;
   animation: earthRotate 30s linear infinite;
-  /* Multi-layered box shadows: sunset shading, and internal ambient shadow */
+  /* Multi-layered box shadows: atmosphere glow, exosphere gradient, sunset shading, and internal ambient shadow */
   box-shadow: 
+    0 0 35px rgba(0, 210, 255, 0.4), 
+    0 0 70px rgba(0, 80, 255, 0.2), 
+    -10px 0px 15px #c3f4ff inset,
     25px 2px 35px #000 inset, 
     350px 0px 44px #00000066 inset, 
     210px 0px 38px #000000aa inset;
