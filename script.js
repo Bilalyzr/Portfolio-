@@ -648,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
             status: "in progress",
             icon: ["fab fa-python", "fas fa-shield-alt", "fas fa-brain", "fab fa-docker"],
             brief: "Developed an AI firewall that detects and blocks prompt-injection attacks on LLM applications using ML classification and behavioral analysis.",
-            img: "assets/images/fraud_detection.png"
+            img: "assets/images/llm_firewall.png"
         }
     ];
 
