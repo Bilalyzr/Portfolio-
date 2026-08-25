@@ -637,6 +637,18 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: ["fab fa-react", "fab fa-node-js", "fas fa-database", "fas fa-brain"],
             brief: "AI-powered industrial governance platform for SIPCOT featuring real-time monitoring, compliance tracking, and intelligent decision support.",
             img: "assets/images/thozhirporul.png"
+        },
+        {
+            id: 8,
+            codename: "HOTEL-08",
+            name: "Dual-Layer AI Firewall for Securing LLM Applications",
+            tools: "Python, FastAPI, XGBoost, Docker, PostgreSQL",
+            category: ["python", "ai"],
+            missionClass: "SHIELD",
+            status: "in progress",
+            icon: ["fab fa-python", "fas fa-shield-alt", "fas fa-brain", "fab fa-docker"],
+            brief: "Developed an AI firewall that detects and blocks prompt-injection attacks on LLM applications using ML classification and behavioral analysis.",
+            img: "assets/images/fraud_detection.png"
         }
     ];
 
