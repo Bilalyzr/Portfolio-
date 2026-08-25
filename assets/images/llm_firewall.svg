@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0b1126" />
+      <stop offset="100%" stop-color="#04060f" />
+    </radialGradient>
+
+    <!-- Glowing effects -->
+    <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="glowPurple" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="glowRed" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Gradients for lines -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#bd00ff" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#00ffff" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#bd00ff" stop-opacity="0.8" />
+    </linearGradient>
+
+    <linearGradient id="attackGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff3b30" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#ff3b30" stop-opacity="1" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    .grid-line { stroke: rgba(0, 210, 255, 0.03); stroke-width: 1; }
+    .hud-text { font-family: 'Share Tech Mono', 'Courier New', monospace; font-size: 11px; fill: #00d2ff; opacity: 0.8; letter-spacing: 1px; }
+    .hud-title { font-family: 'Orbitron', 'Montserrat', sans-serif; font-weight: bold; font-size: 15px; fill: #ffffff; letter-spacing: 2px; }
+    .pulse-node { animation: pulse 2s infinite alternate; }
+    .core-text { font-family: 'Orbitron', sans-serif; font-size: 20px; fill: #00ffff; font-weight: bold; text-anchor: middle; }
+  </style>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bgGrad)" />
+
+  <!-- Cyber Grid -->
+  <g>
+    <!-- Horizontal Grid Lines -->
+    <line x1="0" y1="50" x2="800" y2="50" class="grid-line" />
+    <line x1="0" y1="100" x2="800" y2="100" class="grid-line" />
+    <line x1="0" y1="150" x2="800" y2="150" class="grid-line" />
+    <line x1="0" y1="200" x2="800" y2="200" class="grid-line" />
+    <line x1="0" y1="250" x2="800" y2="250" class="grid-line" />
+    <line x1="0" y1="300" x2="800" y2="300" class="grid-line" />
+    <line x1="0" y1="350" x2="800" y2="350" class="grid-line" />
+    <line x1="0" y1="400" x2="800" y2="400" class="grid-line" />
+    <!-- Vertical Grid Lines -->
+    <line x1="100" y1="0" x2="100" y2="450" class="grid-line" />
+    <line x1="200" y1="0" x2="200" y2="450" class="grid-line" />
+    <line x1="300" y1="0" x2="300" y2="450" class="grid-line" />
+    <line x1="400" y1="0" x2="400" y2="450" class="grid-line" />
+    <line x1="500" y1="0" x2="500" y2="450" class="grid-line" />
+    <line x1="600" y1="0" x2="600" y2="450" class="grid-line" />
+    <line x1="700" y1="0" x2="700" y2="450" class="grid-line" />
+  </g>
+
+  <!-- Decorative Tech Circles in background -->
+  <circle cx="530" cy="225" r="180" stroke="rgba(0, 210, 255, 0.05)" stroke-width="1" fill="none" stroke-dasharray="5,15" />
+  <circle cx="530" cy="225" r="140" stroke="rgba(189, 0, 255, 0.05)" stroke-width="1.5" fill="none" />
+
+  <!-- NEURAL NETWORK/LLM CORE (Right Side: Center at 530, 225) -->
+  <g filter="url(#glowCyan)">
+    <!-- Node connections -->
+    <line x1="530" y1="125" x2="450" y2="185" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+    <line x1="530" y1="125" x2="610" y2="185" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+    <line x1="450" y1="185" x2="450" y2="265" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+    <line x1="610" y1="185" x2="610" y2="265" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+    <line x1="450" y1="265" x2="530" y2="325" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+    <line x1="610" y1="265" x2="530" y2="325" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+    <line x1="530" y1="225" x2="530" y2="125" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+    <line x1="530" y1="225" x2="450" y2="185" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+    <line x1="530" y1="225" x2="610" y2="185" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+    <line x1="530" y1="225" x2="450" y2="265" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+    <line x1="530" y1="225" x2="610" y2="265" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+    <line x1="530" y1="225" x2="530" y2="325" stroke="#00ffff" stroke-width="1.5" opacity="0.6"/>
+
+    <!-- Neural Nodes -->
+    <circle cx="530" cy="125" r="7" fill="#00ffff" />
+    <circle cx="450" cy="185" r="7" fill="#00ffff" />
+    <circle cx="610" cy="185" r="7" fill="#00ffff" />
+    <circle cx="450" cy="265" r="7" fill="#00ffff" />
+    <circle cx="610" cy="265" r="7" fill="#00ffff" />
+    <circle cx="530" cy="325" r="7" fill="#00ffff" />
+
+    <!-- Sub-nodes (data points) -->
+    <circle cx="490" cy="155" r="4" fill="#00d2ff" opacity="0.8" />
+    <circle cx="570" cy="155" r="4" fill="#00d2ff" opacity="0.8" />
+    <circle cx="490" cy="295" r="4" fill="#00d2ff" opacity="0.8" />
+    <circle cx="570" cy="295" r="4" fill="#00d2ff" opacity="0.8" />
+    <circle cx="410" cy="225" r="5" fill="#bd00ff" opacity="0.8" />
+    <circle cx="650" cy="225" r="5" fill="#00ffff" opacity="0.8" />
+
+    <!-- Outer connection lines to outer nodes -->
+    <line x1="450" y1="185" x2="410" y2="225" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+    <line x1="450" y1="265" x2="410" y2="225" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+    <line x1="610" y1="185" x2="650" y2="225" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+    <line x1="610" y1="265" x2="650" y2="225" stroke="#00ffff" stroke-width="1" opacity="0.4"/>
+  </g>
+
+  <!-- Central Core LLM Text -->
+  <circle cx="530" cy="225" r="40" fill="#04060f" stroke="#00ffff" stroke-width="2" filter="url(#glowCyan)"/>
+  <text x="530" y="231" class="core-text">LLM</text>
+
+  <!-- DUAL-LAYER FIREWALL SHIELD (Arc protecting left side) -->
+  <!-- Layer 1: XGBoost Behavioral Filter (Outer Arc) -->
+  <path d="M 330,80 A 170,170 0 0,0 330,370" fill="none" stroke="url(#shieldGrad)" stroke-width="6" stroke-linecap="round" filter="url(#glowPurple)" />
+  <!-- Layer 2: Pattern Classifier/FastAPI Gateway (Inner Arc) -->
+  <path d="M 360,110 A 130,130 0 0,0 360,340" fill="none" stroke="#00ffff" stroke-width="3" stroke-linecap="round" stroke-dasharray="8,4" filter="url(#glowCyan)" />
+
+  <!-- Shield Tech Indicators -->
+  <text x="310" y="70" class="hud-text" text-anchor="end" fill="#bd00ff">L1: BEHAVIORAL BLOCK (XGBoost)</text>
+  <line x1="315" y1="75" x2="332" y2="92" stroke="#bd00ff" stroke-width="1" opacity="0.8" />
+
+  <text x="350" y="100" class="hud-text" text-anchor="end">L2: PATTERN FILTER</text>
+  <line x1="355" y1="105" x2="363" y2="113" stroke="#00ffff" stroke-width="1" opacity="0.8" />
+
+  <!-- ATTACK VECTORS (Red injection streams deflecting off shield from the left) -->
+  <g filter="url(#glowRed)">
+    <!-- Attack stream 1 -->
+    <path d="M 50,150 L 220,150 C 270,150 290,165 310,185" fill="none" stroke="url(#attackGrad)" stroke-width="3" />
+    <circle cx="310" cy="185" r="4" fill="#ff3b30" />
+    <!-- Sparks/deflections -->
+    <line x1="310" y1="185" x2="280" y2="160" stroke="#ff3b30" stroke-width="1.5" />
+    <line x1="310" y1="185" x2="280" y2="210" stroke="#ff3b30" stroke-width="1.5" />
+
+    <!-- Attack stream 2 (Direct Prompt Injection Attempt) -->
+    <path d="M 50,225 L 320,225" fill="none" stroke="url(#attackGrad)" stroke-width="4" />
+    <circle cx="320" cy="225" r="5" fill="#ff3b30" />
+    <!-- Spark blast -->
+    <line x1="320" y1="225" x2="290" y2="200" stroke="#ff3b30" stroke-width="2" />
+    <line x1="320" y1="225" x2="280" y2="225" stroke="#ff3b30" stroke-width="2" />
+    <line x1="320" y1="225" x2="290" y2="250" stroke="#ff3b30" stroke-width="2" />
+
+    <!-- Attack stream 3 -->
+    <path d="M 50,300 L 220,300 C 270,300 290,285 310,265" fill="none" stroke="url(#attackGrad)" stroke-width="3" />
+    <circle cx="310" cy="265" r="4" fill="#ff3b30" />
+    <!-- Sparks -->
+    <line x1="310" y1="265" x2="280" y2="240" stroke="#ff3b30" stroke-width="1.5" />
+    <line x1="310" y1="265" x2="280" y2="290" stroke="#ff3b30" stroke-width="1.5" />
+  </g>
+
+  <!-- Labels for Attacks -->
+  <text x="60" y="140" class="hud-text" fill="#ff3b30" opacity="0.9">ATTACK: PROMPT INJECTION [BLOCKED]</text>
+  <text x="60" y="215" class="hud-text" fill="#ff3b30" opacity="0.9">ATTACK: SYSTEM BYPASS [BLOCKED]</text>
+  <text x="60" y="290" class="hud-text" fill="#ff3b30" opacity="0.9">ATTACK: JAILBREAK PAYLOAD [BLOCKED]</text>
+
+  <!-- HUD BORDERS & INFO TEXTS -->
+  <!-- Top Left HUD -->
+  <path d="M 20,40 L 20,20 L 120,20" fill="none" stroke="#00d2ff" stroke-width="2" opacity="0.8"/>
+  <text x="30" y="35" class="hud-title">AI-FIREWALL // LLM</text>
+  <text x="30" y="52" class="hud-text">STATUS: ACTIVE &amp; MONITORING</text>
+
+  <!-- Top Right HUD -->
+  <path d="M 780,40 L 780,20 L 680,20" fill="none" stroke="#00d2ff" stroke-width="2" opacity="0.8"/>
+  <text x="770" y="35" class="hud-text" text-anchor="end">SYS.LOC: DOCKER_NODE_08</text>
+  <text x="770" y="52" class="hud-text" text-anchor="end" fill="#00ffff">FPS: 60 // LATENCY: 14ms</text>
+
+  <!-- Bottom Left HUD -->
+  <path d="M 20,410 L 20,430 L 120,430" fill="none" stroke="#00d2ff" stroke-width="2" opacity="0.8"/>
+  <text x="30" y="422" class="hud-text">THREAT DETECTED: XGBOOST (99.4% CONFIDENCE)</text>
+
+  <!-- Bottom Right HUD -->
+  <path d="M 780,410 L 780,430 L 680,430" fill="none" stroke="#00d2ff" stroke-width="2" opacity="0.8"/>
+  <text x="770" y="422" class="hud-text" text-anchor="end">FASTAPI / PYTHON GATEWAY SECURED</text>
+
+  <!-- Minor grid decorative crosshairs -->
+  <path d="M 400,20 L 400,30 M 400,420 L 400,430 M 70,225 L 80,225" fill="none" stroke="rgba(0,210,255,0.3)" stroke-width="1" />
+</svg>
