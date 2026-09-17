@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Raleway:wght@500&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&family=Rajdhani:wght@500;600&family=Space+Grotesk:wght@300;400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <!-- Model Viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
@@ -636,6 +636,15 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Open a Transmission CTA Button -->
+                        <div class="open-transmission-wrap">
+                            <button type="button" class="open-transmission-btn" id="openTransmissionBtn">
+                                <i class="fas fa-satellite-dish btn-icon"></i>
+                                <span class="btn-text">OPEN A TRANSMISSION</span>
+                                <i class="fas fa-chevron-down btn-arrow"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="earth-container fade-left">
@@ -719,6 +728,41 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Transmission Console — Contact Form -->
+                <div class="transmission-console fade-up" id="transmissionConsole">
+                    <div class="console-header">
+                        <span class="console-title"><i class="fas fa-satellite-dish"></i> Open a Transmission</span>
+                        <span class="console-signal"><span class="signal-dot"></span> CHANNEL OPEN</span>
+                    </div>
+
+                    <form id="contactForm" class="transmission-form" novalidate>
+                        <div class="form-row">
+                            <div class="form-field">
+                                <label for="cf-name">Callsign</label>
+                                <input type="text" id="cf-name" name="name" placeholder="Your name" required
+                                    autocomplete="name" maxlength="80">
+                            </div>
+                            <div class="form-field">
+                                <label for="cf-email">Frequency</label>
+                                <input type="email" id="cf-email" name="email" placeholder="you@domain.com" required
+                                    autocomplete="email" maxlength="120">
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label for="cf-message">Message Payload</label>
+                            <textarea id="cf-message" name="message" rows="4"
+                                placeholder="Type your transmission..." required maxlength="1200"></textarea>
+                        </div>
+                        <div class="form-footer">
+                            <span class="form-status" id="cfStatus" role="status" aria-live="polite"></span>
+                            <button type="submit" class="transmit-btn" id="cfSubmit">
+                                <span class="transmit-label">Transmit Message</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
             </div>

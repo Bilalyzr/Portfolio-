@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- Accessibility: honor the user's reduced-motion preference ---
+    const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // --- 0. LENIS SMOOTH SCROLL INIT ---
     const lenis = new Lenis({
         duration: 1.2,
@@ -191,316 +194,63 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- 2. GLOBAL CANVAS STARFIELD + INTERACTIVE SPACE OBSTACLES ---
-    (function initGlobalStarfield() {
+    // --- 2. GLOBAL CANVAS BACKGROUND — Static Starfield ---
+    // Non-animated: a still field of stars drawn once (and on resize) for a
+    // quiet space backdrop. No motion, no cursor effects, no requestAnimationFrame.
+    (function initStaticStarfield() {
         const canvas = document.getElementById('globalStarfield');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
 
-        // --- Star Layers (3 depth levels) ---
-        const LAYER_CONFIG = [
-            { count: 200, speedFactor: 0.02, minSize: 0.3, maxSize: 1.0, baseOpacity: 0.25 },
-            { count: 150, speedFactor: 0.06, minSize: 0.5, maxSize: 1.5, baseOpacity: 0.4 },
-            { count: 80, speedFactor: 0.12, minSize: 0.8, maxSize: 2.2, baseOpacity: 0.6 }
+        const STAR_TINTS = [
+            'rgba(255,255,255,',
+            'rgba(160,220,255,',
+            'rgba(140,190,255,',
+            'rgba(200,170,255,'
         ];
 
-        let layers = [];
-        let shootingStars = [];
-        let meteorBursts = []; // Meteor click bursts
-        let scrollY = 0;
+        function draw() {
+            const W = window.innerWidth;
+            const H = window.innerHeight;
+            const DPR = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = W * DPR;
+            canvas.height = H * DPR;
+            canvas.style.width = W + 'px';
+            canvas.style.height = H + 'px';
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+            ctx.clearRect(0, 0, W, H);
 
-        // Mouse position for black hole gravity
-        let mouseX = -9999, mouseY = -9999;
-        const GRAVITY_RADIUS = 120;
-        const GRAVITY_STRENGTH = 0.6;
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initLayers();
-        }
-
-        function initLayers() {
-            layers = LAYER_CONFIG.map(cfg => {
-                const stars = [];
-                for (let i = 0; i < cfg.count; i++) {
-                    stars.push({
-                        x: Math.random() * canvas.width,
-                        baseX: 0, // set after
-                        y: Math.random() * canvas.height * 4,
-                        size: Math.random() * (cfg.maxSize - cfg.minSize) + cfg.minSize,
-                        opacity: cfg.baseOpacity + Math.random() * 0.3,
-                        twinkleSpeed: Math.random() * 0.003 + 0.001,
-                        twinklePhase: Math.random() * Math.PI * 2,
-                        // Gravity displacement
-                        dx: 0, dy: 0
-                    });
-                    stars[stars.length - 1].baseX = stars[stars.length - 1].x;
-                }
-                return { stars, speedFactor: cfg.speedFactor };
-            });
-        }
-
-        window.addEventListener('scroll', () => { scrollY = window.pageYOffset; });
-
-        // Track mouse for black hole cursor
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-        document.addEventListener('mouseleave', () => {
-            mouseX = -9999;
-            mouseY = -9999;
-        });
-
-        // --- FEATURE: Meteor Click Burst ---
-        canvas.style.pointerEvents = 'none'; // Canvas doesn't block clicks
-        document.addEventListener('click', (e) => {
-            // Don't trigger on interactive elements
-            const tag = e.target.tagName.toLowerCase();
-            const isInteractive = e.target.closest('a, button, .stack-card, .stack-nav, .planet, .skill-tile, .freq-btn, .scroll-nav li, model-viewer, input, textarea, .mobile-menu-btn, .mobile-nav-overlay');
-            if (isInteractive || tag === 'a' || tag === 'button') return;
-
-            const count = 6 + Math.floor(Math.random() * 4);
+            const count = Math.min(220, Math.max(80, Math.round((W * H) / 9000)));
             for (let i = 0; i < count; i++) {
-                const angle = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.5;
-                const speed = Math.random() * 4 + 2;
-                meteorBursts.push({
-                    x: e.clientX,
-                    y: e.clientY,
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed,
-                    life: 1.0,
-                    decay: Math.random() * 0.02 + 0.015,
-                    size: Math.random() * 1.5 + 0.8,
-                    trail: []
-                });
-            }
-        });
+                const depth = Math.random();
+                const size = 0.5 + depth * 1.4;
+                const alpha = 0.25 + depth * 0.55;
+                const x = Math.random() * W;
+                const y = Math.random() * H;
+                const tint = STAR_TINTS[(Math.random() * STAR_TINTS.length) | 0];
 
-        // --- Shooting Stars ---
-        function spawnShootingStar() {
-            const startX = Math.random() * canvas.width;
-            const startY = Math.random() * canvas.height * 0.5;
-            const angle = (Math.random() * 40 + 140) * (Math.PI / 180);
-            const speed = Math.random() * 8 + 6;
-            shootingStars.push({
-                x: startX, y: startY,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
-                life: 1.0,
-                decay: Math.random() * 0.015 + 0.01,
-                length: Math.random() * 80 + 60
-            });
-        }
+                ctx.fillStyle = tint + alpha + ')';
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
 
-        // --- Nebula Clouds ---
-        const nebulae = [
-            { cx: 0.2, cy: 0.3, r: 0.35, color: [0, 60, 180], drift: 0.00003 },
-            { cx: 0.75, cy: 0.65, r: 0.3, color: [100, 0, 160], drift: -0.00002 }
-        ];
-
-        let nebulaCanvas = null;
-        let nebulaCtx = null;
-
-        // Pre-render stationary nebulae once to eliminate radial gradient calculations every frame
-        function preRenderNebulae() {
-            if (!nebulaCanvas) {
-                nebulaCanvas = document.createElement('canvas');
-            }
-            nebulaCanvas.width = canvas.width;
-            nebulaCanvas.height = canvas.height;
-            nebulaCtx = nebulaCanvas.getContext('2d');
-            
-            nebulae.forEach(n => {
-                const cx = n.cx * nebulaCanvas.width;
-                const cy = n.cy * nebulaCanvas.height;
-                const r = n.r * Math.max(nebulaCanvas.width, nebulaCanvas.height);
-                const grad = nebulaCtx.createRadialGradient(cx, cy, 0, cx, cy, r);
-                grad.addColorStop(0, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.06)`);
-                grad.addColorStop(0.5, `rgba(${n.color[0]},${n.color[1]},${n.color[2]},0.025)`);
-                grad.addColorStop(1, 'transparent');
-                nebulaCtx.fillStyle = grad;
-                nebulaCtx.fillRect(0, 0, nebulaCanvas.width, nebulaCanvas.height);
-            });
-        }
-
-        // --- Main Render Loop ---
-        function render(time) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 1. Draw Pre-rendered Nebula clouds (Fast GPU blit)
-            if (nebulaCanvas) {
-                ctx.drawImage(nebulaCanvas, 0, 0);
-            }
-
-            // 2. Star layers with parallax + BLACK HOLE CURSOR GRAVITY (Optimized Math)
-            const gravityRadiusSq = GRAVITY_RADIUS * GRAVITY_RADIUS;
-
-            layers.forEach(layer => {
-                const parallaxOffset = scrollY * layer.speedFactor;
-                layer.stars.forEach(star => {
-                    const y = (star.y - parallaxOffset) % (canvas.height * 4);
-                    const screenY = ((y % canvas.height) + canvas.height) % canvas.height;
-                    const drawX = star.baseX + star.dx;
-
-                    // Black hole gravity: Bounding check using squared distance to bypass heavy Math.sqrt
-                    const distX = mouseX - drawX;
-                    const distY = mouseY - screenY;
-                    const distSq = distX * distX + distY * distY;
-
-                    let isNearMouse = false;
-                    let dist = 9999;
-
-                    if (distSq < gravityRadiusSq && distSq > 1) {
-                        isNearMouse = true;
-                        dist = Math.sqrt(distSq); // Only calculate square root when within gravity pull radius
-                        const force = (1 - dist / GRAVITY_RADIUS) * GRAVITY_STRENGTH;
-                        star.dx += (distX / dist) * force;
-                        star.dy += (distY / dist) * force;
-                    } else {
-                        // Spring back to original position
-                        star.dx *= 0.95;
-                        star.dy *= 0.95;
-                    }
-
-                    const finalX = drawX;
-                    const finalY = screenY + star.dy;
-                    const twinkle = Math.sin(time * star.twinkleSpeed + star.twinklePhase) * 0.3 + 0.7;
-                    const alpha = star.opacity * twinkle;
-
-                    // Render: use fast rect blits for background stars, and only circular paths for interactive gravity-stretched stars
-                    if (isNearMouse) {
-                        const stretchFactor = 1 + (1 - dist / GRAVITY_RADIUS) * 1.5;
-                        const stretchAngle = Math.atan2(distY, distX);
-                        ctx.save();
-                        ctx.translate(finalX, finalY);
-                        ctx.rotate(stretchAngle);
-                        ctx.scale(stretchFactor, 1);
-                        ctx.beginPath();
-                        ctx.arc(0, 0, star.size, 0, Math.PI * 2);
-                        ctx.fillStyle = `rgba(200, 220, 255, ${alpha})`;
-                        ctx.fill();
-                        ctx.restore();
-                    } else {
-                        ctx.fillStyle = `rgba(200, 220, 255, ${alpha})`;
-                        ctx.fillRect(finalX - star.size / 2, finalY - star.size / 2, star.size, star.size);
-                    }
-
-                    // Glow for larger stars drawn fast using simple fillRect blits
-                    if (star.size > 1.5) {
-                        ctx.fillStyle = `rgba(0, 210, 255, ${alpha * 0.04})`;
-                        ctx.fillRect(finalX - star.size * 1.5, finalY - star.size * 1.5, star.size * 3, star.size * 3);
-                    }
-                });
-            });
-
-            // 3. Shooting stars
-            for (let i = shootingStars.length - 1; i >= 0; i--) {
-                const s = shootingStars[i];
-                s.x += s.vx; s.y += s.vy; s.life -= s.decay;
-                if (s.life <= 0) { shootingStars.splice(i, 1); continue; }
-
-                const mag = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
-                const tailX = s.x - (s.vx / mag) * s.length;
-                const tailY = s.y - (s.vy / mag) * s.length;
-
-                const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
-                grad.addColorStop(0, 'rgba(255,255,255,0)');
-                grad.addColorStop(0.7, `rgba(200,230,255,${s.life * 0.5})`);
-                grad.addColorStop(1, `rgba(255,255,255,${s.life})`);
-                ctx.beginPath(); ctx.moveTo(tailX, tailY); ctx.lineTo(s.x, s.y);
-                ctx.strokeStyle = grad; ctx.lineWidth = 1.5; ctx.stroke();
-
-                ctx.beginPath(); ctx.arc(s.x, s.y, 2, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255,255,255,${s.life})`; ctx.fill();
-            }
-
-            // 4. METEOR CLICK BURSTS
-            for (let i = meteorBursts.length - 1; i >= 0; i--) {
-                const m = meteorBursts[i];
-                m.x += m.vx; m.y += m.vy;
-                m.vx *= 0.98; m.vy *= 0.98;
-                m.life -= m.decay;
-
-                // Store trail positions
-                m.trail.push({ x: m.x, y: m.y });
-                if (m.trail.length > 8) m.trail.shift();
-
-                if (m.life <= 0) { meteorBursts.splice(i, 1); continue; }
-
-                // Draw trail
-                for (let j = 0; j < m.trail.length - 1; j++) {
-                    const trailAlpha = (j / m.trail.length) * m.life * 0.4;
+                if (size > 1.4) {
+                    ctx.fillStyle = tint + (alpha * 0.12) + ')';
                     ctx.beginPath();
-                    ctx.moveTo(m.trail[j].x, m.trail[j].y);
-                    ctx.lineTo(m.trail[j + 1].x, m.trail[j + 1].y);
-                    ctx.strokeStyle = `rgba(0, 210, 255, ${trailAlpha})`;
-                    ctx.lineWidth = m.size * (j / m.trail.length);
-                    ctx.stroke();
+                    ctx.arc(x, y, size * 2.6, 0, Math.PI * 2);
+                    ctx.fill();
                 }
-
-                // Draw head
-                ctx.beginPath();
-                ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(200, 240, 255, ${m.life})`;
-                ctx.fill();
-
-                // Head glow
-                ctx.beginPath();
-                ctx.arc(m.x, m.y, m.size * 4, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(0, 210, 255, ${m.life * 0.15})`;
-                ctx.fill();
             }
-
-            // Spawn shooting stars
-            if (Math.random() > 0.993) spawnShootingStar();
-
-            requestAnimationFrame(render);
         }
 
-        resize();
-        window.addEventListener('resize', resize);
-        requestAnimationFrame(render);
+        draw();
+        // Redraw only on resize (still no continuous animation)
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(draw, 150);
+        });
     })();
-
-    // --- SATELLITE ORBIT (DOM element orbiting viewport edges) ---
-    (function initSatellite() {
-        const sat = document.createElement('div');
-        sat.id = 'orbitingSatellite';
-        sat.innerHTML = '<i class="fas fa-satellite" style="font-size:10px;color:rgba(200,220,255,0.5);"></i><span class="sat-blink"></span>';
-        document.body.appendChild(sat);
-
-        let angle = 0;
-        const speed = 0.0006; // ~60s per orbit
-
-        function updateSatellite() {
-            angle += speed;
-            if (angle > Math.PI * 2) angle -= Math.PI * 2;
-
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-            const margin = 30;
-
-            // Elliptical path along viewport edges
-            const rx = vw / 2 - margin;
-            const ry = vh / 2 - margin;
-            const x = vw / 2 + Math.cos(angle) * rx;
-            const y = vh / 2 + Math.sin(angle) * ry;
-
-            sat.style.left = x + 'px';
-            sat.style.top = y + 'px';
-
-            // Rotation to face direction of travel
-            const deg = angle * (180 / Math.PI) + 90;
-            sat.style.transform = `translate(-50%, -50%) rotate(${deg}deg)`;
-
-            requestAnimationFrame(updateSatellite);
-        }
-
-        requestAnimationFrame(updateSatellite);
-    })();
-
 
     // --- 3. SKILLS: Interaction ---
 
@@ -645,10 +395,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tools: "Python, FastAPI, XGBoost, Docker, PostgreSQL",
             category: ["python", "ai"],
             missionClass: "SHIELD",
-            status: "in progress",
+            status: "complete",
             icon: ["fab fa-python", "fas fa-shield-alt", "fas fa-brain", "fab fa-docker"],
             brief: "Developed an AI firewall that detects and blocks prompt-injection attacks on LLM applications using ML classification and behavioral analysis.",
-            img: "assets/images/llm_firewall.svg"
+            img: "assets/images/llm_firewall.png",
+            preview_url: "https://dual-layer-firewalls.vercel.app/"
         }
     ];
 
@@ -1166,10 +917,17 @@ function initSpaceLoader() {
         { limit: 100, text: "WELCOME TO THE UNIVERSE!" }
     ];
 
+    let telemetryTarget = '';
     function updateTelemetry(pct) {
         const stage = telemetryStages.find(s => pct <= s.limit);
-        if (stage && telemetryEl.textContent !== stage.text) {
-            telemetryEl.textContent = stage.text;
+        if (stage && stage.text !== telemetryTarget) {
+            telemetryTarget = stage.text;
+            // Crossfade: fade out, swap text, fade back in
+            telemetryEl.classList.add('swapping');
+            setTimeout(() => {
+                telemetryEl.textContent = telemetryTarget;
+                telemetryEl.classList.remove('swapping');
+            }, 180);
         }
     }
 
@@ -1211,20 +969,20 @@ function initSpaceLoader() {
             const delay = Math.random() * 40 + 20; // 20ms to 60ms delay for natural pacing
             setTimeout(animateProgress, delay);
         } else {
-            // Loader reached 100%, initiate flash and fade
+            // Loader reached 100% — smooth fade-out without flash animation
             setTimeout(() => {
-                loader.classList.add('loaded');
-                
+                loader.classList.add('loaded'); // zoom-through + fade
+
                 // Resume Lenis smooth scroll
                 if (window.lenis) {
                     window.lenis.start();
                 }
 
-                // Clean up DOM after transition to avoid rendering load
+                // Remove the loader once transition finishes
                 setTimeout(() => {
                     loader.style.display = 'none';
-                }, 800); // Matches CSS transition duration
-            }, 600); // Hold at 100% for a dramatic pause
+                }, 900);
+            }, 300);
         }
     }
 
@@ -1234,5 +992,127 @@ function initSpaceLoader() {
 
 // Run preloader immediately
 initSpaceLoader();
+
+
+// --- CONTACT: Transmission Console form handling ---
+document.addEventListener('DOMContentLoaded', () => {
+    const openTxBtn = document.getElementById('openTransmissionBtn');
+    const txConsole = document.getElementById('transmissionConsole');
+    const form = document.getElementById('contactForm');
+    
+    if (openTxBtn && txConsole) {
+        openTxBtn.addEventListener('click', () => {
+            const isExpanded = txConsole.classList.contains('active');
+
+            if (!isExpanded) {
+                txConsole.classList.add('active');
+                openTxBtn.classList.add('active');
+                const btnText = openTxBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = 'CLOSE TRANSMISSION';
+
+                setTimeout(() => {
+                    if (window.lenis) {
+                        window.lenis.scrollTo(txConsole, { offset: -30 });
+                    } else {
+                        txConsole.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                    const nameEl = document.getElementById('cf-name');
+                    if (nameEl) nameEl.focus({ preventScroll: true });
+                }, 150);
+            } else {
+                txConsole.classList.remove('active');
+                openTxBtn.classList.remove('active');
+                const btnText = openTxBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = 'OPEN A TRANSMISSION';
+            }
+        });
+    }
+
+    if (!form) return;
+
+    // Destination inbox. To route through a backend later (e.g. Formspree),
+    // set this to your endpoint URL and the code below will POST instead of mailto.
+    const RECIPIENT = 'althafbilal1968@gmail.com';
+    const ENDPOINT = ''; // e.g. 'https://formspree.io/f/xxxxxxx'
+
+    const nameEl = document.getElementById('cf-name');
+    const emailEl = document.getElementById('cf-email');
+    const msgEl = document.getElementById('cf-message');
+    const statusEl = document.getElementById('cfStatus');
+    const btn = document.getElementById('cfSubmit');
+    const btnLabel = btn.querySelector('.transmit-label');
+
+    const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+    function setStatus(msg, kind) {
+        statusEl.textContent = msg;
+        statusEl.className = 'form-status' + (kind ? ' ' + kind : '');
+    }
+
+    function validate() {
+        let ok = true;
+        [[nameEl, nameEl.value.trim().length > 0],
+         [emailEl, isEmail(emailEl.value.trim())],
+         [msgEl, msgEl.value.trim().length > 0]].forEach(([el, valid]) => {
+            el.classList.toggle('invalid', !valid);
+            if (!valid) ok = false;
+        });
+        return ok;
+    }
+
+    // Clear the invalid state as the user corrects a field
+    [nameEl, emailEl, msgEl].forEach(el =>
+        el.addEventListener('input', () => el.classList.remove('invalid')));
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!validate()) {
+            setStatus('// Signal blocked — check highlighted fields', 'err');
+            return;
+        }
+
+        const data = {
+            name: nameEl.value.trim(),
+            email: emailEl.value.trim(),
+            message: msgEl.value.trim()
+        };
+
+        btn.disabled = true;
+        btnLabel.textContent = 'Transmitting…';
+        setStatus('// Establishing uplink…', '');
+
+        try {
+            if (ENDPOINT) {
+                const res = await fetch(ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!res.ok) throw new Error('Bad response');
+            } else {
+                // Zero-backend fallback: open the visitor's mail client, pre-filled.
+                const subject = encodeURIComponent(`New transmission from ${data.name}`);
+                const body = encodeURIComponent(`${data.message}\n\n— ${data.name}\n${data.email}`);
+                window.location.href = `mailto:${RECIPIENT}?subject=${subject}&body=${body}`;
+            }
+
+            btn.classList.add('sent');
+            btnLabel.textContent = 'Signal Sent';
+            setStatus('✓ Transmission received. I\'ll respond within orbit.', 'ok');
+            form.reset();
+
+            setTimeout(() => {
+                btn.classList.remove('sent');
+                btn.disabled = false;
+                btnLabel.textContent = 'Transmit Message';
+            }, 4000);
+        } catch (err) {
+            btn.disabled = false;
+            btnLabel.textContent = 'Transmit Message';
+            setStatus('// Uplink failed — email althafbilal1968@gmail.com directly', 'err');
+        }
+    });
+});
 
 

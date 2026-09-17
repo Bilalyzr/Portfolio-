@@ -36,7 +36,7 @@ p, .sc-brief, .bullet-list li {
 }
 
 p:not(.hero-desc):not(.hero-role):not(.missions-subtitle):not(.trajectory-subtitle):not(.phase-location), .sc-brief {
-    text-align: justify;
+    text-align: left;
 }
 
 .hero-role, .missions-subtitle, .trajectory-subtitle, .phase-location {
@@ -644,7 +644,7 @@ section .container {
     color: var(--neon-purple);
     font-weight: 700;
     text-decoration: none;
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     transition: gap 0.3s;
 }
 
@@ -1168,7 +1168,7 @@ section .container {
 
 #about .subsection-title {
     text-align: center;
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-weight: 500;
     font-size: 1.5rem;
     color: #b3c5ef;
@@ -1438,7 +1438,7 @@ model-viewer {
 
 /* Subtitle/Data Type Label */
 #about .profile-card .hud-subtitle {
-    font-family: 'Rajdhani', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 0.75rem;
     color: var(--neon-cyan);
     text-transform: uppercase;
@@ -1855,7 +1855,7 @@ model-viewer {
     font-size: 1.2rem;
     font-style: italic;
     color: #ffd700;
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-weight: 500;
 }
 
@@ -3802,6 +3802,316 @@ model-viewer {
     color: var(--neon-cyan);
 }
 
+/* ================= OPEN A TRANSMISSION CTA BUTTON ================= */
+.open-transmission-wrap {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.open-transmission-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, rgba(0, 210, 255, 0.12), rgba(189, 0, 255, 0.08));
+    border: 1.5px solid rgba(0, 210, 255, 0.45);
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.15), inset 0 0 15px rgba(0, 210, 255, 0.08);
+}
+
+.open-transmission-btn .btn-icon {
+    font-size: 1.1rem;
+    color: var(--neon-cyan);
+    transition: transform 0.35s ease, color 0.35s ease;
+}
+
+.open-transmission-btn .btn-arrow {
+    font-size: 0.82rem;
+    color: var(--neon-cyan);
+    transition: transform 0.35s ease, color 0.35s ease;
+}
+
+.open-transmission-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 210, 255, 0.25), rgba(189, 0, 255, 0.18));
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.45), inset 0 0 25px rgba(0, 210, 255, 0.2);
+    transform: translateY(-2px);
+    color: #ffffff;
+}
+
+.open-transmission-btn:hover .btn-icon {
+    transform: scale(1.2) rotate(-12deg);
+}
+
+.open-transmission-btn.active {
+    background: linear-gradient(135deg, rgba(255, 170, 0, 0.18), rgba(255, 100, 0, 0.12));
+    border-color: rgba(255, 170, 0, 0.65);
+    box-shadow: 0 0 25px rgba(255, 170, 0, 0.35), inset 0 0 20px rgba(255, 170, 0, 0.12);
+}
+
+.open-transmission-btn.active .btn-icon,
+.open-transmission-btn.active .btn-arrow {
+    color: #ffaa00;
+}
+
+.open-transmission-btn.active .btn-arrow {
+    transform: rotate(180deg);
+}
+
+/* ================= TRANSMISSION CONSOLE — CONTACT FORM ================= */
+.transmission-console {
+    width: 100%;
+    max-width: 780px;
+    margin: 0 auto;
+    background: rgba(6, 12, 24, 0.55);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(0, 210, 255, 0.22);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 0 40px rgba(0, 210, 255, 0.03);
+
+    /* Collapsed state by default */
+    max-height: 0;
+    opacity: 0;
+    padding: 0 30px;
+    margin-top: 0;
+    border-color: transparent;
+    pointer-events: none;
+    transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.45s ease,
+                padding 0.45s ease,
+                margin-top 0.45s ease,
+                border-color 0.45s ease;
+}
+
+.transmission-console.active {
+    max-height: 1200px;
+    opacity: 1;
+    margin-top: 35px;
+    padding: 28px 30px 32px;
+    border-color: rgba(0, 210, 255, 0.22);
+    pointer-events: auto;
+}
+
+/* HUD corner brackets */
+.transmission-console::before,
+.transmission-console::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    pointer-events: none;
+}
+
+.transmission-console::before {
+    top: 12px;
+    left: 12px;
+    border-top: 2px solid rgba(0, 210, 255, 0.5);
+    border-left: 2px solid rgba(0, 210, 255, 0.5);
+}
+
+.transmission-console::after {
+    bottom: 12px;
+    right: 12px;
+    border-bottom: 2px solid rgba(0, 210, 255, 0.5);
+    border-right: 2px solid rgba(0, 210, 255, 0.5);
+}
+
+.console-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.console-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.console-title i {
+    color: var(--neon-cyan);
+    margin-right: 8px;
+    text-shadow: 0 0 10px var(--neon-cyan);
+}
+
+.console-signal {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.signal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2fff8f;
+    box-shadow: 0 0 8px #2fff8f;
+    animation: signalPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes signalPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.75); }
+}
+
+.transmission-form .form-row {
+    display: flex;
+    gap: 18px;
+}
+
+.transmission-form .form-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+    min-width: 0;
+}
+
+.transmission-form label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(0, 210, 255, 0.75);
+    margin-bottom: 8px;
+}
+
+.transmission-form input,
+.transmission-form textarea {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    border-radius: 4px;
+    padding: 13px 15px;
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    resize: vertical;
+    width: 100%;
+}
+
+.transmission-form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.transmission-form input::placeholder,
+.transmission-form textarea::placeholder {
+    color: rgba(255, 255, 255, 0.28);
+}
+
+.transmission-form input:focus,
+.transmission-form textarea:focus {
+    outline: none;
+    border-color: var(--neon-cyan);
+    background: rgba(0, 210, 255, 0.06);
+    box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.12), 0 0 18px rgba(0, 210, 255, 0.15);
+}
+
+.transmission-form input.invalid,
+.transmission-form textarea.invalid {
+    border-color: #ff4d6d;
+    box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.14);
+}
+
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.form-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
+    min-height: 1em;
+}
+
+.form-status.ok { color: #2fff8f; }
+.form-status.err { color: #ff6b83; }
+
+.transmit-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 26px;
+    background: linear-gradient(135deg, rgba(0, 210, 255, 0.16), rgba(189, 0, 255, 0.16));
+    border: 1px solid var(--neon-cyan);
+    border-radius: 4px;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.25s ease;
+    margin-left: auto;
+}
+
+.transmit-btn i { transition: transform 0.35s ease; }
+
+.transmit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(0, 210, 255, 0.28);
+    background: linear-gradient(135deg, rgba(0, 210, 255, 0.28), rgba(189, 0, 255, 0.28));
+}
+
+.transmit-btn:hover i { transform: translateX(4px) rotate(8deg); }
+
+.transmit-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+    transform: none;
+}
+
+.transmit-btn.sent {
+    background: linear-gradient(135deg, rgba(47, 255, 143, 0.25), rgba(0, 210, 255, 0.2));
+    border-color: #2fff8f;
+    box-shadow: 0 0 22px rgba(47, 255, 143, 0.3);
+}
+
+.transmit-btn.sent i { transform: translateX(140%) rotate(15deg); opacity: 0; }
+
+/* Responsive: stack name/email on narrow screens */
+@media (max-width: 600px) {
+    .open-transmission-wrap { width: 100%; }
+    .open-transmission-btn { width: 100%; justify-content: center; }
+    .transmission-console.active { padding: 22px 18px 26px; }
+    .transmission-form .form-row { flex-direction: column; gap: 0; }
+    .transmit-btn { width: 100%; justify-content: center; margin-left: 0; }
+    .form-footer { flex-direction: column-reverse; align-items: stretch; }
+    .form-status { text-align: center; }
+}
+
 /* --- Realistic CSS 3D EARTH BANNER --- */
 .earth-container {
     flex: 0.9;
@@ -4371,20 +4681,9 @@ model-viewer {
         -180px -250px #00d2ff, 180px 250px #00d2ff, -250px 180px #00d2ff, 250px -180px #00d2ff;
 }
 
-/* White Flash at the end of the jump */
+/* White Flash at the end of the jump - disabled */
 .warp-flash {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.warp-container.active .warp-flash {
-    animation: jumpFlash 1.2s ease-in-out forwards;
+    display: none;
 }
 
 @keyframes warpZoom {
@@ -4811,6 +5110,8 @@ model-viewer {
     pointer-events: none;
 }
 
+/* Warp flash burst disabled for smooth loader completion */
+
 /* CRT Scanlines and Nebula overlays */
 .loader-scanlines {
     position: absolute;
@@ -4888,6 +5189,28 @@ model-viewer {
         filter: brightness(1.15);
         box-shadow: 0 0 30px #ffaa00, 0 0 60px rgba(255, 94, 0, 0.7), 0 0 100px rgba(255, 94, 0, 0.4);
     }
+}
+
+/* Slow radar sweep behind the system for ambient life */
+.loader-solar-system::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    margin: -150px 0 0 -150px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, rgba(255, 170, 0, 0.16), rgba(255, 94, 0, 0.02) 22%, transparent 44%);
+    animation: loaderRadarSweep 4.5s linear infinite;
+    z-index: 0;
+    pointer-events: none;
+    -webkit-mask: radial-gradient(circle, transparent 26%, #000 27%);
+    mask: radial-gradient(circle, transparent 26%, #000 27%);
+}
+
+@keyframes loaderRadarSweep {
+    to { transform: rotate(360deg); }
 }
 
 /* Orbit lines and Planetary nodes */
@@ -5071,11 +5394,32 @@ model-viewer {
 .loader-bar-fill {
     height: 100%;
     width: 0%;
+    position: relative;
     background: linear-gradient(90deg, #ffaa00, #ff5e00);
-    box-shadow: 
-        0 0 8px #ffaa00, 
+    box-shadow:
+        0 0 8px #ffaa00,
         0 0 12px rgba(255, 94, 0, 0.5);
     transition: width 0.15s ease-out;
+}
+
+/* Bright leading spark that rides the edge of the fill */
+.loader-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #fff6d8;
+    transform: translate(50%, -50%);
+    box-shadow: 0 0 6px #fff, 0 0 12px #ffaa00, 0 0 20px #ff5e00;
+    animation: loaderSparkPulse 0.9s ease-in-out infinite;
+}
+
+@keyframes loaderSparkPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
 }
 
 .loader-telemetry {
@@ -5085,6 +5429,13 @@ model-viewer {
     letter-spacing: 1px;
     height: 1.2rem;
     font-weight: 400;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+/* Crossfade state while telemetry text swaps */
+.loader-telemetry.swapping {
+    opacity: 0;
+    transform: translateY(4px);
 }
 
 /* --- RESPONSIVE LAYOUT SCALING --- */
@@ -5108,6 +5459,47 @@ model-viewer {
     .loader-percentage { font-size: 2.4rem; }
     .loader-telemetry { font-size: 0.75rem; letter-spacing: 0.5px; }
     .loader-bar-container { width: 140px; }
+}
+
+
+
+/* =========================================================
+   ACCESSIBILITY — REDUCED MOTION
+   Respects users who request minimal animation (OS setting).
+   Keeps the visual design intact but stops perpetual motion.
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Freeze orbital systems, spinners and decorative loops in place */
+    .solar-system,
+    .track,
+    .p-wrapper,
+    .planet-spinner,
+    .orbit-ring,
+    .loader-track,
+    .loader-orbit,
+    .star-rays,
+    .star-corona,
+    .moon-orbit-ring,
+    .loader-scanlines,
+    .scanlines {
+        animation: none !important;
+    }
+
+    /* Keep interactive hover feedback subtle but instant */
+    .contact-card:hover,
+    .stack-card:hover {
+        transform: none !important;
+    }
 }
 
 
