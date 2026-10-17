@@ -4655,26 +4655,43 @@ model-viewer {
     .phase-title { font-size: 1.15rem; }
 }
 
-/* --- SECTION 7: CONTACT (#contact) --- */
+/* --- SECTION 7: CONTACT (#contact — GALAXY ORBITAL UPLINK) --- */
 #contact {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 80px 0;
-    /* Creates an unbreakable safe-zone barrier so content physically cannot be cut vertically */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ambient Cosmic Nebula Backdrop */
+.contact-galaxy-nebula {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 78% 52%, rgba(0, 210, 255, 0.09) 0%, rgba(99, 102, 241, 0.05) 32%, transparent 65%),
+        radial-gradient(circle at 18% 60%, rgba(168, 85, 247, 0.06) 0%, transparent 55%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 #contact .container {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+#contact .missions-subtitle {
+    margin-bottom: 42px;
 }
 
 #contact .mission-control-container {
     display: flex;
     flex-direction: column;
-    /* Stack Top (Text+Sat) and Bottom (Cards) */
     gap: 50px;
     width: 100%;
     max-width: 1200px;
@@ -4684,38 +4701,73 @@ model-viewer {
 
 #contact .contact-upper-area {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    gap: 50px;
+    gap: 48px;
     width: 100%;
 }
 
 #contact .contact-text-panel {
-    flex: 1.2;
+    flex: 1.25;
     min-width: 300px;
     color: white;
 }
 
+/* Subspace Uplink Status Pill */
+.mc-uplink-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 14px;
+    margin-bottom: 18px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(0, 210, 255, 0.12) 0%, rgba(15, 23, 42, 0.75) 100%);
+    border: 1px solid rgba(0, 210, 255, 0.32);
+    box-shadow: 0 0 18px rgba(0, 210, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.66rem;
+    letter-spacing: 1.8px;
+    color: rgba(224, 242, 254, 0.9);
+}
+
+.mc-uplink-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #39d353;
+    box-shadow: 0 0 8px #39d353;
+    animation: signalPulse 1.6s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.mc-uplink-sep {
+    opacity: 0.4;
+}
+
+.mc-uplink-coords {
+    color: var(--neon-cyan);
+}
+
 #contact .contact-heading {
-    font-size: 2.3rem;
+    font-size: 2.25rem;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
-    margin-bottom: 25px;
-    line-height: 1.4;
-    letter-spacing: 1px;
-    background: linear-gradient(135deg, #ffffff 0%, var(--neon-cyan) 100%);
+    margin-bottom: 20px;
+    line-height: 1.38;
+    letter-spacing: 0.8px;
+    background: linear-gradient(135deg, #ffffff 0%, #c8f4ff 55%, var(--neon-cyan) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(0, 210, 255, 0.1);
+    text-shadow: 0 0 30px rgba(0, 210, 255, 0.12);
 }
 
 #contact .contact-subtext {
-    font-size: 1.1rem;
-    color: #ccc;
+    font-size: 1.06rem;
+    color: rgba(226, 232, 240, 0.85);
     font-family: 'Space Grotesk', sans-serif;
-    margin-bottom: 40px;
-    line-height: 1.9;
-    letter-spacing: 0.5px;
+    margin-bottom: 32px;
+    line-height: 1.85;
+    letter-spacing: 0.4px;
 }
 
 /* Beautiful custom style for links in text */
@@ -4724,130 +4776,205 @@ model-viewer {
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
-    border-bottom: 1px dashed rgba(0, 255, 255, 0.4);
+    border-bottom: 1px dashed rgba(0, 255, 255, 0.45);
     padding-bottom: 2px;
 }
 
 .text-highlight:hover {
-    color: var(--text-main);
+    color: #ffffff;
     border-bottom-color: var(--neon-blue);
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.65);
 }
 
 #contact .contact-links-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
     width: 100%;
 }
 
-/* Space Module Card Style - Centered and aligned beautifully */
+/* Galaxy Orbital Transceiver Node Cards */
 #contact .contact-card {
-    background: rgba(6, 12, 24, 0.5);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 210, 255, 0.2);
-    border-left: 4px solid var(--neon-blue);
-    padding: 16px 20px; /* Optimized padding for horizontal spacing */
+    --ch-accent: #00e0ff;
+    --ch-glow: rgba(0, 224, 255, 0.25);
+    --ch-bg-tint: rgba(0, 210, 255, 0.08);
+    background:
+        radial-gradient(circle at 0% 50%, var(--ch-bg-tint) 0%, transparent 70%),
+        linear-gradient(155deg, rgba(8, 15, 30, 0.78) 0%, rgba(4, 9, 20, 0.88) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 210, 255, 0.22);
+    border-left: 3px solid var(--ch-accent);
+    padding: 15px 18px;
     display: flex;
     align-items: center;
-    gap: 14px; /* Tighter gap to maximize text space */
-    border-radius: 4px;
-    flex: 1 1 280px; /* Aligns them into beautiful equal widths and scales nicely! */
-    min-width: 260px;
+    gap: 14px;
+    border-radius: 12px;
     text-align: left;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
     position: relative;
     overflow: hidden;
 }
 
-#contact .contact-card > div {
+#contact .contact-card.channel-indigo {
+    --ch-accent: #38bdf8;
+    --ch-glow: rgba(56, 189, 248, 0.28);
+    --ch-bg-tint: rgba(56, 189, 248, 0.1);
+}
+
+#contact .contact-card > div:not(.card-orb-icon) {
     flex: 1;
     min-width: 0;
 }
 
-/* Scanline/Grid Effect layer */
+/* Subtle Cosmic Star-Grid Overlay inside Card */
 #contact .contact-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, transparent 50%, rgba(0, 210, 255, 0.02) 50%);
+    inset: 0;
+    background:
+        linear-gradient(to bottom, transparent 50%, rgba(0, 210, 255, 0.015) 50%);
     background-size: 100% 4px;
     pointer-events: none;
     z-index: 0;
 }
 
-/* Sci-fi HUD Corner bracket decorations */
+/* HUD Corner Bracket Decoration */
 #contact .contact-card::after {
     content: '';
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 10px;
-    height: 10px;
-    border-top: 2px solid rgba(0, 210, 255, 0.4);
-    border-right: 2px solid rgba(0, 210, 255, 0.4);
+    top: 8px;
+    right: 8px;
+    width: 9px;
+    height: 9px;
+    border-top: 1.5px solid var(--ch-accent);
+    border-right: 1.5px solid var(--ch-accent);
+    opacity: 0.45;
     pointer-events: none;
-    transition: all 0.4s ease;
+    transition: all 0.35s ease;
+}
+
+/* Planetary Orb Icon Container */
+.card-orb-icon {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: radial-gradient(circle at 32% 30%, rgba(0, 224, 255, 0.24), rgba(6, 14, 30, 0.92) 75%);
+    border: 1px solid rgba(0, 224, 255, 0.35);
+    box-shadow:
+        0 0 16px var(--ch-glow),
+        inset 0 0 10px rgba(0, 224, 255, 0.18);
+    z-index: 1;
+    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.card-orb-icon .orb-ring {
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 1px dashed rgba(0, 224, 255, 0.38);
+    animation: rotateOrbit 18s linear infinite;
+    pointer-events: none;
+}
+
+.card-orb-icon.gh-orb-icon {
+    background: radial-gradient(circle at 32% 30%, rgba(57, 211, 83, 0.25), rgba(6, 20, 15, 0.92) 75%);
+    border-color: rgba(57, 211, 83, 0.45);
+    box-shadow:
+        0 0 16px rgba(57, 211, 83, 0.25),
+        inset 0 0 10px rgba(57, 211, 83, 0.16);
+}
+
+.card-orb-icon.gh-orb-icon .orb-ring {
+    border-color: rgba(57, 211, 83, 0.42);
 }
 
 #contact .contact-card i {
-    font-size: 1.5rem; /* Clean, space-efficient icon size */
-    color: var(--neon-blue);
-    text-shadow: 0 0 8px var(--neon-blue);
+    font-size: 1.15rem;
+    color: var(--ch-accent);
+    text-shadow: 0 0 10px var(--ch-glow);
     z-index: 1;
     flex-shrink: 0;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
 }
 
 #contact .card-label {
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.64rem;
     font-weight: 700;
-    margin-bottom: 4px;
-    letter-spacing: 2px;
+    margin-bottom: 5px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     font-family: 'Share Tech Mono', monospace;
     z-index: 1;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.ch-freq-tag {
+    font-size: 0.52rem;
+    letter-spacing: 1.2px;
+    color: rgba(0, 224, 255, 0.8);
+    background: rgba(0, 210, 255, 0.09);
+    border: 1px solid rgba(0, 210, 255, 0.24);
+    padding: 1.5px 6px;
+    border-radius: 999px;
+    font-family: 'Share Tech Mono', monospace;
+    white-space: nowrap;
 }
 
 #contact .card-value {
-    color: #ffffff;
+    color: #f8fafc;
     text-decoration: none;
-    font-size: 0.85rem; /* Standardized size to completely fit long strings */
+    font-size: 0.84rem;
     font-weight: 500;
     display: block;
-    font-family: 'JetBrains Mono', monospace; /* Modern, condensed developer font prevents text clipping */
-    letter-spacing: 0.5px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.3px;
     overflow-wrap: anywhere;
     word-break: break-word;
     z-index: 1;
     position: relative;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
 }
 
 #contact .contact-card:hover {
-    transform: translateY(-5px); /* Lift-up is more modern than slide-out */
-    background: rgba(0, 210, 255, 0.1);
-    border-color: var(--neon-cyan);
-    box-shadow: 0 12px 30px rgba(0, 210, 255, 0.2);
+    transform: translateY(-4px);
+    border-color: var(--ch-accent);
+    box-shadow:
+        0 14px 34px rgba(0, 0, 0, 0.55),
+        0 0 24px var(--ch-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 #contact .contact-card:hover::after {
-    width: 15px;
-    height: 15px;
-    border-color: var(--neon-cyan);
+    width: 13px;
+    height: 13px;
+    opacity: 0.95;
+}
+
+#contact .contact-card:hover .card-orb-icon {
+    transform: scale(1.08);
+    border-color: var(--ch-accent);
+    box-shadow: 0 0 22px var(--ch-glow), inset 0 0 12px rgba(0, 224, 255, 0.28);
 }
 
 #contact .contact-card:hover i {
-    transform: scale(1.1) rotate(5deg);
-    color: var(--neon-cyan);
-    text-shadow: 0 0 12px var(--neon-cyan);
+    transform: scale(1.08);
+    color: #ffffff;
+    text-shadow: 0 0 12px var(--ch-accent);
 }
 
 #contact .contact-card:hover .card-value {
@@ -4861,38 +4988,47 @@ model-viewer {
 }
 
 #contact .github-contact-card {
+    --ch-accent: #39d353;
+    --ch-glow: rgba(57, 211, 83, 0.28);
+    --ch-bg-tint: rgba(57, 211, 83, 0.1);
     cursor: pointer;
     border-left-color: #39d353;
 }
 
 #contact .github-contact-card:hover,
 #contact .github-contact-card.hud-open {
-    background: linear-gradient(135deg, rgba(14, 68, 41, 0.38), rgba(0, 210, 255, 0.12));
-    border-color: rgba(57, 211, 83, 0.65);
+    background:
+        radial-gradient(circle at 0% 50%, rgba(57, 211, 83, 0.18) 0%, transparent 70%),
+        linear-gradient(155deg, rgba(10, 32, 24, 0.85) 0%, rgba(5, 12, 22, 0.92) 100%);
+    border-color: rgba(57, 211, 83, 0.68);
     border-left-color: #39d353;
     box-shadow:
-        0 12px 32px rgba(0, 0, 0, 0.55),
-        0 0 26px rgba(57, 211, 83, 0.25),
+        0 14px 34px rgba(0, 0, 0, 0.6),
+        0 0 26px rgba(57, 211, 83, 0.26),
         inset 0 0 18px rgba(57, 211, 83, 0.08);
     transform: translateY(-4px);
+}
+
+#contact .github-contact-card:hover .gh-orb-icon,
+#contact .github-contact-card.hud-open .gh-orb-icon {
+    border-color: #39d353;
+    box-shadow: 0 0 22px rgba(57, 211, 83, 0.45), inset 0 0 12px rgba(57, 211, 83, 0.25);
 }
 
 #contact .github-contact-card:hover i,
 #contact .github-contact-card.hud-open i {
     color: #39d353;
-    text-shadow: 0 0 14px rgba(57, 211, 83, 0.8);
+    text-shadow: 0 0 14px rgba(57, 211, 83, 0.85);
+}
+
+#contact .github-contact-card:hover .card-value,
+#contact .github-contact-card.hud-open .card-value {
+    color: #7ee787;
 }
 
 .gh-card-info {
     flex: 1;
     min-width: 0;
-}
-
-#contact .card-label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
 }
 
 .gh-telemetry-badge {
@@ -5875,44 +6011,122 @@ model-viewer {
     .form-status { text-align: center; }
 }
 
-/* --- Realistic CSS 3D EARTH BANNER --- */
+/* --- Realistic CSS 3D EARTH & LUNAR RELAY SYSTEM --- */
 .earth-container {
-    flex: 0.9;
+    flex: 0.95;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 400px;
+    height: 430px;
     position: relative;
+}
+
+/* Outer Planetary Radar Ring */
+.earth-orbit-track {
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 210, 255, 0.14);
+    box-shadow:
+        0 0 35px rgba(0, 210, 255, 0.06),
+        inset 0 0 35px rgba(0, 210, 255, 0.04);
+    pointer-events: none;
+    z-index: 0;
 }
 
 /* Glowing dashed orbit ring around Earth */
 .earth-container::before {
     content: '';
     position: absolute;
-    width: 440px;
-    height: 440px;
+    width: 410px;
+    height: 410px;
     border-radius: 50%;
-    border: 1px dashed rgba(0, 210, 255, 0.2);
-    box-shadow: 0 0 20px rgba(0, 210, 255, 0.05);
-    animation: rotateOrbit 40s linear infinite;
+    border: 1px dashed rgba(0, 224, 255, 0.28);
+    box-shadow: 0 0 24px rgba(0, 210, 255, 0.08);
+    animation: rotateOrbit 42s linear infinite;
     pointer-events: none;
     z-index: 0;
 }
 
-/* Glowing solid orbital path in front of Earth */
+/* Glowing tilted orbital path in front of Earth */
 .earth-container::after {
     content: '';
     position: absolute;
-    width: 420px;
-    height: 130px;
+    width: 425px;
+    height: 132px;
     border-radius: 50%;
-    border-top: 2px solid rgba(0, 255, 255, 0.35);
-    border-bottom: 2px solid rgba(0, 255, 255, 0.05);
-    transform: rotate(-15deg);
-    filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.3));
+    border-top: 2px solid rgba(0, 255, 255, 0.42);
+    border-bottom: 1.5px solid rgba(56, 189, 248, 0.08);
+    transform: rotate(-16deg);
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.35));
     pointer-events: none;
-    z-index: 2; /* Renders in front of Earth! */
+    z-index: 3;
     animation: orbitPulse 4s ease-in-out infinite alternate;
+}
+
+/* Orbiting 3D Moon Satellite Ring */
+.earth-moon-orbit {
+    position: absolute;
+    width: 410px;
+    height: 410px;
+    border-radius: 50%;
+    animation: rotateOrbit 26s linear infinite;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.earth-moon-node {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    animation: counterRotateMoon 26s linear infinite;
+}
+
+@keyframes counterRotateMoon {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(-360deg); }
+}
+
+.earth-moon-sphere {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-image:
+        radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.32) 0%, transparent 45%),
+        url("assets/images/planets/moon.jpg");
+    background-size: 100% 100%, 200% 100%;
+    background-position: center, 0% 50%;
+    animation: moonSpin 18s linear infinite;
+    box-shadow:
+        inset -7px -6px 12px rgba(0, 0, 0, 0.85),
+        inset 2px 2px 5px rgba(224, 242, 254, 0.45),
+        0 0 16px rgba(186, 230, 253, 0.55),
+        0 0 30px rgba(0, 210, 255, 0.3);
+}
+
+@keyframes moonSpin {
+    0% { background-position: center, 0% 50%; }
+    100% { background-position: center, 200% 50%; }
+}
+
+.earth-moon-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.48rem;
+    letter-spacing: 1.4px;
+    color: #e0f2fe;
+    background: rgba(5, 12, 26, 0.88);
+    border: 1px solid rgba(0, 224, 255, 0.38);
+    padding: 1.5px 6px;
+    border-radius: 999px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
 }
 
 @keyframes rotateOrbit {
@@ -5926,46 +6140,92 @@ model-viewer {
 
 @keyframes orbitPulse {
     0% {
-        opacity: 0.5;
-        transform: rotate(-15deg) scale(0.98);
+        opacity: 0.55;
+        transform: rotate(-16deg) scale(0.98);
     }
     100% {
-        opacity: 0.9;
-        transform: rotate(-15deg) scale(1.02);
+        opacity: 0.95;
+        transform: rotate(-16deg) scale(1.02);
     }
 }
 
-/* The Earth Sphere */
+/* The 3D Earth Sphere */
 .section-banner {
-  height: 350px;
-  width: 350px;
-  flex-shrink: 0;
-  position: relative;
-  transition: left 0.3s linear;
-  background: url("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg") repeat-x;
-  background-size: 700px 350px;
-  background-position: 0 0;
-  bottom: 0px;
-  border-radius: 50%;
-  animation: earthRotate 30s linear infinite;
-  /* Multi-layered box shadows: atmosphere glow, exosphere gradient, sunset shading, and internal ambient shadow */
-  box-shadow: 
-    0 0 35px rgba(0, 210, 255, 0.4), 
-    0 0 70px rgba(0, 80, 255, 0.2), 
-    -10px 0px 15px #c3f4ff inset,
-    25px 2px 35px #000 inset, 
-    350px 0px 44px #00000066 inset, 
-    210px 0px 38px #000000aa inset;
-  z-index: 1;
+    height: 330px;
+    width: 330px;
+    flex-shrink: 0;
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background-image:
+        radial-gradient(circle at 28% 26%, rgba(255, 255, 255, 0.22) 0%, transparent 42%),
+        url("assets/images/planets/earth.jpg");
+    background-repeat: no-repeat, repeat-x;
+    background-size: 100% 100%, 660px 330px;
+    background-position: center, 0 0;
+    border-radius: 50%;
+    animation: earthRotate 32s linear infinite;
+    /* Multi-layered 3D atmosphere & night-side terminator shading */
+    box-shadow:
+        0 0 40px rgba(0, 210, 255, 0.42),
+        0 0 85px rgba(0, 95, 255, 0.22),
+        -12px -4px 18px rgba(195, 244, 255, 0.82) inset,
+        26px 4px 36px #000000 inset,
+        330px 0px 44px #00000066 inset,
+        195px 0px 38px #000000aa inset;
+    z-index: 2;
+}
+
+.earth-atmosphere-halo {
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    background: radial-gradient(circle, transparent 60%, rgba(0, 210, 255, 0.16) 72%, transparent 82%);
+    pointer-events: none;
 }
 
 @keyframes earthRotate {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 700px 0;
-  }
+    0% {
+        background-position: center, 0 0;
+    }
+    100% {
+        background-position: center, 660px 0;
+    }
+}
+
+/* Planetary Telemetry Caption Pill below Earth */
+.earth-telemetry-pill {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: rgba(5, 11, 24, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 224, 255, 0.35);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 15px rgba(0, 210, 255, 0.15);
+    z-index: 5;
+    white-space: nowrap;
+}
+
+.et-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 8px var(--neon-cyan);
+    animation: signalPulse 1.8s ease-in-out infinite;
+}
+
+.et-code {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 1.8px;
+    color: #e0f2fe;
 }
 
 /* Beautiful custom twinkling stars quadrant */
@@ -6048,35 +6308,35 @@ model-viewer {
 
 #star-3 {
   position: absolute;
-  left: 400px;
+  left: 380px;
   top: 90px;
   animation: twinkling 4s infinite;
 }
 
 #star-4 {
   position: absolute;
-  left: 200px;
-  top: 390px;
+  left: 190px;
+  top: 365px;
   animation: twinkling 3s infinite;
 }
 
 #star-5 {
   position: absolute;
-  left: 50px;
-  top: 370px;
+  left: 45px;
+  top: 350px;
   animation: twinkling 1.5s infinite;
 }
 
 #star-6 {
   position: absolute;
-  left: 300px;
-  top: -50px;
+  left: 285px;
+  top: -45px;
   animation: twinkling 4s infinite;
 }
 
 #star-7 {
   position: absolute;
-  left: 360px;
+  left: 345px;
   top: 60px;
   animation: twinkling 2s infinite;
 }
@@ -6545,6 +6805,13 @@ model-viewer {
         height: auto;
     }
 
+    .mc-uplink-badge {
+        justify-content: center;
+        flex-wrap: wrap;
+        font-size: 0.6rem;
+        padding: 5px 12px;
+    }
+
     #contact .contact-heading {
         font-size: 1.85rem;
         margin-bottom: 18px;
@@ -6577,9 +6844,9 @@ model-viewer {
         flex: none;
         width: 100%;
         max-width: 100%;
-        height: 270px;
-        margin: 12px auto 0;
-        transform: scale(0.6);
+        height: 280px;
+        margin: 16px auto 0;
+        transform: scale(0.62);
         transform-origin: center center;
     }
 
@@ -6654,6 +6921,10 @@ model-viewer {
         min-height: auto;
     }
 
+    #contact .missions-subtitle {
+        margin-bottom: 26px;
+    }
+
     #contact .mission-control-container {
         padding: 0 16px;
         gap: 24px;
@@ -6661,6 +6932,13 @@ model-viewer {
 
     #contact .contact-upper-area {
         gap: 24px;
+    }
+
+    .mc-uplink-badge {
+        font-size: 0.54rem;
+        letter-spacing: 1.3px;
+        gap: 6px;
+        margin-bottom: 14px;
     }
 
     #contact .contact-heading {
@@ -6688,12 +6966,17 @@ model-viewer {
         width: 100%;
         min-width: 0;
         height: auto;
-        padding: 14px 16px;
+        padding: 13px 15px;
         gap: 12px;
     }
 
+    .card-orb-icon {
+        width: 38px;
+        height: 38px;
+    }
+
     #contact .contact-card i {
-        font-size: 1.35rem;
+        font-size: 1.05rem;
     }
 
     #contact .card-label {
@@ -6705,7 +6988,8 @@ model-viewer {
         font-size: 0.78rem;
     }
 
-    .gh-telemetry-badge {
+    .gh-telemetry-badge,
+    .ch-freq-tag {
         font-size: 0.48rem;
         letter-spacing: 1px;
         padding: 2px 6px;
@@ -6716,9 +7000,9 @@ model-viewer {
     #contact .earth-container.fade-left.visible {
         flex: none;
         width: 100%;
-        height: 235px;
-        margin: 10px auto 0;
-        transform: scale(0.5);
+        height: 245px;
+        margin: 12px auto 0;
+        transform: scale(0.52);
         transform-origin: center center;
     }
 

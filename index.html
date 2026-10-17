@@ -8,7 +8,7 @@
     <!-- Favicon -->
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-    <link rel="stylesheet" href="style.css?v=23">
+    <link rel="stylesheet" href="style.css?v=24">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -843,13 +843,24 @@
 
 
     <section id="contact">
+        <!-- Ambient Galaxy Nebula Glow -->
+        <div class="contact-galaxy-nebula" aria-hidden="true"></div>
+
         <div class="container fade-up">
-            <h2 class="section-title" style="text-align:center; margin-bottom:40px;">Mission Control</h2>
+            <h2 class="section-title" style="text-align:center;">Mission Control</h2>
+            <p class="missions-subtitle">Deep Space Uplink &mdash; Orbital Communications Array</p>
 
             <div class="mission-control-container">
 
                 <div class="contact-upper-area">
                     <div class="contact-text-panel fade-right">
+                        <div class="mc-uplink-badge">
+                            <span class="mc-uplink-dot"></span>
+                            <span>SUBSPACE TRANSCEIVER // ONLINE</span>
+                            <span class="mc-uplink-sep">&bull;</span>
+                            <span class="mc-uplink-coords">11.66&deg;N, 78.14&deg;E</span>
+                        </div>
+
                         <h3 class="contact-heading">What would you do if a software expert were just a click away?</h3>
                         <p class="contact-subtext">Whether you want to start a new project or just say hello, I’d love
                             to
@@ -860,24 +871,44 @@
 
                         <div class="contact-links-stage">
                             <div class="contact-links-row">
-                                <div class="contact-card">
-                                    <i class="fas fa-envelope"></i>
-                                    <div>
-                                        <div class="card-label">EMAIL</div>
+                                <!-- Channel 01: Direct Mail -->
+                                <div class="contact-card channel-cyan">
+                                    <div class="card-orb-icon">
+                                        <span class="orb-ring"></span>
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-label">
+                                            <span>EMAIL</span>
+                                            <span class="ch-freq-tag">CH-01 // DIRECT</span>
+                                        </div>
                                         <a href="mailto:althafbilal1968@gmail.com"
                                             class="card-value">althafbilal1968@gmail.com</a>
                                     </div>
                                 </div>
-                                <div class="contact-card">
-                                    <i class="fab fa-linkedin"></i>
-                                    <div>
-                                        <div class="card-label">LINKEDIN</div>
+
+                                <!-- Channel 02: LinkedIn Network -->
+                                <div class="contact-card channel-indigo">
+                                    <div class="card-orb-icon">
+                                        <span class="orb-ring"></span>
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card-label">
+                                            <span>LINKEDIN</span>
+                                            <span class="ch-freq-tag">CH-02 // COMMS</span>
+                                        </div>
                                         <a href="https://www.linkedin.com/in/mohammed-bilal-a-5b5656254" class="card-value"
                                             target="_blank" rel="noopener noreferrer">Mohammed Bilal A</a>
                                     </div>
                                 </div>
+
+                                <!-- Channel 03: GitHub + Live Contributions HUD -->
                                 <div class="contact-card github-contact-card" id="githubContactCard" tabindex="0" role="button" aria-expanded="false" aria-controls="githubContribHud">
-                                    <i class="fab fa-github"></i>
+                                    <div class="card-orb-icon gh-orb-icon">
+                                        <span class="orb-ring"></span>
+                                        <i class="fab fa-github"></i>
+                                    </div>
                                     <div class="gh-card-info">
                                         <div class="card-label">
                                             <span>GITHUB</span>
@@ -1009,9 +1040,23 @@
                         </div>
                     </div>
 
+                    <!-- RIGHT: 3D Orbital Earth & Lunar Relay System -->
                     <div class="earth-container fade-left">
-                        <!-- From Uiverse.io by Lakshay-art -->
+                        <!-- Outer Planetary Radar Track -->
+                        <div class="earth-orbit-track" aria-hidden="true"></div>
+
+                        <!-- Orbiting 3D Moon Satellite -->
+                        <div class="earth-moon-orbit" aria-hidden="true">
+                            <div class="earth-moon-node">
+                                <div class="earth-moon-sphere"></div>
+                                <span class="earth-moon-label">LUNA-RELAY</span>
+                            </div>
+                        </div>
+
+                        <!-- 3D Rotating Earth Sphere -->
                         <div class="section-banner">
+                            <div class="earth-atmosphere-halo" aria-hidden="true"></div>
+
                             <div id="star-1">
                                 <div class="curved-corner-star">
                                     <div class="curved-corner-bottomright"></div>
@@ -1089,6 +1134,12 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Planetary Telemetry Caption Pill -->
+                        <div class="earth-telemetry-pill">
+                            <span class="et-pulse"></span>
+                            <span class="et-code">TERRA-03 // ORBITAL RELAY LOCKED</span>
+                        </div>
                     </div>
                 </div>
 
@@ -1122,7 +1173,7 @@
         <div class="warp-flash"></div>
     </div>
 
-    <script src="script.js?v=13"></script>
+    <script src="script.js?v=14"></script>
 </body>
 
 </html>
