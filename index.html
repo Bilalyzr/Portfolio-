@@ -8,7 +8,7 @@
     <!-- Favicon -->
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=23">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,16 +102,116 @@
 
 
 
-    <!-- Mobile Screen Overlay -->
-    <div class="mobile-nav-overlay" id="mobileNav">
-        <div class="close-menu-btn" onclick="toggleMobileMenu()"><i class="fas fa-times"></i></div>
-        <div class="mobile-nav-links">
-            <a href="#home" onclick="toggleMobileMenu()">Home</a>
-            <a href="#about" onclick="toggleMobileMenu()">About</a>
-            <a href="#skills" onclick="toggleMobileMenu()">Skills</a>
-            <a href="#projects" onclick="toggleMobileMenu()">Projects</a>
-            <a href="#journey" onclick="toggleMobileMenu()">Journey</a>
-            <a href="#contact" onclick="toggleMobileMenu()">Contact</a>
+    <!-- Mobile Orbital Menu Trigger Button -->
+    <button type="button" class="mobile-menu-trigger" id="mobileMenuTrigger" onclick="toggleMobileMenu()" aria-label="Open Orbital Navigation" aria-expanded="false" aria-controls="mobileNav">
+        <span class="mm-radar-dot"></span>
+        <span class="mm-label">ORBITAL NAV</span>
+        <span class="mm-bars" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+        </span>
+    </button>
+
+    <!-- Mobile Screen Overlay (Spacecraft Orbital Command Deck) -->
+    <div class="mobile-nav-overlay" id="mobileNav" role="dialog" aria-modal="true" aria-label="Orbital Navigation Deck">
+        <div class="mnav-backdrop-grid"></div>
+        <div class="mnav-nebula-glow"></div>
+
+        <div class="mnav-hud-panel">
+            <!-- Top HUD Header -->
+            <div class="mnav-header">
+                <div class="mnav-brand">
+                    <div class="logo-box">
+                        <span class="logo-terminal">&gt;<span class="blink-underscore">_</span></span>
+                    </div>
+                    <div class="mnav-brand-meta">
+                        <span class="mnav-brand-title">DVLPR // NAV DECK</span>
+                        <span class="mnav-brand-sub"><span class="mnav-live-dot"></span>SECTOR TELEPORT READY</span>
+                    </div>
+                </div>
+                <button type="button" class="close-menu-btn" onclick="toggleMobileMenu()" aria-label="Close Navigation">
+                    <span class="close-label">ESC</span>
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Sector Telemetry Navigation Links -->
+            <nav class="mobile-nav-links" aria-label="Primary Mobile Navigation">
+                <a href="#home" class="mnav-item active" style="--i: 0;">
+                    <span class="mnav-index">00</span>
+                    <span class="mnav-icon"><i class="fas fa-sun"></i></span>
+                    <span class="mnav-info">
+                        <span class="mnav-title">Home</span>
+                        <span class="mnav-desc">SOLAR CORE // OVERVIEW</span>
+                    </span>
+                    <i class="fas fa-chevron-right mnav-arrow"></i>
+                </a>
+                <a href="#about" class="mnav-item" style="--i: 1;">
+                    <span class="mnav-index">01</span>
+                    <span class="mnav-icon"><i class="fas fa-user-astronaut"></i></span>
+                    <span class="mnav-info">
+                        <span class="mnav-title">About</span>
+                        <span class="mnav-desc">ASTRONAUT DOSSIER // BIO</span>
+                    </span>
+                    <i class="fas fa-chevron-right mnav-arrow"></i>
+                </a>
+                <a href="#skills" class="mnav-item" style="--i: 2;">
+                    <span class="mnav-index">02</span>
+                    <span class="mnav-icon"><i class="fas fa-globe"></i></span>
+                    <span class="mnav-info">
+                        <span class="mnav-title">Skills</span>
+                        <span class="mnav-desc">PLANETARY TECH SYSTEM</span>
+                    </span>
+                    <i class="fas fa-chevron-right mnav-arrow"></i>
+                </a>
+                <a href="#projects" class="mnav-item" style="--i: 3;">
+                    <span class="mnav-index">03</span>
+                    <span class="mnav-icon"><i class="fas fa-satellite-dish"></i></span>
+                    <span class="mnav-info">
+                        <span class="mnav-title">Projects</span>
+                        <span class="mnav-desc">MISSIONS LOG // ARCHIVE</span>
+                    </span>
+                    <i class="fas fa-chevron-right mnav-arrow"></i>
+                </a>
+                <a href="#journey" class="mnav-item" style="--i: 4;">
+                    <span class="mnav-index">04</span>
+                    <span class="mnav-icon"><i class="fas fa-route"></i></span>
+                    <span class="mnav-info">
+                        <span class="mnav-title">Journey</span>
+                        <span class="mnav-desc">STELLAR TRAJECTORY</span>
+                    </span>
+                    <i class="fas fa-chevron-right mnav-arrow"></i>
+                </a>
+                <a href="#contact" class="mnav-item" style="--i: 5;">
+                    <span class="mnav-index">05</span>
+                    <span class="mnav-icon"><i class="fas fa-broadcast-tower"></i></span>
+                    <span class="mnav-info">
+                        <span class="mnav-title">Contact</span>
+                        <span class="mnav-desc">MISSION CONTROL // UPLINK</span>
+                    </span>
+                    <i class="fas fa-chevron-right mnav-arrow"></i>
+                </a>
+            </nav>
+
+            <!-- Bottom Quick-Comms & Telemetry Footer -->
+            <div class="mnav-footer">
+                <div class="mnav-socials">
+                    <a href="https://github.com/Bilalyzr" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/mohammed-bilal-a-5b5656254" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="mailto:althafbilal1968@gmail.com" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="https://www.instagram.com/_.bxnny_4?igsh=dndpNm1zdHIxMTE0" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+                <div class="mnav-coords">SYS ONLINE · 11.66°N, 78.14°E</div>
+            </div>
         </div>
     </div>
 
@@ -142,46 +242,117 @@
                     </div>
                 </div>
 
-                <!-- Tracks & Planets -->
+                <!-- Tracks & 3D Real Solar System Tech Planets -->
+                <!-- 1. Mercury (Node.js) — Scorched Cratered Iron World -->
                 <div class="track track-1">
-                    <div class="p-wrapper p-1">
-                        <div class="planet-body style-node counter-rot-1"><i class="fab fa-node-js"></i></div>
+                    <div class="p-wrapper p-1" style="--start-angle: 0deg;">
+                        <div class="planet-body style-node planet-mercury counter-rot-1" data-skill="node" data-planet-label="MERCURY // NODE.JS" role="button" tabindex="0" aria-label="Mercury - Node.js Tech Planet">
+                            <div class="planet-aura"></div>
+                            <div class="planet-sphere">
+                                <div class="planet-texture"></div>
+                                <div class="planet-emblem"><i class="fab fa-node-js"></i></div>
+                                <div class="planet-grid-overlay"></div>
+                                <div class="planet-shading"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- 2. Earth (React.js) — Blue Marble, Continents, Clouds & Lunar Moon -->
                 <div class="track track-2">
-                    <div class="p-wrapper p-2">
-                        <div class="planet-body style-react counter-rot-2"><i class="fab fa-react"></i></div>
+                    <div class="p-wrapper p-2" style="--start-angle: 120deg;">
+                        <div class="planet-body style-react planet-earth counter-rot-2" data-skill="react" data-planet-label="EARTH // REACT.JS" role="button" tabindex="0" aria-label="Earth - React.js Tech Planet">
+                            <div class="planet-aura"></div>
+                            <div class="planet-sphere">
+                                <div class="planet-texture"></div>
+                                <div class="planet-clouds"></div>
+                                <div class="planet-emblem"><i class="fab fa-react"></i></div>
+                                <div class="planet-grid-overlay"></div>
+                                <div class="planet-shading"></div>
+                            </div>
+                            <div class="planet-moon-orbit">
+                                <div class="planet-moon"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- 3. Mars (HTML5) — The Rusty Red Planet & Polar Ice Cap -->
                 <div class="track track-3">
-                    <div class="p-wrapper p-3">
-                        <div class="planet-body style-html counter-rot-3"><i class="fab fa-html5"></i></div>
+                    <div class="p-wrapper p-3" style="--start-angle: 240deg;">
+                        <div class="planet-body style-html planet-mars counter-rot-3" data-skill="html" data-planet-label="MARS // HTML5" role="button" tabindex="0" aria-label="Mars - HTML5 Tech Planet">
+                            <div class="planet-aura"></div>
+                            <div class="planet-sphere">
+                                <div class="planet-texture"></div>
+                                <div class="planet-emblem"><i class="fab fa-html5"></i></div>
+                                <div class="planet-grid-overlay"></div>
+                                <div class="planet-shading"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- 4. Saturn (Database / SQL) — Golden Gas Giant & Cassini Ring System -->
                 <div class="track track-4">
-                    <div class="p-wrapper p-4">
-                        <div class="planet-body style-db counter-rot-4"><i class="fas fa-database"></i></div>
+                    <div class="p-wrapper p-4" style="--start-angle: 60deg;">
+                        <div class="planet-body style-db planet-saturn counter-rot-4" data-skill="sql" data-planet-label="SATURN // SQL & DB" role="button" tabindex="0" aria-label="Saturn - SQL Database Tech Planet">
+                            <div class="planet-aura"></div>
+                            <div class="planet-sphere">
+                                <div class="planet-texture"></div>
+                                <div class="planet-emblem"><i class="fas fa-database"></i></div>
+                                <div class="planet-grid-overlay"></div>
+                                <div class="planet-shading"></div>
+                            </div>
+                            <div class="planet-ring ring-saturn-major"></div>
+                            <div class="planet-ring ring-saturn-minor"></div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- 5. Jupiter (Python) — Banded Gas Giant & Great Red Spot -->
                 <div class="track track-5">
-                    <div class="p-wrapper p-5">
-                        <div class="planet-body style-python counter-rot-5"><i class="fab fa-python"></i></div>
+                    <div class="p-wrapper p-5" style="--start-angle: 180deg;">
+                        <div class="planet-body style-python planet-jupiter counter-rot-5" data-skill="python" data-planet-label="JUPITER // PYTHON" role="button" tabindex="0" aria-label="Jupiter - Python Tech Planet">
+                            <div class="planet-aura"></div>
+                            <div class="planet-sphere">
+                                <div class="planet-texture"></div>
+                                <div class="planet-emblem"><i class="fab fa-python"></i></div>
+                                <div class="planet-grid-overlay"></div>
+                                <div class="planet-shading"></div>
+                            </div>
+                            <div class="planet-ring ring-jupiter-faint"></div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- 6. Uranus (CSS3) — Aquamarine Ice Giant & Tilted Ring -->
                 <div class="track track-6">
-                    <div class="p-wrapper p-6">
-                        <div class="planet-body style-css counter-rot-6"><i class="fab fa-css3-alt"></i></div>
+                    <div class="p-wrapper p-6" style="--start-angle: 300deg;">
+                        <div class="planet-body style-css planet-uranus counter-rot-6" data-skill="css" data-planet-label="URANUS // CSS3" role="button" tabindex="0" aria-label="Uranus - CSS3 Tech Planet">
+                            <div class="planet-aura"></div>
+                            <div class="planet-sphere">
+                                <div class="planet-texture"></div>
+                                <div class="planet-emblem"><i class="fab fa-css3-alt"></i></div>
+                                <div class="planet-grid-overlay"></div>
+                                <div class="planet-shading"></div>
+                            </div>
+                            <div class="planet-ring ring-uranus"></div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- 7. Neptune (Git) — Deep Cobalt Ice Giant & Cirrus Winds -->
                 <div class="track track-7">
-                    <div class="p-wrapper p-7">
-                        <div class="planet-body style-git counter-rot-7"><i class="fab fa-git-alt"></i></div>
+                    <div class="p-wrapper p-7" style="--start-angle: 45deg;">
+                        <div class="planet-body style-git planet-neptune counter-rot-7" data-skill="git" data-planet-label="NEPTUNE // GIT" role="button" tabindex="0" aria-label="Neptune - Git Tech Planet">
+                            <div class="planet-aura"></div>
+                            <div class="planet-sphere">
+                                <div class="planet-texture"></div>
+                                <div class="planet-emblem"><i class="fab fa-git-alt"></i></div>
+                                <div class="planet-grid-overlay"></div>
+                                <div class="planet-shading"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -206,15 +377,22 @@
             <h2 class="section-title">About - The Astronaut</h2>
 
             <div class="top-section">
-                <div class="astronaut-container zoom-in">
+                <div class="astronaut-container zoom-in" id="astronautContainer">
                     <model-viewer src="assets/models/Astronaut.glb" alt="A 3D model of an astronaut" auto-rotate
                         camera-controls shadow-intensity="1"
                         style="width: 100%; height: 100%; background-color: transparent;" disable-zoom disable-pan>
                     </model-viewer>
 
-                    <!-- Speech Bubble -->
-                    <div class="speech-bubble">Hello, Universe.<br>
-                        I am Mohammed Bilal.</div>
+                    <!-- Hologram Emitter Pedestal -->
+                    <div class="holo-emitter-base" aria-hidden="true">
+                        <div class="emitter-beam"></div>
+                        <div class="emitter-ring-outer"></div>
+                        <div class="emitter-ring-inner"></div>
+                    </div>
+
+                    <!-- Speech Bubble (revealed when touching/interacting with the Astronaut) -->
+                    <div class="speech-bubble" id="astronautSpeechBubble">Hello, Universe.<br>
+                        I am <span class="astronaut-name-highlight">Mohammed Bilal</span>.</div>
                 </div>
 
                 <div class="profile-card holograph-card fade-left">
@@ -228,7 +406,7 @@
                     </div>
                     <div class="hud-status">Active</div>
 
-                    <h3>Who You Are</h3>
+                    <h3>Who I Am</h3>
                     <div class="hud-subtitle">Personnel Database // Entry_001</div>
                     <div class="card-line"></div>
                     <p>
@@ -298,10 +476,10 @@
                     <div class="card-title">Areas of Interest</div>
                     <div class="card-content">
                         <ul class="bullet-list">
-                            <li>Artificial Intelligence.</li>
-                            <li>Software Development.</li>
-                            <li>Web Development.</li>
-                            <li>Data Analysis.</li>
+                            <li>Artificial Intelligence</li>
+                            <li>Software Development</li>
+                            <li>Web Development</li>
+                            <li>Data Analysis</li>
                         </ul>
                     </div>
                 </div>
@@ -362,11 +540,17 @@
                     <div class="planet-track track-1">
                         <div class="planet-spinner">
                             <div class="planet-pos" style="--start-angle: 0deg;">
-                                <div class="planet p-react" onclick="openSkill('react')"><i class="fab fa-react"></i>
+                                <div class="planet p-react skill-earth" data-planet-label="EARTH // REACT.JS" onclick="openSkill('react')">
+                                    <span class="sk-planet-surface"></span>
+                                    <span class="sk-planet-clouds"></span>
+                                    <i class="fab fa-react"></i>
+                                    <span class="sk-moon-orbit"><span class="sk-moon"></span></span>
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 180deg;">
-                                <div class="planet p-node" onclick="openSkill('node')"><i class="fab fa-node-js"></i>
+                                <div class="planet p-node skill-mercury" data-planet-label="MERCURY // NODE.JS" onclick="openSkill('node')">
+                                    <span class="sk-planet-surface"></span>
+                                    <i class="fab fa-node-js"></i>
                                 </div>
                             </div>
                         </div>
@@ -376,15 +560,24 @@
                     <div class="planet-track track-2">
                         <div class="planet-spinner">
                             <div class="planet-pos" style="--start-angle: 0deg;">
-                                <div class="planet p-html" onclick="openSkill('html')"><i class="fab fa-html5"></i>
+                                <div class="planet p-html skill-mars" data-planet-label="MARS // HTML5" onclick="openSkill('html')">
+                                    <span class="sk-planet-surface"></span>
+                                    <i class="fab fa-html5"></i>
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 120deg;">
-                                <div class="planet p-sql" onclick="openSkill('sql')"><i class="fas fa-database"></i>
+                                <div class="planet p-sql skill-saturn" data-planet-label="SATURN // SQL & DB" onclick="openSkill('sql')">
+                                    <span class="sk-planet-surface"></span>
+                                    <i class="fas fa-database"></i>
+                                    <span class="sk-saturn-ring-major"></span>
+                                    <span class="sk-saturn-ring-minor"></span>
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 240deg;">
-                                <div class="planet p-git" onclick="openSkill('git')"><i class="fab fa-git-alt"></i>
+                                <div class="planet p-git skill-uranus" data-planet-label="URANUS // GIT" onclick="openSkill('git')">
+                                    <span class="sk-planet-surface"></span>
+                                    <i class="fab fa-git-alt"></i>
+                                    <span class="sk-uranus-ring"></span>
                                 </div>
                             </div>
                         </div>
@@ -394,15 +587,21 @@
                     <div class="planet-track track-3">
                         <div class="planet-spinner">
                             <div class="planet-pos" style="--start-angle: 0deg;">
-                                <div class="planet p-css" onclick="openSkill('css')"><i class="fab fa-css3-alt"></i>
+                                <div class="planet p-css skill-neptune" data-planet-label="NEPTUNE // CSS3" onclick="openSkill('css')">
+                                    <span class="sk-planet-surface"></span>
+                                    <i class="fab fa-css3-alt"></i>
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 120deg;">
-                                <div class="planet p-js" onclick="openSkill('js')"><i class="fab fa-js"></i>
+                                <div class="planet p-js skill-venus" data-planet-label="VENUS // JAVASCRIPT" onclick="openSkill('js')">
+                                    <span class="sk-planet-surface"></span>
+                                    <i class="fab fa-js"></i>
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 240deg;">
-                                <div class="planet p-python" onclick="openSkill('python')"><i class="fab fa-python"></i>
+                                <div class="planet p-python skill-jupiter" data-planet-label="JUPITER // PYTHON" onclick="openSkill('python')">
+                                    <span class="sk-planet-surface"></span>
+                                    <i class="fab fa-python"></i>
                                 </div>
                             </div>
                         </div>
@@ -419,15 +618,15 @@
                 <p class="skills-body-text">
                     Hands-on experience in full-stack web development with React.js, Node.js, Express.js, FastAPI, and Python.
                     Proficient in database design (PostgreSQL, MySQL, MongoDB, Supabase), API architectures (REST, GraphQL),
-                    Dockerized containerization, machine learning classification (Scikit-learn, XGBoost), and managing LMS platforms like WordPress & Tutor LMS.
+                    Docker containerization, machine learning classification (Scikit-learn, XGBoost), and LMS platform management (WordPress &amp; Tutor LMS).
                 </p>
             </div>
         </div>
 
     </section>
 
-    <!-- 4. PROJECTS SECTION — Missions Log -->
-    <section id="projects">
+    <!-- 4. PROJECTS SECTION — Missions Log (3D Planetary Orbit Map + Wide Mission Console) -->
+    <section id="projects" class="galaxy-missions-section">
 
         <!-- Holographic Grid Background -->
         <div class="holo-grid-plane"></div>
@@ -436,7 +635,7 @@
             <h2 class="section-title" style="text-align:center;">Missions Log</h2>
             <p class="missions-subtitle">Classified Operations &mdash; Mission Archive</p>
 
-            <!-- Filter Bar -->
+            <!-- Constellation Filter Bar -->
             <div class="freq-scanner">
                 <div class="scanner-line"></div>
                 <div class="freq-buttons">
@@ -450,7 +649,7 @@
                         <span class="freq-dot"></span> Python
                     </button>
                     <button class="freq-btn" onclick="filterProjects('ai', this)">
-                        <span class="freq-dot"></span> AI & ML
+                        <span class="freq-dot"></span> AI &amp; ML
                     </button>
                     <button class="freq-btn" onclick="filterProjects('web', this)">
                         <span class="freq-dot"></span> Web
@@ -458,14 +657,47 @@
                 </div>
             </div>
 
-            <!-- File Stack Carousel -->
-            <div class="stack-container" id="stackContainer">
-                <!-- Injected via JS -->
-            </div>
-            <div class="stack-nav">
-                <div class="nav-arrow" id="prevBtn"><i class="fas fa-chevron-left"></i></div>
-                <div class="nav-dots" id="navDots"></div>
-                <div class="nav-arrow" id="nextBtn"><i class="fas fa-chevron-right"></i></div>
+            <!-- 3D Planetary Orbit Map + Wide Mission Console Split Deck -->
+            <div class="galaxy-mission-deck">
+
+                <!-- LEFT: Interactive 3D Planetary Orbit Map -->
+                <div class="orbital-starmap-panel">
+                    <div class="starmap-stage" id="starmapStage">
+                        <!-- Concentric Orbital Rings -->
+                        <div class="starmap-ring ring-outer"></div>
+                        <div class="starmap-ring ring-mid"></div>
+                        <div class="starmap-ring ring-inner"></div>
+                        <div class="starmap-radar-sweep"></div>
+
+                        <!-- Dynamic SVG Laser Link from Core to Active Planet -->
+                        <svg class="starmap-laser-svg" viewBox="0 0 400 400" preserveAspectRatio="none" aria-hidden="true">
+                            <line id="starmapLaserLine" x1="200" y1="200" x2="200" y2="60" />
+                        </svg>
+
+                        <!-- Central Active Planet Core -->
+                        <div class="starmap-core" id="starmapCore">
+                            <div class="starmap-core-halo"></div>
+                            <div class="starmap-core-sphere" id="starmapCoreSphere"></div>
+                            <span class="starmap-core-code" id="starmapCoreCode">ALPHA-01</span>
+                        </div>
+
+                        <!-- Orbiting Mission Planet Nodes (Injected via JS) -->
+                        <div class="starmap-nodes" id="starmapNodes"></div>
+                    </div>
+
+                    <!-- Orbital Step Controls below Star Map -->
+                    <div class="stack-nav">
+                        <div class="nav-arrow" id="prevBtn" role="button" aria-label="Previous mission"><i class="fas fa-chevron-left"></i></div>
+                        <div class="nav-dots" id="navDots"></div>
+                        <div class="nav-arrow" id="nextBtn" role="button" aria-label="Next mission"><i class="fas fa-chevron-right"></i></div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Wide Holographic Mission Console -->
+                <div class="mission-console-wrapper" id="stackContainer">
+                    <!-- Injected via JS -->
+                </div>
+
             </div>
 
         </div>
@@ -486,10 +718,19 @@
 
             <!-- Node 1: SSLC — Asteroid -->
             <div class="stellar-node node-asteroid zoom-in">
-                <div class="celestial-body asteroid-body">
-                    <div class="body-surface"></div>
-                    <div class="body-glow"></div>
-                    <div class="body-icon"><i class="fas fa-meteor"></i></div>
+                <div class="celestial-stage">
+                    <div class="celestial-body asteroid-body">
+                        <div class="body-glow"></div>
+                        <div class="body-surface">
+                            <div class="body-texture"></div>
+                            <div class="body-icon"><i class="fas fa-meteor"></i></div>
+                            <div class="body-shading"></div>
+                        </div>
+                    </div>
+                    <div class="lightyear-connector">
+                        <div class="ly-line"></div>
+                        <span class="ly-label">2 LY</span>
+                    </div>
                 </div>
                 <div class="stellar-info">
                     <div class="mission-hud">
@@ -497,26 +738,29 @@
                         <span class="hud-year">2020</span>
                     </div>
                     <h3 class="phase-title">SSLC</h3>
-                    <p class="phase-location">St. John's Matric Hr Sec School</p>
+                    <p class="phase-location">St. John's Matric. Hr. Sec. School</p>
                     <div class="phase-tags">
                         <span class="phase-tag">Foundation</span>
                     </div>
-                </div>
-                <div class="lightyear-connector">
-                    <div class="ly-line"></div>
-                    <span class="ly-label">2 LY</span>
                 </div>
             </div>
 
             <!-- Node 2: HSC — Moon -->
             <div class="stellar-node node-moon zoom-in" style="transition-delay: 0.15s;">
-                <div class="celestial-body moon-body">
-                    <div class="body-surface"></div>
-                    <div class="body-crater c1"></div>
-                    <div class="body-crater c2"></div>
-                    <div class="body-glow"></div>
-                    <div class="body-icon"><i class="fas fa-moon"></i></div>
-                    <div class="moon-orbit-ring"></div>
+                <div class="celestial-stage">
+                    <div class="celestial-body moon-body">
+                        <div class="body-glow"></div>
+                        <div class="moon-orbit-ring"></div>
+                        <div class="body-surface">
+                            <div class="body-texture"></div>
+                            <div class="body-icon"><i class="fas fa-moon"></i></div>
+                            <div class="body-shading"></div>
+                        </div>
+                    </div>
+                    <div class="lightyear-connector">
+                        <div class="ly-line"></div>
+                        <span class="ly-label">3 LY</span>
+                    </div>
                 </div>
                 <div class="stellar-info">
                     <div class="mission-hud">
@@ -524,25 +768,30 @@
                         <span class="hud-year">2022</span>
                     </div>
                     <h3 class="phase-title">HSC</h3>
-                    <p class="phase-location">St. John's Matric Hr Sec School</p>
+                    <p class="phase-location">St. John's Matric. Hr. Sec. School</p>
                     <div class="phase-tags">
                         <span class="phase-tag">Computer Applications</span>
                     </div>
-                </div>
-                <div class="lightyear-connector">
-                    <div class="ly-line"></div>
-                    <span class="ly-label">3 LY</span>
                 </div>
             </div>
 
             <!-- Node 3: BCA — Planet -->
             <div class="stellar-node node-planet zoom-in" style="transition-delay: 0.3s;">
-                <div class="celestial-body planet-body-j">
-                    <div class="body-surface"></div>
-                    <div class="planet-atmosphere"></div>
-                    <div class="planet-ring-belt"></div>
-                    <div class="body-glow"></div>
-                    <div class="body-icon"><i class="fas fa-globe-americas"></i></div>
+                <div class="celestial-stage">
+                    <div class="celestial-body planet-body-j">
+                        <div class="body-glow"></div>
+                        <div class="planet-atmosphere"></div>
+                        <div class="planet-ring-belt"></div>
+                        <div class="body-surface">
+                            <div class="body-texture"></div>
+                            <div class="body-icon"><i class="fas fa-globe-americas"></i></div>
+                            <div class="body-shading"></div>
+                        </div>
+                    </div>
+                    <div class="lightyear-connector active-connector">
+                        <div class="ly-line"></div>
+                        <span class="ly-label blink-transit">In Transit...</span>
+                    </div>
                 </div>
                 <div class="stellar-info">
                     <div class="mission-hud">
@@ -550,26 +799,27 @@
                         <span class="hud-year">2025</span>
                     </div>
                     <h3 class="phase-title">BCA</h3>
-                    <p class="phase-location">Sona College of Arts & Science</p>
+                    <p class="phase-location">Sona College of Arts &amp; Science</p>
                     <div class="phase-tags">
                         <span class="phase-tag">CGPA: 7.9/10</span>
                         <span class="phase-tag">Graduated May 2025</span>
                     </div>
                 </div>
-                <div class="lightyear-connector active-connector">
-                    <div class="ly-line"></div>
-                    <span class="ly-label blink-transit">In Transit...</span>
-                </div>
             </div>
 
             <!-- Node 4: MCA — Star (Active/Current) -->
             <div class="stellar-node node-star zoom-in" style="transition-delay: 0.45s;">
-                <div class="celestial-body star-body">
-                    <div class="body-surface"></div>
-                    <div class="star-corona"></div>
-                    <div class="star-rays"></div>
-                    <div class="body-glow"></div>
-                    <div class="body-icon"><i class="fas fa-sun"></i></div>
+                <div class="celestial-stage">
+                    <div class="celestial-body star-body">
+                        <div class="body-glow"></div>
+                        <div class="star-rays"></div>
+                        <div class="star-corona"></div>
+                        <div class="body-surface">
+                            <div class="body-texture"></div>
+                            <div class="body-icon"><i class="fas fa-sun"></i></div>
+                            <div class="body-shading"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="stellar-info">
                     <div class="mission-hud">
@@ -582,7 +832,7 @@
                         <span class="phase-tag">CGPA: 8.3/10</span>
                         <span class="phase-tag">Expected 2027</span>
                         <span class="phase-tag">Full-Stack Dev</span>
-                        <span class="phase-tag">AI & ML</span>
+                        <span class="phase-tag">AI &amp; ML</span>
                     </div>
                 </div>
                 <!-- No connector after last node -->
@@ -608,40 +858,154 @@
                                 target="_blank" rel="noopener noreferrer">Instagram</a>.
                         </p>
 
-                        <div class="contact-links-row">
-                            <div class="contact-card">
-                                <i class="fas fa-envelope"></i>
-                                <div>
-                                    <div class="card-label">EMAIL</div>
-                                    <a href="mailto:althafbilal1968@gmail.com"
-                                        class="card-value">althafbilal1968@gmail.com</a>
+                        <div class="contact-links-stage">
+                            <div class="contact-links-row">
+                                <div class="contact-card">
+                                    <i class="fas fa-envelope"></i>
+                                    <div>
+                                        <div class="card-label">EMAIL</div>
+                                        <a href="mailto:althafbilal1968@gmail.com"
+                                            class="card-value">althafbilal1968@gmail.com</a>
+                                    </div>
+                                </div>
+                                <div class="contact-card">
+                                    <i class="fab fa-linkedin"></i>
+                                    <div>
+                                        <div class="card-label">LINKEDIN</div>
+                                        <a href="https://www.linkedin.com/in/mohammed-bilal-a-5b5656254" class="card-value"
+                                            target="_blank" rel="noopener noreferrer">Mohammed Bilal A</a>
+                                    </div>
+                                </div>
+                                <div class="contact-card github-contact-card" id="githubContactCard" tabindex="0" role="button" aria-expanded="false" aria-controls="githubContribHud">
+                                    <i class="fab fa-github"></i>
+                                    <div class="gh-card-info">
+                                        <div class="card-label">
+                                            <span>GITHUB</span>
+                                            <span class="gh-telemetry-badge"><span class="gh-live-dot"></span>CONTRIBUTIONS</span>
+                                        </div>
+                                        <a href="https://github.com/Bilalyzr" class="card-value" id="githubUrlTrigger" target="_blank"
+                                            rel="noopener noreferrer">github.com/Bilalyzr</a>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="contact-card">
-                                <i class="fab fa-linkedin"></i>
-                                <div>
-                                    <div class="card-label">LINKEDIN</div>
-                                    <a href="https://www.linkedin.com/in/mohammed-bilal-a-5b5656254" class="card-value"
-                                        target="_blank" rel="noopener noreferrer">Mohammed Bilal A</a>
-                                </div>
-                            </div>
-                            <div class="contact-card">
-                                <i class="fab fa-github"></i>
-                                <div>
-                                    <div class="card-label">GITHUB</div>
-                                    <a href="https://github.com/Bilalyzr" class="card-value" target="_blank"
-                                        rel="noopener noreferrer">View on GitHub</a>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Open a Transmission CTA Button -->
-                        <div class="open-transmission-wrap">
-                            <button type="button" class="open-transmission-btn" id="openTransmissionBtn">
-                                <i class="fas fa-satellite-dish btn-icon"></i>
-                                <span class="btn-text">OPEN A TRANSMISSION</span>
-                                <i class="fas fa-chevron-down btn-arrow"></i>
-                            </button>
+                            <!-- Holographic GitHub Contributions HUD Popover -->
+                            <div class="gh-contrib-hud" id="githubContribHud" data-theme="emerald" role="dialog" aria-label="GitHub Contributions Telemetry">
+                                <div class="gh-hud-scanline"></div>
+                                <div class="gh-hud-glow-orb"></div>
+
+                                <!-- Floating Cell Tooltip -->
+                                <div class="gh-floating-tooltip" id="ghFloatingTooltip" aria-hidden="true"></div>
+
+                                <div class="gh-hud-header">
+                                    <div class="gh-user-meta">
+                                        <div class="gh-avatar-ring">
+                                            <img src="https://avatars.githubusercontent.com/u/219866355?v=4" alt="Bilalyzr Avatar" id="ghAvatar" loading="lazy">
+                                            <span class="gh-avatar-status"></span>
+                                        </div>
+                                        <div>
+                                            <div class="gh-hud-title">
+                                                <span id="ghName">Mohammed Bilal A</span>
+                                                <span class="gh-handle" id="ghHandle">@Bilalyzr</span>
+                                            </div>
+                                            <div class="gh-hud-sub">
+                                                <span class="gh-live-dot"></span> GITHUB CONTRIBUTION MATRIX // LIVE TELEMETRY
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="gh-hud-actions">
+                                        <div class="gh-theme-switch" role="group" aria-label="Contribution Matrix Color Theme">
+                                            <button type="button" class="gh-theme-btn active" data-theme-target="emerald" title="GitHub Neon Green">
+                                                <span class="theme-swatch swatch-emerald"></span>GREEN
+                                            </button>
+                                            <button type="button" class="gh-theme-btn" data-theme-target="cyan" title="Cosmic Cyan">
+                                                <span class="theme-swatch swatch-cyan"></span>CYAN
+                                            </button>
+                                        </div>
+                                        <a href="https://github.com/Bilalyzr" target="_blank" rel="noopener noreferrer" class="gh-profile-launch-btn">
+                                            <i class="fab fa-github"></i>
+                                            <span>PROFILE</span>
+                                            <i class="fas fa-arrow-up-right-from-square"></i>
+                                        </a>
+                                        <button type="button" class="gh-hud-close" id="ghHudCloseBtn" aria-label="Close GitHub Telemetry">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Stats Strip -->
+                                <div class="gh-stats-strip">
+                                    <div class="gh-stat-box">
+                                        <div class="gh-stat-top">
+                                            <span class="gh-stat-label">TOTAL CONTRIBUTIONS</span>
+                                            <i class="fas fa-fire-flame-curved gh-stat-icon"></i>
+                                        </div>
+                                        <div class="gh-stat-value" id="ghTotalContrib">372</div>
+                                        <div class="gh-stat-sub">Last 12 Months</div>
+                                    </div>
+                                    <div class="gh-stat-box">
+                                        <div class="gh-stat-top">
+                                            <span class="gh-stat-label">PUBLIC REPOS</span>
+                                            <i class="fas fa-code-branch gh-stat-icon"></i>
+                                        </div>
+                                        <div class="gh-stat-value" id="ghPublicRepos">24</div>
+                                        <div class="gh-stat-sub">Active Repositories</div>
+                                    </div>
+                                    <div class="gh-stat-box">
+                                        <div class="gh-stat-top">
+                                            <span class="gh-stat-label">PEAK DAY BURST</span>
+                                            <i class="fas fa-bolt gh-stat-icon"></i>
+                                        </div>
+                                        <div class="gh-stat-value" id="ghPeakDay">26</div>
+                                        <div class="gh-stat-sub" id="ghPeakDateSub">Oct 3, 2026</div>
+                                    </div>
+                                    <div class="gh-stat-box">
+                                        <div class="gh-stat-top">
+                                            <span class="gh-stat-label">ACTIVE DAYS</span>
+                                            <i class="fas fa-calendar-check gh-stat-icon"></i>
+                                        </div>
+                                        <div class="gh-stat-value" id="ghActiveDays">64</div>
+                                        <div class="gh-stat-sub" id="ghStreakSub">Max Streak: 7d</div>
+                                    </div>
+                                </div>
+
+                                <!-- Contribution Heatmap Grid -->
+                                <div class="gh-heatmap-wrapper">
+                                    <div class="gh-heatmap-scroll">
+                                        <div class="gh-heatmap-canvas">
+                                            <div class="gh-months-row" id="ghMonthsRow"></div>
+                                            <div class="gh-heatmap-body">
+                                                <div class="gh-days-col">
+                                                    <span>Mon</span>
+                                                    <span>Wed</span>
+                                                    <span>Fri</span>
+                                                </div>
+                                                <div class="gh-heatmap-grid" id="ghHeatmapGrid">
+                                                    <!-- Populated by JS -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- HUD Footer / Legend & Cell Readout -->
+                                <div class="gh-hud-footer">
+                                    <div class="gh-cell-readout" id="ghCellReadout">
+                                        <span class="readout-pulse"></span>
+                                        <span class="readout-text">HOVER ANY MATRIX CELL TO INSPECT DAILY COMMIT TELEMETRY</span>
+                                    </div>
+                                    <div class="gh-legend">
+                                        <span>Less</span>
+                                        <span class="gh-cell lvl-0"></span>
+                                        <span class="gh-cell lvl-1"></span>
+                                        <span class="gh-cell lvl-2"></span>
+                                        <span class="gh-cell lvl-3"></span>
+                                        <span class="gh-cell lvl-4"></span>
+                                        <span>More</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -728,44 +1092,29 @@
                     </div>
                 </div>
 
-                <!-- Transmission Console — Contact Form -->
-                <div class="transmission-console fade-up" id="transmissionConsole">
-                    <div class="console-header">
-                        <span class="console-title"><i class="fas fa-satellite-dish"></i> Open a Transmission</span>
-                        <span class="console-signal"><span class="signal-dot"></span> CHANNEL OPEN</span>
-                    </div>
-
-                    <form id="contactForm" class="transmission-form" novalidate>
-                        <div class="form-row">
-                            <div class="form-field">
-                                <label for="cf-name">Callsign</label>
-                                <input type="text" id="cf-name" name="name" placeholder="Your name" required
-                                    autocomplete="name" maxlength="80">
-                            </div>
-                            <div class="form-field">
-                                <label for="cf-email">Frequency</label>
-                                <input type="email" id="cf-email" name="email" placeholder="you@domain.com" required
-                                    autocomplete="email" maxlength="120">
-                            </div>
-                        </div>
-                        <div class="form-field">
-                            <label for="cf-message">Message Payload</label>
-                            <textarea id="cf-message" name="message" rows="4"
-                                placeholder="Type your transmission..." required maxlength="1200"></textarea>
-                        </div>
-                        <div class="form-footer">
-                            <span class="form-status" id="cfStatus" role="status" aria-live="polite"></span>
-                            <button type="submit" class="transmit-btn" id="cfSubmit">
-                                <span class="transmit-label">Transmit Message</span>
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
             </div>
         </div>
     </section>
+
+    <!-- SPACECRAFT TELEMETRY FOOTER -->
+    <footer class="space-telemetry-footer">
+        <div class="telemetry-footer-inner">
+            <div class="tf-col tf-status">
+                <span class="tf-dot"></span>
+                <span>ORBITAL TELEMETRY // ALL SYSTEMS NOMINAL</span>
+            </div>
+            <div class="tf-col tf-coords">
+                <i class="fas fa-location-crosshairs"></i>
+                <span>11.6643° N, 78.1460° E · TAMIL NADU, IN</span>
+                <span class="tf-divider">|</span>
+                <span id="footerMissionClock">IST --:--:--</span>
+            </div>
+            <div class="tf-col tf-copy">
+                <span>&copy; 2026 MOHAMMED BILAL A · THE GALAXY PORTFOLIO</span>
+            </div>
+        </div>
+    </footer>
+
     <!-- WARP SPEED TRANSITION OVERLAY -->
     <div id="warp-transition" class="warp-container">
         <div class="warp-stars"></div>
@@ -773,7 +1122,7 @@
         <div class="warp-flash"></div>
     </div>
 
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=13"></script>
 </body>
 
 </html>

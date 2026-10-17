@@ -94,6 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // Sync active sector highlight inside Mobile Orbital Command Deck
+            document.querySelectorAll('.mobile-nav-links .mnav-item').forEach((mItem, index) => {
+                mItem.classList.toggle('active', index === activeIndex);
+            });
+
             const activeLink = scrollLinks[activeIndex];
             if (activeLink && scrollNavBox) {
                 // Update CSS variable only when active section switches
@@ -139,8 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Bug #6 fix: Close mobile nav if it's open before starting warp
                 const mobileNav = document.getElementById('mobileNav');
+                const mobileTrigger = document.getElementById('mobileMenuTrigger');
                 if (mobileNav && mobileNav.classList.contains('active')) {
                     mobileNav.classList.remove('active');
+                    if (mobileTrigger) {
+                        mobileTrigger.classList.remove('active');
+                        mobileTrigger.setAttribute('aria-expanded', 'false');
+                    }
                 }
 
                 // 1. Start Warp Effect
@@ -178,8 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
 
-
-
                 // Trigger Path Animation if Journey Section
                 if (entry.target.id === 'journey' || entry.target.querySelector('#journey')) {
                     const pathColumn = document.querySelector('.path-column');
@@ -193,10 +201,36 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
+    // --- Astronaut Touch / Click / Hover Name Reveal ---
+    const astronautContainer = document.getElementById('astronautContainer');
+    const astronautSpeechBubble = document.getElementById('astronautSpeechBubble');
+    if (astronautContainer && astronautSpeechBubble) {
+        let bubbleHideTimer = null;
 
-    // --- 2. GLOBAL CANVAS BACKGROUND — Static Starfield ---
-    // Non-animated: a still field of stars drawn once (and on resize) for a
-    // quiet space backdrop. No motion, no cursor effects, no requestAnimationFrame.
+        const revealAstronautName = (autoHideMs = 0) => {
+            if (bubbleHideTimer) clearTimeout(bubbleHideTimer);
+            astronautSpeechBubble.classList.add('active');
+            if (autoHideMs > 0) {
+                bubbleHideTimer = setTimeout(() => {
+                    astronautSpeechBubble.classList.remove('active');
+                }, autoHideMs);
+            }
+        };
+
+        astronautContainer.addEventListener('mouseenter', () => revealAstronautName(0));
+        astronautContainer.addEventListener('mouseleave', () => {
+            if (bubbleHideTimer) clearTimeout(bubbleHideTimer);
+            astronautSpeechBubble.classList.remove('active');
+        });
+        astronautContainer.addEventListener('pointerdown', () => revealAstronautName(4500));
+        astronautContainer.addEventListener('touchstart', () => revealAstronautName(4500), { passive: true });
+        astronautContainer.addEventListener('click', () => revealAstronautName(4500));
+    }
+
+
+    // --- 2. GLOBAL CANVAS BACKGROUND — Static Starfield & Faint Constellation Grid ---
+    // Non-animated: a still field of stars with subtle nebula halos and faint constellation
+    // threads drawn once (and on resize) for a deep space backdrop.
     (function initStaticStarfield() {
         const canvas = document.getElementById('globalStarfield');
         if (!canvas) return;
@@ -220,11 +254,13 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
             ctx.clearRect(0, 0, W, H);
 
-            const count = Math.min(220, Math.max(80, Math.round((W * H) / 9000)));
+            const count = Math.min(240, Math.max(90, Math.round((W * H) / 8500)));
+            const brightStars = [];
+
             for (let i = 0; i < count; i++) {
                 const depth = Math.random();
-                const size = 0.5 + depth * 1.4;
-                const alpha = 0.25 + depth * 0.55;
+                const size = 0.5 + depth * 1.45;
+                const alpha = 0.25 + depth * 0.58;
                 const x = Math.random() * W;
                 const y = Math.random() * H;
                 const tint = STAR_TINTS[(Math.random() * STAR_TINTS.length) | 0];
@@ -235,10 +271,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.fill();
 
                 if (size > 1.4) {
-                    ctx.fillStyle = tint + (alpha * 0.12) + ')';
+                    ctx.fillStyle = tint + (alpha * 0.14) + ')';
                     ctx.beginPath();
-                    ctx.arc(x, y, size * 2.6, 0, Math.PI * 2);
+                    ctx.arc(x, y, size * 2.8, 0, Math.PI * 2);
                     ctx.fill();
+                    brightStars.push({ x, y });
+                }
+            }
+
+            // Subtle faint constellation links between nearby bright stars
+            ctx.strokeStyle = 'rgba(0, 240, 255, 0.045)';
+            ctx.lineWidth = 0.6;
+            for (let i = 0; i < brightStars.length; i++) {
+                for (let j = i + 1; j < brightStars.length; j++) {
+                    const dx = brightStars[i].x - brightStars[j].x;
+                    const dy = brightStars[i].y - brightStars[j].y;
+                    const dist = Math.hypot(dx, dy);
+                    if (dist < 135) {
+                        ctx.beginPath();
+                        ctx.moveTo(brightStars[i].x, brightStars[i].y);
+                        ctx.lineTo(brightStars[j].x, brightStars[j].y);
+                        ctx.stroke();
+                    }
                 }
             }
         }
@@ -255,14 +309,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. SKILLS: Interaction ---
 
     const skillsData = {
-        react: { title: "React.js", icon: "fab fa-react", color: "#61dafb", tools: "React.js, Next.js, Redux, React Router", level: "Advanced", percent: "85%", desc: "SPAs, Interactive UIs, PWAs." },
-        html: { title: "HTML5", icon: "fab fa-html5", color: "#e34f26", tools: "Semantic HTML5, Accessibility, Canvas", level: "Expert", percent: "95%", desc: "Structural foundation, SEO optimization." },
-        css: { title: "CSS3", icon: "fab fa-css3-alt", color: "#2965f1", tools: "Flexbox, CSS Grid, Responsive Design, Animations", level: "Advanced", percent: "90%", desc: "Responsive designs, complex layouts." },
-        js: { title: "JavaScript", icon: "fab fa-js", color: "#f7df1e", tools: "ES6+, Async/Await, DOM, REST APIs", level: "Advanced", percent: "85%", desc: "Interactive logic, async operations." },
-        node: { title: "Node.js", icon: "fab fa-node-js", color: "#6cc24a", tools: "Express.js, FastAPI, REST APIs, GraphQL", level: "Intermediate", percent: "75%", desc: "Server-side logic, scalable APIs." },
-        python: { title: "Python", icon: "fab fa-python", color: "#3776ab", tools: "FastAPI, Scikit-learn, Pandas, NumPy, XGBoost", level: "Intermediate", percent: "80%", desc: "ML models, AI security, backend services." },
-        sql: { title: "Databases & SQL", icon: "fas fa-database", color: "#bd00ff", tools: "PostgreSQL, MySQL, MongoDB, Supabase", level: "Intermediate", percent: "80%", desc: "Data modeling, schema design, complex queries." },
-        git: { title: "Git & DevOps", icon: "fab fa-git-alt", color: "#f05032", tools: "Git, GitHub, Docker, VS Code, CI/CD", level: "Advanced", percent: "88%", desc: "Version control, containerization, deployment." }
+        react: { title: "React.js", icon: "fab fa-react", color: "#61dafb", tools: "React.js, Next.js, Redux, React Router", level: "Advanced", percent: "85%", desc: "SPAs, interactive UIs, and PWAs." },
+        html: { title: "HTML5", icon: "fab fa-html5", color: "#e34f26", tools: "Semantic HTML5, Accessibility, Canvas", level: "Expert", percent: "95%", desc: "Semantic structure, accessibility, and SEO optimization." },
+        css: { title: "CSS3", icon: "fab fa-css3-alt", color: "#2965f1", tools: "Flexbox, CSS Grid, Responsive Design, Animations", level: "Advanced", percent: "90%", desc: "Responsive design, modern layouts, and animations." },
+        js: { title: "JavaScript", icon: "fab fa-js", color: "#f7df1e", tools: "ES6+, Async/Await, DOM, REST APIs", level: "Advanced", percent: "85%", desc: "Interactive logic, DOM manipulation, and async workflows." },
+        node: { title: "Node.js", icon: "fab fa-node-js", color: "#6cc24a", tools: "Express.js, FastAPI, REST APIs, GraphQL", level: "Intermediate", percent: "75%", desc: "Server-side architecture and scalable REST/GraphQL APIs." },
+        python: { title: "Python", icon: "fab fa-python", color: "#3776ab", tools: "FastAPI, Scikit-learn, Pandas, NumPy, XGBoost", level: "Intermediate", percent: "80%", desc: "Machine learning models, AI security, and backend services." },
+        sql: { title: "Databases & SQL", icon: "fas fa-database", color: "#bd00ff", tools: "PostgreSQL, MySQL, MongoDB, Supabase", level: "Intermediate", percent: "80%", desc: "Data modeling, schema design, and query optimization." },
+        git: { title: "Git & DevOps", icon: "fab fa-git-alt", color: "#f05032", tools: "Git, GitHub, Docker, VS Code, CI/CD", level: "Advanced", percent: "88%", desc: "Version control, containerization, and CI/CD deployment." }
     };
 
     const skillCard = document.getElementById('skill-info-card');
@@ -271,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Expose openSkill to global scope for HTML onclick
     window.openSkill = function (key) {
         const data = skillsData[key];
+        if (!data) return;
         document.getElementById('skill-icon').className = `${data.icon} tech-icon-large`;
         document.getElementById('skill-icon').style.color = data.color;
         document.getElementById('skill-title').innerText = data.title;
@@ -297,25 +352,58 @@ document.addEventListener('DOMContentLoaded', () => {
         if (universeContainer) universeContainer.classList.remove('paused-orbit');
     };
 
+    // Hero 3D Tech Planets: Click / Enter opens corresponding Skill Telemetry Dossier
+    document.querySelectorAll('#home .planet-body[data-skill]').forEach((planetEl) => {
+        const triggerPlanetSkill = () => {
+            const skillKey = planetEl.getAttribute('data-skill');
+            if (!skillKey || !skillsData[skillKey]) return;
+            const skillsSection = document.getElementById('skills');
+            if (skillsSection) {
+                if (window.lenis) {
+                    window.lenis.scrollTo(skillsSection);
+                } else {
+                    skillsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+            setTimeout(() => {
+                window.openSkill(skillKey);
+            }, 550);
+        };
 
-    // --- 4. PROJECTS: Missions Log — Dossier System ---
+        planetEl.addEventListener('click', triggerPlanetSkill);
+        planetEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                triggerPlanetSkill();
+            }
+        });
+    });
+
+
+    // --- 4. PROJECTS: Missions Log — Galactic Star-Chart Dossier System ---
 
     const projects = [
         {
             id: 1,
             codename: "ALPHA-01",
+            sector: "SECTOR α-01 · MERCURY ORBIT",
+            planetTex: "assets/images/planets/mercury.jpg",
+            accent: "#00e0ff",
             name: "Control Mouse with Hand Gesture Detection",
             tools: "Python, OpenCV, MediaPipe",
             category: ["python", "ai"],
             missionClass: "RECON",
             status: "complete",
             icon: ["fab fa-python", "fas fa-robot"],
-            brief: "Computer vision system for touchless interaction recognizing real-time hand gestures.",
+            brief: "Built a computer vision system for touchless cursor control that recognizes real-time hand gestures.",
             img: "assets/images/hand_gestures.png"
         },
         {
             id: 2,
             codename: "BETA-02",
+            sector: "SECTOR β-02 · VENUSIAN CORE",
+            planetTex: "assets/images/planets/venus.jpg",
+            accent: "#f59e0b",
             name: "Credit Card Fraud Detection Using Machine Learning",
             tools: "Python, Scikit-learn, Pandas, NumPy",
             category: ["python", "ai"],
@@ -328,6 +416,9 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 3,
             codename: "GAMMA-03",
+            sector: "SECTOR γ-03 · TERRA STATION",
+            planetTex: "assets/images/planets/earth.jpg",
+            accent: "#38bdf8",
             name: "Tutor LMS Platform | Sasha Infinity",
             tools: "React.js, WordPress, Tutor LMS, AI Integration",
             category: ["web", "react"],
@@ -340,19 +431,25 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 4,
             codename: "DELTA-04",
-            name: "AISCCT Conference website for my department",
+            sector: "SECTOR δ-04 · MARTIAN RELAY",
+            planetTex: "assets/images/planets/mars.jpg",
+            accent: "#fb7185",
+            name: "AISCCT International Conference Website",
             tools: "HTML, CSS, JavaScript, Figma",
             category: ["web"],
             missionClass: "CONSTRUCT",
             status: "complete",
             icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-figma"],
-            brief: "Designed and developed a static web page for an international conference organized by the department.",
+            brief: "Designed and developed a responsive static website for an international conference organized by the department.",
             img: "assets/images/conference_website.png",
             preview_url: "https://www.sonatech.ac.in/aiscct-26/"
         },
         {
             id: 5,
             codename: "ECHO-05",
+            sector: "SECTOR ε-05 · JOVIAN CITADEL",
+            planetTex: "assets/images/planets/jupiter.jpg",
+            accent: "#c084fc",
             name: "SAST Organization Static Website",
             tools: "HTML, CSS, JavaScript, Figma",
             category: ["web"],
@@ -366,19 +463,25 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 6,
             codename: "FOXTROT-06",
+            sector: "SECTOR ζ-06 · SATURN RING",
+            planetTex: "assets/images/planets/saturn.jpg",
+            accent: "#facc15",
             name: "Nexora Startup Landing Page",
             tools: "HTML, CSS, JavaScript, Figma",
             category: ["web"],
             missionClass: "CONSTRUCT",
             status: "complete",
             icon: ["fab fa-html5", "fab fa-css3-alt", "fab fa-js", "fab fa-figma"],
-            brief: "Designed and developed a premium landing page for my startup company to showcase the Niral Thiruvizha 3.0 project.",
+            brief: "Designed and developed a modern startup landing page to showcase the Niral Thiruvizha 3.0 project.",
             img: "assets/images/niral_landing.png",
             preview_url: "https://nexora-indusio.netlify.app/"
         },
         {
             id: 7,
             codename: "GOLF-07",
+            sector: "SECTOR η-07 · URANIAN NEXUS",
+            planetTex: "assets/images/planets/uranus.jpg",
+            accent: "#2dd4bf",
             name: "THOZHIRPORUL – Smart Industrial Monitoring System",
             tools: "React.js, Node.js, Express.js, PostgreSQL, Docker",
             category: ["web", "react", "ai"],
@@ -391,6 +494,9 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 8,
             codename: "HOTEL-08",
+            sector: "SECTOR θ-08 · NEPTUNE SHIELD",
+            planetTex: "assets/images/planets/neptune.jpg",
+            accent: "#818cf8",
             name: "Dual-Layer AI Firewall for Securing LLM Applications",
             tools: "Python, FastAPI, XGBoost, Docker, PostgreSQL",
             category: ["python", "ai"],
@@ -403,9 +509,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    // --- Holographic File Stack Carousel ---
+    // --- 3D Planetary Orbit Map + Wide Mission Console ---
     const stackContainer = document.getElementById('stackContainer');
     const dotsContainer = document.getElementById('navDots');
+    const starmapNodesEl = document.getElementById('starmapNodes');
+    const starmapCoreSphere = document.getElementById('starmapCoreSphere');
+    const starmapCoreCode = document.getElementById('starmapCoreCode');
+    const starmapCore = document.getElementById('starmapCore');
+    const starmapLaserLine = document.getElementById('starmapLaserLine');
     let activeStackIndex = 0;
 
     function getFiltered(category) {
@@ -416,111 +527,208 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderStack() {
         const filtered = getFiltered(currentFilter);
+        if (!filtered.length) return;
         if (activeStackIndex >= filtered.length) activeStackIndex = 0;
 
         stackContainer.innerHTML = '';
         dotsContainer.innerHTML = '';
+        if (starmapNodesEl) starmapNodesEl.innerHTML = '';
 
+        const activeProject = filtered[activeStackIndex];
+        const total = filtered.length;
+
+        // 1. Update Central 3D Planet Core on Star-Map
+        if (starmapCoreSphere && activeProject) {
+            starmapCoreSphere.style.backgroundImage = `url('${activeProject.planetTex}')`;
+        }
+        if (starmapCore && activeProject) {
+            starmapCore.style.setProperty('--core-accent', activeProject.accent || '#00e0ff');
+        }
+        if (starmapCoreCode && activeProject) {
+            starmapCoreCode.textContent = activeProject.codename;
+        }
+
+        // 2. Render Orbiting Mission Planet Nodes on the 3D Star-Map
         filtered.forEach((p, i) => {
-            const iconsHtml = p.icon.map(ic => `<i class="${ic}"></i>`).join(' ');
-            const offset = i - activeStackIndex;
+            const isActive = i === activeStackIndex;
 
-            const card = document.createElement('div');
-            card.className = 'stack-card' + (i === activeStackIndex ? ' active' : '');
+            // Distribute planets evenly around 360deg, alternating between outer (41% radius) and mid (30% radius) orbital rings
+            const angleDeg = -90 + (i * (360 / total));
+            const rad = (angleDeg * Math.PI) / 180;
+            const radiusPct = (total >= 5 && i % 2 === 1) ? 30 : 41;
+            const xPct = 50 + Math.cos(rad) * radiusPct;
+            const yPct = 50 + Math.sin(rad) * radiusPct;
 
-            // Enhanced 3D stacking
-            if (window.innerWidth > 768) {
-                // More dramatic spread for active card
-                const spreadX = offset * 60;
-                const spreadZ = -Math.abs(offset) * 120;
-                const rotY = offset * -15;
-
-                card.style.transform = `translateX(${spreadX}px) translateZ(${spreadZ}px) rotateY(${rotY}deg)`;
-                card.style.opacity = Math.abs(offset) > 2 ? 0 : 1 - Math.abs(offset) * 0.3;
-                card.style.zIndex = 10 - Math.abs(offset);
+            if (isActive && starmapLaserLine) {
+                starmapLaserLine.setAttribute('x2', (xPct * 4).toFixed(1));
+                starmapLaserLine.setAttribute('y2', (yPct * 4).toFixed(1));
+                starmapLaserLine.style.stroke = p.accent || '#00e0ff';
             }
 
-            card.innerHTML = `
-                <div class="sc-img">
-                    <div class="scanlines"></div>
-                    <img src="${p.img}" alt="${p.name}">
-                    <span class="sc-codename">${p.codename}</span>
-                    <span class="sc-status ${p.status === 'in progress' ? 'in-progress' : 'complete'}"><span class="sc-status-dot"></span>${p.status.toUpperCase()}</span>
-                </div>
-                <div class="sc-body">
-                    <div class="sc-class">${p.missionClass}</div>
-                    <div class="sc-name">${p.name}</div>
-                    <div class="sc-tools"><span>PAYLOAD:</span> ${p.tools}</div>
-                    <div class="sc-brief" id="brief-${p.id}">${p.brief}</div>
-                    <div class="sc-icons">${iconsHtml}</div>
-                    ${p.preview_url ? `
-                    <div class="sc-actions">
-                        <a href="${p.preview_url}" target="_blank" class="sc-btn">
-                            <i class="fas fa-external-link-alt"></i> MISSION PREVIEW
-                        </a>
-                    </div>` : ''}
-                </div>
-            `;
-
-            // Terminal Typing Effect for active card
-            if (i === activeStackIndex) {
-                setTimeout(() => {
-                    const briefEl = card.querySelector('.sc-brief');
-                    if (briefEl) {
-                        const text = p.brief;
-                        briefEl.textContent = '';
-                        let charIndex = 0;
-
-                        // Cancel any previous typing on this element if it exists
-                        if (briefEl.typingTimeout) clearTimeout(briefEl.typingTimeout);
-
-                        function type() {
-                            // Bug Fix: Check if element still exists in DOM to avoid wasted cycles
-                            if (!document.contains(briefEl)) return;
-                            
-                            if (charIndex < text.length) {
-                                briefEl.textContent += text.charAt(charIndex);
-                                charIndex++;
-                                briefEl.typingTimeout = setTimeout(type, 20);
-                            }
-                        }
-                        type();
+            if (starmapNodesEl) {
+                const nodeBtn = document.createElement('button');
+                nodeBtn.type = 'button';
+                nodeBtn.className = 'starmap-node' + (isActive ? ' active' : '');
+                nodeBtn.style.left = `${xPct}%`;
+                nodeBtn.style.top = `${yPct}%`;
+                nodeBtn.style.setProperty('--node-accent', p.accent || '#00e0ff');
+                nodeBtn.setAttribute('aria-label', `Select mission ${p.codename}: ${p.name}`);
+                nodeBtn.innerHTML = `
+                    <span class="sm-node-reticle"></span>
+                    <span class="sm-node-sphere" style="background-image: url('${p.planetTex}');"></span>
+                    <span class="sm-node-code">${p.codename}</span>
+                `;
+                nodeBtn.addEventListener('click', () => {
+                    if (activeStackIndex !== i) {
+                        activeStackIndex = i;
+                        renderStack();
                     }
-                }, 400);
+                });
+                starmapNodesEl.appendChild(nodeBtn);
             }
 
-            card.addEventListener('click', () => {
-                if (activeStackIndex !== i) {
-                    activeStackIndex = i;
-                    renderStack();
-                }
-            });
-
-            stackContainer.appendChild(card);
-
-            // Nav dot
+            // Orbital Planet Nav Dot
             const dot = document.createElement('div');
-            dot.className = 'nav-dot' + (i === activeStackIndex ? ' active' : '');
+            dot.className = 'nav-dot' + (isActive ? ' active' : '');
+            dot.style.setProperty('--dot-accent', p.accent || '#00e0ff');
+            dot.title = `${p.codename} — ${p.name}`;
             dot.addEventListener('click', () => {
                 activeStackIndex = i;
                 renderStack();
             });
             dotsContainer.appendChild(dot);
         });
+
+        // 3. Render Wide Holographic Mission Console for the Active Mission
+        if (activeProject) {
+            const p = activeProject;
+            const iconsHtml = p.icon.map(ic => `<i class="${ic}"></i>`).join(' ');
+            const toolPillsHtml = p.tools
+                .split(',')
+                .map(t => `<span class="sc-tech-pill">${t.trim()}</span>`)
+                .join('');
+
+            const consoleCard = document.createElement('div');
+            consoleCard.className = 'mission-console-card';
+            consoleCard.style.setProperty('--card-accent', p.accent || '#00e0ff');
+
+            consoleCard.innerHTML = `
+                <div class="mc-topbar">
+                    <div class="mc-topbar-left">
+                        <span class="sc-planet-orb" style="background-image: url('${p.planetTex}');"></span>
+                        <span class="mc-codename">${p.codename}</span>
+                        <span class="mc-divider">//</span>
+                        <span class="mc-sector">${p.sector}</span>
+                    </div>
+                    <div class="mc-topbar-right">
+                        <span class="sc-class">${p.missionClass}</span>
+                        <span class="sc-status ${p.status === 'in progress' ? 'in-progress' : 'complete'}">
+                            <span class="sc-status-dot"></span>${p.status.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mc-viewport" style="--mc-img: url('${p.img}');">
+                    <div class="scanlines"></div>
+                    <img src="${p.img}" alt="${p.name}">
+                    <div class="mc-viewport-vignette"></div>
+                    <span class="mc-hud-corner tl"></span>
+                    <span class="mc-hud-corner tr"></span>
+                    <span class="mc-hud-corner bl"></span>
+                    <span class="mc-hud-corner br"></span>
+                </div>
+
+                <div class="mc-body">
+                    <h3 class="mc-title">${p.name}</h3>
+                    <div class="mc-payload-row">
+                        <span class="mc-payload-label">PAYLOAD //</span>
+                        <div class="sc-tech-pills">${toolPillsHtml}</div>
+                    </div>
+                    <div class="sc-brief" id="brief-${p.id}">${p.brief}</div>
+                    <div class="sc-footer">
+                        <div class="sc-icons">${iconsHtml}</div>
+                        <div class="sc-actions">
+                            ${p.preview_url ? `
+                            <a href="${p.preview_url}" target="_blank" rel="noopener noreferrer" class="sc-btn">
+                                <i class="fas fa-satellite-dish"></i> MISSION PREVIEW
+                            </a>` : `
+                            <a href="https://github.com/Bilalyzr" target="_blank" rel="noopener noreferrer" class="sc-btn sc-btn-secondary">
+                                <i class="fab fa-github"></i> SOURCE ARCHIVE
+                            </a>`}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            stackContainer.appendChild(consoleCard);
+
+            // Terminal Typing Effect for active mission brief
+            setTimeout(() => {
+                const briefEl = consoleCard.querySelector('.sc-brief');
+                if (briefEl) {
+                    const text = p.brief;
+                    briefEl.textContent = '';
+                    let charIndex = 0;
+
+                    if (briefEl.typingTimeout) clearTimeout(briefEl.typingTimeout);
+
+                    function type() {
+                        if (!document.contains(briefEl)) return;
+                        if (charIndex < text.length) {
+                            briefEl.textContent += text.charAt(charIndex);
+                            charIndex++;
+                            briefEl.typingTimeout = setTimeout(type, 14);
+                        }
+                    }
+                    type();
+                }
+            }, 180);
+        }
+    }
+
+    function stepMission(delta) {
+        const f = getFiltered(currentFilter);
+        if (!f.length) return;
+        activeStackIndex = (activeStackIndex + delta + f.length) % f.length;
+        renderStack();
     }
 
     // Nav arrows
-    document.getElementById('prevBtn').addEventListener('click', () => {
-        const f = getFiltered(currentFilter);
-        activeStackIndex = (activeStackIndex - 1 + f.length) % f.length;
-        renderStack();
+    document.getElementById('prevBtn').addEventListener('click', () => stepMission(-1));
+    document.getElementById('nextBtn').addEventListener('click', () => stepMission(1));
+
+    // Keyboard Left/Right arrow navigation when Projects section is in view or focused
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+        const projectsSec = document.getElementById('projects');
+        if (!projectsSec) return;
+        const rect = projectsSec.getBoundingClientRect();
+        const inView = rect.top < window.innerHeight * 0.75 && rect.bottom > window.innerHeight * 0.25;
+        if (inView) {
+            stepMission(e.key === 'ArrowRight' ? 1 : -1);
+        }
     });
 
-    document.getElementById('nextBtn').addEventListener('click', () => {
-        const f = getFiltered(currentFilter);
-        activeStackIndex = (activeStackIndex + 1) % f.length;
-        renderStack();
-    });
+    // Touch-swipe navigation on stackContainer
+    if (stackContainer) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        stackContainer.addEventListener('touchstart', (e) => {
+            if (!e.touches.length) return;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        stackContainer.addEventListener('touchend', (e) => {
+            if (!e.changedTouches.length) return;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+                stepMission(dx < 0 ? 1 : -1);
+            }
+        }, { passive: true });
+    }
 
     window.filterProjects = function (category, btn) {
         document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
@@ -535,15 +743,53 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial Load
     filterProjects('all', document.querySelector('.freq-btn.active'));
 
+    // --- Live Spacecraft Telemetry Footer Clock (IST) ---
+    const footerClockEl = document.getElementById('footerMissionClock');
+    if (footerClockEl) {
+        const updateFooterClock = () => {
+            const now = new Date();
+            const istTime = now.toLocaleTimeString('en-GB', {
+                timeZone: 'Asia/Kolkata',
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            footerClockEl.textContent = `IST ${istTime}`;
+        };
+        updateFooterClock();
+        setInterval(updateFooterClock, 1000);
+    }
+
 
 
 
 
     // --- 6. MOBILE NAVIGATION Logic ---
+    const mobileNavOverlay = document.getElementById('mobileNav');
+    const mobileMenuTrigger = document.getElementById('mobileMenuTrigger');
+
     window.toggleMobileMenu = function () {
-        const overlay = document.getElementById('mobileNav');
-        overlay.classList.toggle('active');
+        if (!mobileNavOverlay) return;
+        const isOpen = mobileNavOverlay.classList.toggle('active');
+        if (mobileMenuTrigger) {
+            mobileMenuTrigger.classList.toggle('active', isOpen);
+            mobileMenuTrigger.setAttribute('aria-expanded', String(isOpen));
+        }
     };
+
+    if (mobileNavOverlay) {
+        mobileNavOverlay.addEventListener('click', (e) => {
+            if (e.target === mobileNavOverlay) {
+                window.toggleMobileMenu();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileNavOverlay.classList.contains('active')) {
+                window.toggleMobileMenu();
+            }
+        });
+    }
 
     // Stars + shooting stars now handled by #globalStarfield canvas
 
@@ -1114,5 +1360,344 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+// --- 13. HOLOGRAPHIC GITHUB CONTRIBUTIONS HUD (@Bilalyzr) ---
+document.addEventListener('DOMContentLoaded', () => {
+    const ghCard = document.getElementById('githubContactCard');
+    const ghUrlTrigger = document.getElementById('githubUrlTrigger');
+    const ghHud = document.getElementById('githubContribHud');
+    const ghCloseBtn = document.getElementById('ghHudCloseBtn');
+    const heatmapGrid = document.getElementById('ghHeatmapGrid');
+    const monthsRow = document.getElementById('ghMonthsRow');
+    const readoutEl = document.getElementById('ghCellReadout');
+    const floatingTooltip = document.getElementById('ghFloatingTooltip');
+    const totalEl = document.getElementById('ghTotalContrib');
+    const reposEl = document.getElementById('ghPublicRepos');
+    const peakEl = document.getElementById('ghPeakDay');
+    const peakDateSubEl = document.getElementById('ghPeakDateSub');
+    const activeDaysEl = document.getElementById('ghActiveDays');
+    const streakSubEl = document.getElementById('ghStreakSub');
+
+    if (!ghCard || !ghHud || !heatmapGrid) return;
+
+    const GITHUB_USER = 'Bilalyzr';
+
+    // Real snapshot of @Bilalyzr's active contribution dates for instant / offline rendering
+    const FALLBACK_ACTIVE_MAP = {
+        '2025-12-08': [5, 1],
+        '2026-02-13': [1, 1], '2026-02-20': [4, 1],
+        '2026-03-05': [1, 1], '2026-03-10': [4, 1],
+        '2026-04-05': [1, 1], '2026-04-14': [1, 1], '2026-04-19': [2, 1], '2026-04-25': [3, 1],
+        '2026-05-06': [1, 1], '2026-05-07': [7, 2], '2026-05-08': [1, 1], '2026-05-09': [1, 1],
+        '2026-05-19': [17, 3], '2026-05-20': [4, 1], '2026-05-24': [1, 1], '2026-05-25': [5, 1],
+        '2026-06-13': [2, 1], '2026-06-14': [2, 1], '2026-06-20': [3, 1], '2026-06-21': [3, 1],
+        '2026-06-24': [3, 1], '2026-06-26': [1, 1], '2026-06-27': [1, 1], '2026-06-29': [2, 1],
+        '2026-07-04': [1, 1], '2026-07-05': [4, 1], '2026-07-11': [1, 1], '2026-07-15': [3, 1],
+        '2026-07-16': [2, 1], '2026-07-17': [4, 1], '2026-07-20': [1, 1], '2026-07-21': [5, 1],
+        '2026-07-23': [1, 1], '2026-07-24': [1, 1], '2026-07-25': [3, 1],
+        '2026-08-03': [6, 1], '2026-08-04': [1, 1], '2026-08-05': [7, 2], '2026-08-06': [1, 1],
+        '2026-08-07': [1, 1], '2026-08-12': [2, 1], '2026-08-13': [1, 1], '2026-08-14': [10, 2],
+        '2026-08-15': [3, 1], '2026-08-20': [6, 1], '2026-08-21': [9, 2], '2026-08-22': [2, 1],
+        '2026-08-25': [9, 2], '2026-08-31': [4, 1],
+        '2026-09-01': [4, 1], '2026-09-03': [2, 1], '2026-09-04': [1, 1], '2026-09-05': [9, 2],
+        '2026-09-06': [16, 3], '2026-09-08': [8, 2], '2026-09-09': [1, 1], '2026-09-10': [12, 2],
+        '2026-09-12': [11, 2], '2026-09-13': [1, 1], '2026-09-14': [2, 1], '2026-09-16': [2, 1],
+        '2026-09-21': [3, 1], '2026-09-22': [19, 3], '2026-09-23': [4, 1], '2026-09-24': [2, 1],
+        '2026-09-25': [9, 2], '2026-09-26': [5, 1], '2026-09-27': [3, 1], '2026-09-28': [3, 1],
+        '2026-09-29': [4, 1], '2026-09-30': [2, 1],
+        '2026-10-03': [26, 4], '2026-10-05': [5, 1], '2026-10-06': [13, 2], '2026-10-07': [3, 1],
+        '2026-10-08': [1, 1], '2026-10-09': [3, 1], '2026-10-10': [6, 1], '2026-10-11': [14, 3],
+        '2026-10-13': [1, 1], '2026-10-14': [2, 1], '2026-10-16': [6, 1], '2026-10-17': [5, 1]
+    };
+
+    function buildFallbackContributions() {
+        const list = [];
+        const start = new Date('2025-10-12T00:00:00Z');
+        const end = new Date('2026-10-17T00:00:00Z');
+        for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+            const iso = d.toISOString().slice(0, 10);
+            const hit = FALLBACK_ACTIVE_MAP[iso];
+            list.push({
+                date: iso,
+                count: hit ? hit[0] : 0,
+                level: hit ? hit[1] : 0
+            });
+        }
+        return list;
+    }
+
+    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    function formatReadoutDate(isoDate) {
+        const parts = isoDate.split('-');
+        if (parts.length !== 3) return isoDate;
+        const m = MONTH_NAMES[parseInt(parts[1], 10) - 1] || parts[1];
+        return `${m} ${parseInt(parts[2], 10)}, ${parts[0]}`;
+    }
+
+    // Theme switcher buttons (GitHub Neon Green vs Cosmic Cyan)
+    ghHud.querySelectorAll('.gh-theme-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const theme = btn.getAttribute('data-theme-target') || 'emerald';
+            ghHud.setAttribute('data-theme', theme);
+            ghHud.querySelectorAll('.gh-theme-btn').forEach(b => b.classList.toggle('active', b === btn));
+        });
+    });
+
+    function renderContributions(contributions, totalOverride) {
+        if (!Array.isArray(contributions) || contributions.length === 0) return;
+
+        heatmapGrid.innerHTML = '';
+        if (monthsRow) monthsRow.innerHTML = '';
+
+        let total = typeof totalOverride === 'number' ? totalOverride : 0;
+        let peakCount = 0;
+        let peakDate = '';
+        let activeDays = 0;
+        let currentStreak = 0;
+        let maxStreak = 0;
+
+        const totalWeeks = Math.ceil(contributions.length / 7);
+        heatmapGrid.style.setProperty('--total-weeks', totalWeeks);
+
+        const monthMarkers = [];
+        let lastMonth = -1;
+        let lastMarkerWeek = -10;
+
+        contributions.forEach((day, idx) => {
+            if (typeof totalOverride !== 'number') total += day.count;
+            if (day.count > 0) {
+                activeDays++;
+                currentStreak++;
+                if (currentStreak > maxStreak) maxStreak = currentStreak;
+            } else {
+                currentStreak = 0;
+            }
+
+            if (day.count > peakCount) {
+                peakCount = day.count;
+                peakDate = day.date;
+            }
+
+            const weekIdx = Math.floor(idx / 7);
+            if (idx % 7 === 0 && day.date) {
+                const mIdx = parseInt(day.date.slice(5, 7), 10) - 1;
+                if (mIdx !== lastMonth && mIdx >= 0 && mIdx < 12) {
+                    if (weekIdx - lastMarkerWeek >= 3 && weekIdx < totalWeeks - 1) {
+                        monthMarkers.push({ weekIdx, label: MONTH_NAMES[mIdx] });
+                        lastMarkerWeek = weekIdx;
+                    }
+                    lastMonth = mIdx;
+                }
+            }
+
+            const cell = document.createElement('div');
+            const lvl = Math.min(4, Math.max(0, day.level || 0));
+            cell.className = `gh-cell lvl-${lvl}`;
+            cell.dataset.date = day.date;
+            cell.dataset.count = day.count;
+
+            const showCellInfo = () => {
+                const readableDate = formatReadoutDate(day.date);
+                if (readoutEl) {
+                    const label = day.count === 0
+                        ? `0 CONTRIBUTIONS ON ${readableDate.toUpperCase()}`
+                        : `${day.count} CONTRIBUTION${day.count > 1 ? 'S' : ''} ON ${readableDate.toUpperCase()}`;
+                    readoutEl.innerHTML = `<span class="readout-pulse"></span><span class="readout-text" style="color:${day.count > 0 ? 'var(--gh-accent)' : 'rgba(240,246,252,0.75)'};">${label}</span>`;
+                }
+
+                if (floatingTooltip) {
+                    const hudRect = ghHud.getBoundingClientRect();
+                    const cellRect = cell.getBoundingClientRect();
+                    const leftPx = cellRect.left - hudRect.left + (cellRect.width / 2);
+                    const topPx = cellRect.top - hudRect.top;
+
+                    const clampedLeft = Math.max(90, Math.min(hudRect.width - 90, leftPx));
+                    floatingTooltip.style.left = `${clampedLeft}px`;
+                    floatingTooltip.style.top = `${topPx}px`;
+                    floatingTooltip.innerHTML = day.count === 0
+                        ? `No contributions on ${readableDate}`
+                        : `<strong>${day.count} contribution${day.count > 1 ? 's' : ''}</strong> on ${readableDate}`;
+                    floatingTooltip.classList.add('visible');
+                }
+            };
+
+            const hideCellInfo = () => {
+                if (floatingTooltip) {
+                    floatingTooltip.classList.remove('visible');
+                }
+            };
+
+            cell.addEventListener('mouseenter', showCellInfo);
+            cell.addEventListener('mouseleave', hideCellInfo);
+            cell.addEventListener('touchstart', showCellInfo, { passive: true });
+
+            heatmapGrid.appendChild(cell);
+        });
+
+        if (monthsRow) {
+            monthMarkers.forEach(({ weekIdx, label }) => {
+                const span = document.createElement('span');
+                span.textContent = label;
+                span.style.left = `${(weekIdx / totalWeeks) * 100}%`;
+                monthsRow.appendChild(span);
+            });
+        }
+
+        if (totalEl) totalEl.textContent = total.toLocaleString();
+        if (peakEl) peakEl.textContent = peakCount;
+        if (peakDateSubEl && peakDate) peakDateSubEl.textContent = formatReadoutDate(peakDate);
+        if (activeDaysEl) activeDaysEl.textContent = activeDays;
+        if (streakSubEl) streakSubEl.textContent = `Max Streak: ${maxStreak}d`;
+
+        // Scroll heatmap to most recent weeks on small screens
+        const scrollBox = ghHud.querySelector('.gh-heatmap-scroll');
+        if (scrollBox && window.innerWidth <= 900) {
+            scrollBox.scrollLeft = scrollBox.scrollWidth;
+        }
+    }
+
+    // 1. Render immediately with verified snapshot so there is zero blank state
+    renderContributions(buildFallbackContributions(), 372);
+
+    // 2. Fetch live GitHub telemetry in background
+    let hasFetchedLive = false;
+    async function fetchLiveGitHubTelemetry() {
+        if (hasFetchedLive) return;
+        hasFetchedLive = true;
+
+        try {
+            const [contribRes, userRes] = await Promise.allSettled([
+                fetch(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`),
+                fetch(`https://api.github.com/users/${GITHUB_USER}`)
+            ]);
+
+            if (contribRes.status === 'fulfilled' && contribRes.value.ok) {
+                const contribData = await contribRes.value.json();
+                if (contribData && Array.isArray(contribData.contributions)) {
+                    const lastYrTotal = contribData.total && typeof contribData.total.lastYear === 'number'
+                        ? contribData.total.lastYear
+                        : undefined;
+                    renderContributions(contribData.contributions, lastYrTotal);
+                }
+            }
+
+            if (userRes.status === 'fulfilled' && userRes.value.ok) {
+                const userData = await userRes.value.json();
+                if (userData) {
+                    if (typeof userData.public_repos === 'number' && reposEl) {
+                        reposEl.textContent = userData.public_repos;
+                    }
+                    const avatarImg = document.getElementById('ghAvatar');
+                    if (userData.avatar_url && avatarImg) {
+                        avatarImg.src = userData.avatar_url;
+                    }
+                }
+            }
+        } catch (err) {
+            // Snapshot is already rendered, fail silently
+        }
+    }
+
+    // --- Hover & Touch / Click State Machine ---
+    let isPinned = false;
+    let hoverTimer = null;
+
+    function openHud(pin = false) {
+        clearTimeout(hoverTimer);
+        if (pin) isPinned = true;
+        ghHud.classList.add('active');
+        ghCard.classList.add('hud-open');
+        ghCard.setAttribute('aria-expanded', 'true');
+        fetchLiveGitHubTelemetry();
+    }
+
+    function closeHud(force = false) {
+        if (isPinned && !force) return;
+        isPinned = false;
+        ghHud.classList.remove('active');
+        ghCard.classList.remove('hud-open');
+        ghCard.setAttribute('aria-expanded', 'false');
+        if (floatingTooltip) floatingTooltip.classList.remove('visible');
+    }
+
+    function scheduleClose() {
+        clearTimeout(hoverTimer);
+        hoverTimer = setTimeout(() => {
+            closeHud(false);
+        }, 220);
+    }
+
+    // Desktop Hover on GitHub Card & HUD
+    ghCard.addEventListener('mouseenter', () => openHud(false));
+    ghCard.addEventListener('mouseleave', scheduleClose);
+    ghHud.addEventListener('mouseenter', () => clearTimeout(hoverTimer));
+    ghHud.addEventListener('mouseleave', scheduleClose);
+
+    // Touch / Click on GitHub Card or URL displays contributions on the portfolio
+    ghCard.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (ghHud.classList.contains('active') && isPinned) {
+            closeHud(true);
+        } else {
+            openHud(true);
+            setTimeout(() => {
+                if (window.innerWidth <= 900) {
+                    ghHud.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 200);
+        }
+    });
+
+    if (ghUrlTrigger) {
+        ghUrlTrigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (ghHud.classList.contains('active') && isPinned) {
+                closeHud(true);
+            } else {
+                openHud(true);
+            }
+        });
+    }
+
+    // Keyboard accessibility on GitHub Card
+    ghCard.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (ghHud.classList.contains('active')) {
+                closeHud(true);
+            } else {
+                openHud(true);
+            }
+        }
+    });
+
+    // Close button inside HUD
+    if (ghCloseBtn) {
+        ghCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeHud(true);
+        });
+    }
+
+    // Click outside or Escape key unpins and closes HUD
+    document.addEventListener('click', (e) => {
+        if (!ghHud.classList.contains('active')) return;
+        if (!ghHud.contains(e.target) && !ghCard.contains(e.target)) {
+            closeHud(true);
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && ghHud.classList.contains('active')) {
+            closeHud(true);
+        }
+    });
+});
+
+
 
 
