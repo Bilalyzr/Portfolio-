@@ -5368,15 +5368,20 @@ model-viewer {
 
 .loader-percentage {
     font-size: 3rem;
-    font-weight: 500;
-    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
     color: #ffd700;
     text-shadow: 
         0 0 10px rgba(255, 170, 0, 0.5), 
         0 0 25px rgba(255, 94, 0, 0.25);
     line-height: 1.1;
     margin-bottom: 4px;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
+    display: inline-block;
+    min-width: 140px;
+    text-align: center;
 }
 
 /* Warm gold cosmic progress bar */
@@ -5423,10 +5428,10 @@ model-viewer {
 }
 
 .loader-telemetry {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Share Tech Mono', 'Space Grotesk', monospace;
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.7);
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     height: 1.2rem;
     font-weight: 400;
     transition: opacity 0.18s ease, transform 0.18s ease;
@@ -5456,8 +5461,8 @@ model-viewer {
         left: calc(50% - 10px);
         font-size: 0.55rem;
     }
-    .loader-percentage { font-size: 2.4rem; }
-    .loader-telemetry { font-size: 0.75rem; letter-spacing: 0.5px; }
+    .loader-percentage { font-size: 2.4rem; min-width: 110px; }
+    .loader-telemetry { font-size: 0.72rem; letter-spacing: 0.8px; }
     .loader-bar-container { width: 140px; }
 }
 
