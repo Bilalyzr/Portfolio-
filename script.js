@@ -255,14 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. SKILLS: Interaction ---
 
     const skillsData = {
-        react: { title: "React.js", icon: "fab fa-react", color: "#61dafb", tools: "Redux, React Router, Webpack", level: "Advanced", percent: "85%", desc: "SPAs, Interactive UIs, PWAs." },
-        html: { title: "HTML5", icon: "fab fa-html5", color: "#e34f26", tools: "Semantic Tags, Canvas", level: "Expert", percent: "95%", desc: "Structural foundation, SEO optimization." },
-        css: { title: "CSS3", icon: "fab fa-css3-alt", color: "#2965f1", tools: "Flexbox, Grid, Animations", level: "Advanced", percent: "90%", desc: "Responsive designs, complex layouts." },
-        js: { title: "JavaScript", icon: "fab fa-js", color: "#f7df1e", tools: "ES6+, DOM, Fetch API", level: "Advanced", percent: "85%", desc: "Interactive logic, async operations." },
-        node: { title: "Node.js", icon: "fab fa-node-js", color: "#6cc24a", tools: "Express, REST APIs", level: "Intermediate", percent: "70%", desc: "Server-side logic, scalable apps." },
-        python: { title: "Python", icon: "fab fa-python", color: "#3776ab", tools: "Django, Flask, Pandas", level: "Intermediate", percent: "75%", desc: "Backend, data analysis, scripting." },
-        sql: { title: "SQL / DB", icon: "fas fa-database", color: "#bd00ff", tools: "PostgreSQL, MongoDB", level: "Intermediate", percent: "80%", desc: "Data modeling, complex queries." },
-        git: { title: "Git", icon: "fab fa-git-alt", color: "#f05032", tools: "GitHub, CI/CD", level: "Advanced", percent: "88%", desc: "Version control, collaboration." }
+        react: { title: "React.js", icon: "fab fa-react", color: "#61dafb", tools: "React.js, Next.js, Redux, React Router", level: "Advanced", percent: "85%", desc: "SPAs, Interactive UIs, PWAs." },
+        html: { title: "HTML5", icon: "fab fa-html5", color: "#e34f26", tools: "Semantic HTML5, Accessibility, Canvas", level: "Expert", percent: "95%", desc: "Structural foundation, SEO optimization." },
+        css: { title: "CSS3", icon: "fab fa-css3-alt", color: "#2965f1", tools: "Flexbox, CSS Grid, Responsive Design, Animations", level: "Advanced", percent: "90%", desc: "Responsive designs, complex layouts." },
+        js: { title: "JavaScript", icon: "fab fa-js", color: "#f7df1e", tools: "ES6+, Async/Await, DOM, REST APIs", level: "Advanced", percent: "85%", desc: "Interactive logic, async operations." },
+        node: { title: "Node.js", icon: "fab fa-node-js", color: "#6cc24a", tools: "Express.js, FastAPI, REST APIs, GraphQL", level: "Intermediate", percent: "75%", desc: "Server-side logic, scalable APIs." },
+        python: { title: "Python", icon: "fab fa-python", color: "#3776ab", tools: "FastAPI, Scikit-learn, Pandas, NumPy, XGBoost", level: "Intermediate", percent: "80%", desc: "ML models, AI security, backend services." },
+        sql: { title: "Databases & SQL", icon: "fas fa-database", color: "#bd00ff", tools: "PostgreSQL, MySQL, MongoDB, Supabase", level: "Intermediate", percent: "80%", desc: "Data modeling, schema design, complex queries." },
+        git: { title: "Git & DevOps", icon: "fab fa-git-alt", color: "#f05032", tools: "Git, GitHub, Docker, VS Code, CI/CD", level: "Advanced", percent: "88%", desc: "Version control, containerization, deployment." }
     };
 
     const skillCard = document.getElementById('skill-info-card');
@@ -316,25 +316,25 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 2,
             codename: "BETA-02",
-            name: "Credit Card Fraud Detection Using ML",
+            name: "Credit Card Fraud Detection Using Machine Learning",
             tools: "Python, Scikit-learn, Pandas, NumPy",
             category: ["python", "ai"],
             missionClass: "RECON",
             status: "complete",
             icon: ["fab fa-python", "fas fa-robot"],
-            brief: "Machine learning classification model built to detect fraudulent financial transactions.",
+            brief: "Built a classification model for fraudulent transaction detection using structured data preprocessing and transaction behavior patterns.",
             img: "assets/images/fraud_detection.png"
         },
         {
             id: 3,
             codename: "GAMMA-03",
-            name: "Tutor LMS Platform (Internship)",
-            tools: "React JS, WordPress, HTML/CSS",
+            name: "Tutor LMS Platform | Sasha Infinity",
+            tools: "React.js, WordPress, Tutor LMS, AI Integration",
             category: ["web", "react"],
             missionClass: "ORBITAL",
             status: "complete",
             icon: ["fab fa-react", "fab fa-wordpress"],
-            brief: "Developed responsive interfaces and customized platform modules with AI-driven tools.",
+            brief: "Developed and maintained a Tutor LMS-based e-learning platform supporting online course delivery, WordPress performance optimization, and AI tool integrations.",
             img: "assets/images/tutor_lms.png"
         },
         {
@@ -380,12 +380,12 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 7,
             codename: "GOLF-07",
             name: "THOZHIRPORUL – Smart Industrial Monitoring System",
-            tools: "React.js, Node.js, Express.js, PostgreSQL, JWT, AI Integration",
+            tools: "React.js, Node.js, Express.js, PostgreSQL, Docker",
             category: ["web", "react", "ai"],
             missionClass: "COMMAND",
-            status: "in progress",
+            status: "complete",
             icon: ["fab fa-react", "fab fa-node-js", "fas fa-database", "fas fa-brain"],
-            brief: "AI-powered industrial governance platform for SIPCOT featuring real-time monitoring, compliance tracking, and intelligent decision support.",
+            brief: "Developed a full-stack industrial governance platform featuring dashboards, GIS-based park mapping, compliance tracking, workflow automation, and AI-assisted decision support.",
             img: "assets/images/thozhirporul.png"
         },
         {
