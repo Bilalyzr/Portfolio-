@@ -4,21 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Mohammed Bilal | The Galaxy Portfolio</title>
     <!-- Favicon -->
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-    <link rel="stylesheet" href="style.css?v=32">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=33">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@700&family=Orbitron:wght@400..900&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400..700&family=Space+Grotesk:wght@300..700&display=swap"
         rel="stylesheet">
     <!-- Model Viewer -->
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js" crossorigin="anonymous"></script>
     <!-- Lenis Smooth Scroll -->
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -361,10 +362,10 @@
 
         <div class="cta-container" id="btnWrapper">
             <div class="galaxy-button">
-                <button id="btn" class="space-button" data-target="#projects">
+                <button id="btn" class="space-button" data-target="#projects" type="button">
                     <span class="backdrop"></span>
                     <span class="galaxy"></span>
-                    <label class="text">EXPLORE MY UNIVERSE &nbsp;<i class="fas fa-rocket"></i></label>
+                    <span class="text">EXPLORE MY UNIVERSE &nbsp;<i class="fas fa-rocket"></i></span>
                 </button>
                 <div class="bodydrop"></div>
             </div>
@@ -572,7 +573,7 @@
                     <div class="planet-track track-1">
                         <div class="planet-spinner">
                             <div class="planet-pos" style="--start-angle: 0deg;">
-                                <div class="planet p-react skill-earth" data-planet-label="EARTH // REACT.JS" onclick="openSkill('react')">
+                                <div class="planet p-react skill-earth" data-skill="react" data-planet-label="EARTH // REACT.JS" role="button" tabindex="0" aria-label="Earth — React.js telemetry" onclick="openSkill('react')">
                                     <span class="sk-planet-surface"></span>
                                     <span class="sk-planet-clouds"></span>
                                     <i class="fab fa-react"></i>
@@ -580,7 +581,7 @@
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 180deg;">
-                                <div class="planet p-node skill-mercury" data-planet-label="MERCURY // NODE.JS" onclick="openSkill('node')">
+                                <div class="planet p-node skill-mercury" data-skill="node" data-planet-label="MERCURY // NODE.JS" role="button" tabindex="0" aria-label="Mercury — Node.js telemetry" onclick="openSkill('node')">
                                     <span class="sk-planet-surface"></span>
                                     <i class="fab fa-node-js"></i>
                                 </div>
@@ -592,13 +593,13 @@
                     <div class="planet-track track-2">
                         <div class="planet-spinner">
                             <div class="planet-pos" style="--start-angle: 0deg;">
-                                <div class="planet p-html skill-mars" data-planet-label="MARS // HTML5" onclick="openSkill('html')">
+                                <div class="planet p-html skill-mars" data-skill="html" data-planet-label="MARS // HTML5" role="button" tabindex="0" aria-label="Mars — HTML5 telemetry" onclick="openSkill('html')">
                                     <span class="sk-planet-surface"></span>
                                     <i class="fab fa-html5"></i>
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 120deg;">
-                                <div class="planet p-sql skill-saturn" data-planet-label="SATURN // SQL & DB" onclick="openSkill('sql')">
+                                <div class="planet p-sql skill-saturn" data-skill="sql" data-planet-label="SATURN // SQL & DB" role="button" tabindex="0" aria-label="Saturn — Databases & SQL telemetry" onclick="openSkill('sql')">
                                     <span class="sk-planet-surface"></span>
                                     <i class="fas fa-database"></i>
                                     <span class="sk-saturn-ring-major"></span>
@@ -606,7 +607,7 @@
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 240deg;">
-                                <div class="planet p-git skill-uranus" data-planet-label="URANUS // GIT" onclick="openSkill('git')">
+                                <div class="planet p-git skill-uranus" data-skill="git" data-planet-label="URANUS // GIT" role="button" tabindex="0" aria-label="Uranus — Git & DevOps telemetry" onclick="openSkill('git')">
                                     <span class="sk-planet-surface"></span>
                                     <i class="fab fa-git-alt"></i>
                                     <span class="sk-uranus-ring"></span>
@@ -619,19 +620,19 @@
                     <div class="planet-track track-3">
                         <div class="planet-spinner">
                             <div class="planet-pos" style="--start-angle: 0deg;">
-                                <div class="planet p-css skill-neptune" data-planet-label="NEPTUNE // CSS3" onclick="openSkill('css')">
+                                <div class="planet p-css skill-neptune" data-skill="css" data-planet-label="NEPTUNE // CSS3" role="button" tabindex="0" aria-label="Neptune — CSS3 telemetry" onclick="openSkill('css')">
                                     <span class="sk-planet-surface"></span>
                                     <i class="fab fa-css3-alt"></i>
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 120deg;">
-                                <div class="planet p-js skill-venus" data-planet-label="VENUS // JAVASCRIPT" onclick="openSkill('js')">
+                                <div class="planet p-js skill-venus" data-skill="js" data-planet-label="VENUS // JAVASCRIPT" role="button" tabindex="0" aria-label="Venus — JavaScript telemetry" onclick="openSkill('js')">
                                     <span class="sk-planet-surface"></span>
                                     <i class="fab fa-js"></i>
                                 </div>
                             </div>
                             <div class="planet-pos" style="--start-angle: 240deg;">
-                                <div class="planet p-python skill-jupiter" data-planet-label="JUPITER // PYTHON" onclick="openSkill('python')">
+                                <div class="planet p-python skill-jupiter" data-skill="python" data-planet-label="JUPITER // PYTHON" role="button" tabindex="0" aria-label="Jupiter — Python telemetry" onclick="openSkill('python')">
                                     <span class="sk-planet-surface"></span>
                                     <i class="fab fa-python"></i>
                                 </div>
@@ -719,9 +720,9 @@
 
                     <!-- Orbital Step Controls below Star Map -->
                     <div class="stack-nav">
-                        <div class="nav-arrow" id="prevBtn" role="button" aria-label="Previous mission"><i class="fas fa-chevron-left"></i></div>
+                        <div class="nav-arrow" id="prevBtn" role="button" tabindex="0" aria-label="Previous mission"><i class="fas fa-chevron-left"></i></div>
                         <div class="nav-dots" id="navDots"></div>
-                        <div class="nav-arrow" id="nextBtn" role="button" aria-label="Next mission"><i class="fas fa-chevron-right"></i></div>
+                        <div class="nav-arrow" id="nextBtn" role="button" tabindex="0" aria-label="Next mission"><i class="fas fa-chevron-right"></i></div>
                     </div>
                 </div>
 
@@ -1192,7 +1193,7 @@
         <div class="warp-flash"></div>
     </div>
 
-    <script src="script.js?v=16"></script>
+    <script src="script.js?v=17"></script>
 </body>
 
 </html>

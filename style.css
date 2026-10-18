@@ -2977,7 +2977,8 @@ model-viewer {
     z-index: 30;
 }
 
-#skills .planet:hover::after {
+#skills .planet:hover::after,
+#skills .planet:focus-visible::after {
     opacity: 1;
     transform: translateX(-50%) translateY(0) scale(1);
 }
@@ -3024,7 +3025,9 @@ model-viewer {
     transition: transform 0.3s ease, opacity 0.3s ease, text-shadow 0.3s ease;
 }
 
-#skills .planet:hover {
+#skills .planet:hover,
+#skills .planet:focus-visible {
+    outline: none;
     filter: brightness(1.12);
     box-shadow:
         inset -16px -12px 22px rgba(0, 0, 0, 0.88),
@@ -3032,7 +3035,8 @@ model-viewer {
         0 0 32px var(--sk-glow, rgba(0, 210, 255, 0.65));
 }
 
-#skills .planet:hover i {
+#skills .planet:hover i,
+#skills .planet:focus-visible i {
     opacity: 1;
     transform: scale(1.1);
     color: #ffffff;

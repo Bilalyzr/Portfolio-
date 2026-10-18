@@ -129,9 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- UPDATED: Warp Speed Page Transition ---
     const warpContainer = document.getElementById('warp-transition');
+    let warpTeleportTimer = null;
+    let warpEndTimer = null;
 
-    // Select all navigation links (Sidebar + Top Contact + CTA Buttons)
-    const allNavLinks = document.querySelectorAll('.scroll-nav li, .nav-contact-btn, .cta-btn, .space-button, .mobile-nav-links a');
+    // Select all navigation links (Sidebar + Top Contact + CTA Buttons + Skill CTA)
+    const allNavLinks = document.querySelectorAll('.scroll-nav li, .nav-contact-btn, .cta-btn, .space-button, .skill-cta-btn, .mobile-nav-links a');
 
     allNavLinks.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -153,13 +155,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
+                // Honor reduced-motion preference: skip fullscreen warp flash
+                if (REDUCE_MOTION) {
+                    if (window.lenis) {
+                        window.lenis.scrollTo(targetId, { immediate: true });
+                    } else {
+                        document.querySelector(targetId).scrollIntoView({ behavior: 'auto', block: 'start' });
+                    }
+                    return;
+                }
+
+                clearTimeout(warpTeleportTimer);
+                clearTimeout(warpEndTimer);
+
                 // 1. Start Warp Effect
                 if (warpContainer) {
                     warpContainer.classList.add('active');
                 }
 
                 // 2. Teleport (Scroll) to section during the flash (at 800ms)
-                setTimeout(() => {
+                warpTeleportTimer = setTimeout(() => {
                     if (window.lenis) {
                         window.lenis.scrollTo(targetId, { immediate: true });
                     } else {
@@ -171,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 800);
 
                 // 3. End Warp Effect
-                setTimeout(() => {
+                warpEndTimer = setTimeout(() => {
                     if (warpContainer) {
                         warpContainer.classList.remove('active');
                     }
@@ -230,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. GLOBAL CANVAS BACKGROUND — Static Starfield & Faint Constellation Grid ---
     // Non-animated: a still field of stars with subtle nebula halos and faint constellation
-    // threads drawn once (and on resize) for a deep space backdrop.
+    // threads drawn once (and on significant viewport resize) for a deep space backdrop.
     (function initStaticStarfield() {
         const canvas = document.getElementById('globalStarfield');
         if (!canvas) return;
@@ -243,9 +258,14 @@ document.addEventListener('DOMContentLoaded', () => {
             'rgba(200,170,255,'
         ];
 
+        let lastStarW = 0;
+        let lastStarH = 0;
+
         function draw() {
             const W = window.innerWidth;
             const H = window.innerHeight;
+            lastStarW = W;
+            lastStarH = H;
             const DPR = Math.min(window.devicePixelRatio || 1, 2);
             canvas.width = W * DPR;
             canvas.height = H * DPR;
@@ -255,7 +275,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.clearRect(0, 0, W, H);
 
             const count = Math.min(240, Math.max(90, Math.round((W * H) / 8500)));
-            const brightStars = [];
 
             for (let i = 0; i < count; i++) {
                 const depth = Math.random();
@@ -280,9 +299,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         draw();
-        // Redraw only on resize (still no continuous animation)
+        // Redraw only on genuine viewport width changes or major height changes (ignores mobile URL bar collapse)
         let resizeTimer;
         window.addEventListener('resize', () => {
+            if (Math.abs(window.innerWidth - lastStarW) < 2 && Math.abs(window.innerHeight - lastStarH) < 140) {
+                return;
+            }
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(draw, 150);
         });
@@ -383,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const skillCard = document.getElementById('skill-info-card');
     const universeContainer = document.querySelector('#skills .universe-container');
+    let skillProgressTimer = null;
 
     // Expose openSkill to global scope for HTML onclick
     window.openSkill = function (key) {
@@ -404,41 +427,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const planetNameEl = document.getElementById('skill-planet-name');
         if (planetNameEl) {
-            planetNameEl.innerText = data.planet || 'SECTOR // ORBIT';
+            planetNameEl.textContent = data.planet || 'SECTOR // ORBIT';
         }
 
-        document.getElementById('skill-title').innerText = data.title;
+        const titleEl = document.getElementById('skill-title');
+        if (titleEl) titleEl.textContent = data.title;
 
         const toolsContainer = document.getElementById('skill-tools');
         if (toolsContainer) {
-            toolsContainer.innerHTML = data.tools
-                .split(',')
-                .map(t => `<span class="sk-tool-pill">${t.trim()}</span>`)
-                .join('');
+            toolsContainer.textContent = '';
+            data.tools.split(',').forEach(t => {
+                const pill = document.createElement('span');
+                pill.className = 'sk-tool-pill';
+                pill.textContent = t.trim();
+                toolsContainer.appendChild(pill);
+            });
         }
 
-        document.getElementById('skill-level').innerText = data.level;
-        document.getElementById('skill-percent').innerText = data.percent;
-        document.getElementById('skill-desc').innerText = data.desc;
+        const levelEl = document.getElementById('skill-level');
+        if (levelEl) levelEl.textContent = data.level;
+        const percentEl = document.getElementById('skill-percent');
+        if (percentEl) percentEl.textContent = data.percent;
+        const descEl = document.getElementById('skill-desc');
+        if (descEl) descEl.textContent = data.desc;
 
         const skillProgress = document.getElementById('skill-progress');
-        // Reset width to 0 first to re-trigger animation
-        skillProgress.style.width = '0%';
+        if (skillProgress) {
+            clearTimeout(skillProgressTimer);
+            // Reset width to 0 first to re-trigger animation
+            skillProgress.style.width = '0%';
+            skillProgressTimer = setTimeout(() => {
+                skillProgress.style.width = data.percent;
+            }, 260);
+        }
 
         skillCard.classList.add('open');
         if (universeContainer) universeContainer.classList.add('paused-orbit');
-
-        // Animate Progress Bar after card is visible
-        setTimeout(() => {
-            skillProgress.style.width = data.percent;
-        }, 260);
     };
 
     window.closeSkillCard = function () {
         if (!skillCard) return;
+        clearTimeout(skillProgressTimer);
         skillCard.classList.remove('open');
         if (universeContainer) universeContainer.classList.remove('paused-orbit');
     };
+
+    // Keyboard operability for #skills 3D planets & Escape key to close telemetry dossier
+    document.querySelectorAll('#skills .planet[data-skill]').forEach((planetEl) => {
+        planetEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const skillKey = planetEl.getAttribute('data-skill');
+                if (skillKey) window.openSkill(skillKey);
+            }
+        });
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && skillCard && skillCard.classList.contains('open')) {
+            window.closeSkillCard();
+        }
+    });
 
     // Hero 3D Tech Planets: Click / Enter opens corresponding Skill Telemetry Dossier
     document.querySelectorAll('#home .planet-body[data-skill]').forEach((planetEl) => {
@@ -612,11 +661,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let currentFilter = 'all';
+    let activeTypingDelayTimer = null;
+    let activeTypingCharTimer = null;
 
     function renderStack() {
         const filtered = getFiltered(currentFilter);
-        if (!filtered.length) return;
+        if (!filtered.length || !stackContainer || !dotsContainer) return;
         if (activeStackIndex >= filtered.length) activeStackIndex = 0;
+
+        clearTimeout(activeTypingDelayTimer);
+        clearTimeout(activeTypingCharTimer);
 
         stackContainer.innerHTML = '';
         dotsContainer.innerHTML = '';
@@ -750,27 +804,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
             stackContainer.appendChild(consoleCard);
 
-            // Terminal Typing Effect for active mission brief
-            setTimeout(() => {
-                const briefEl = consoleCard.querySelector('.sc-brief');
-                if (briefEl) {
-                    const text = p.brief;
-                    briefEl.textContent = '';
-                    let charIndex = 0;
+            // Terminal Typing Effect for active mission brief (skipped if user prefers reduced motion)
+            if (!REDUCE_MOTION) {
+                activeTypingDelayTimer = setTimeout(() => {
+                    const briefEl = consoleCard.querySelector('.sc-brief');
+                    if (briefEl) {
+                        const text = p.brief;
+                        briefEl.textContent = '';
+                        let charIndex = 0;
 
-                    if (briefEl.typingTimeout) clearTimeout(briefEl.typingTimeout);
-
-                    function type() {
-                        if (!document.contains(briefEl)) return;
-                        if (charIndex < text.length) {
-                            briefEl.textContent += text.charAt(charIndex);
-                            charIndex++;
-                            briefEl.typingTimeout = setTimeout(type, 14);
+                        function type() {
+                            if (!document.contains(briefEl)) return;
+                            if (charIndex < text.length) {
+                                briefEl.textContent += text.charAt(charIndex);
+                                charIndex++;
+                                activeTypingCharTimer = setTimeout(type, 14);
+                            }
                         }
+                        type();
                     }
-                    type();
-                }
-            }, 180);
+                }, 180);
+            }
         }
     }
 
@@ -781,9 +835,27 @@ document.addEventListener('DOMContentLoaded', () => {
         renderStack();
     }
 
-    // Nav arrows
-    document.getElementById('prevBtn').addEventListener('click', () => stepMission(-1));
-    document.getElementById('nextBtn').addEventListener('click', () => stepMission(1));
+    // Nav arrows (click + keyboard Enter/Space)
+    const prevBtnEl = document.getElementById('prevBtn');
+    const nextBtnEl = document.getElementById('nextBtn');
+    if (prevBtnEl) {
+        prevBtnEl.addEventListener('click', () => stepMission(-1));
+        prevBtnEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                stepMission(-1);
+            }
+        });
+    }
+    if (nextBtnEl) {
+        nextBtnEl.addEventListener('click', () => stepMission(1));
+        nextBtnEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                stepMission(1);
+            }
+        });
+    }
 
     // Keyboard Left/Right arrow navigation when Projects section is in view or focused
     document.addEventListener('keydown', (e) => {
@@ -820,13 +892,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.filterProjects = function (category, btn) {
         document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        if (btn) btn.classList.add('active');
         currentFilter = category;
         activeStackIndex = 0;
         renderStack();
     };
-
-    window.addEventListener('resize', renderStack);
 
     // Initial Load
     filterProjects('all', document.querySelector('.freq-btn.active'));
@@ -928,15 +998,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- 8. AUDIO: Space Ambience (Quiet Deep Space) ---
-// Initialize strictly on first user interaction
+// Initialize strictly on first valid user activation gesture
 const enableAudio = () => {
     if (window.hasSpaceAudioStarted) return;
-    window.hasSpaceAudioStarted = true;
 
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
 
-    const ctx = new AudioContext();
+    let ctx;
+    try {
+        ctx = new AudioContext();
+    } catch (e) {
+        return;
+    }
+
+    window.hasSpaceAudioStarted = true;
+    document.body.removeEventListener('click', enableAudio);
+    document.body.removeEventListener('touchstart', enableAudio);
+    document.body.removeEventListener('keydown', enableAudio);
+
+    if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+    }
+
     const masterGain = ctx.createGain();
     masterGain.gain.value = 0;
     masterGain.connect(ctx.destination);
@@ -995,10 +1079,9 @@ const enableAudio = () => {
     }, 45000);
 };
 
-// Listen for ANY interaction to start the sound
+// Listen for valid user activation gestures (excluding 'scroll', which browsers reject for AudioContext autoplay)
 document.body.addEventListener('click', enableAudio, { once: true });
-document.body.addEventListener('touchstart', enableAudio, { once: true });
-document.body.addEventListener('scroll', enableAudio, { once: true });
+document.body.addEventListener('touchstart', enableAudio, { once: true, passive: true });
 document.body.addEventListener('keydown', enableAudio, { once: true });
 
 
@@ -1047,6 +1130,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- 11. STELLAR TRAJECTORY: Warp Trail Particle Canvas ---
 function initWarpTrail() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const canvas = document.getElementById('warpTrailCanvas');
     if (!canvas) return;
 
@@ -1054,30 +1139,28 @@ function initWarpTrail() {
     if (!section) return;
 
     const ctx = canvas.getContext('2d');
+    const celestialNodes = Array.from(section.querySelectorAll('.celestial-body'));
     let particles = [];
-    let animationId;
+    let cachedPositions = [];
+    let animationId = null;
     let isVisible = false;
+
+    // Cache center positions of each celestial body on resize/intersection to avoid 60fps layout thrashing
+    function updateNodePositions() {
+        const sectionRect = section.getBoundingClientRect();
+        cachedPositions = celestialNodes.map(node => {
+            const rect = node.getBoundingClientRect();
+            return {
+                x: rect.left + rect.width / 2 - sectionRect.left,
+                y: rect.top + rect.height / 2 - sectionRect.top
+            };
+        });
+    }
 
     function resizeCanvas() {
         canvas.width = section.offsetWidth;
         canvas.height = section.offsetHeight;
-    }
-
-    // Get center positions of each celestial body
-    function getNodePositions() {
-        const nodes = section.querySelectorAll('.celestial-body');
-        const sectionRect = section.getBoundingClientRect();
-        const positions = [];
-
-        nodes.forEach(node => {
-            const rect = node.getBoundingClientRect();
-            positions.push({
-                x: rect.left + rect.width / 2 - sectionRect.left,
-                y: rect.top + rect.height / 2 - sectionRect.top
-            });
-        });
-
-        return positions;
+        updateNodePositions();
     }
 
     // Cubic bezier point between two positions with slight curve
@@ -1122,17 +1205,9 @@ function initWarpTrail() {
         };
     }
 
-    // Visibility check using IntersectionObserver
-    const visObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            isVisible = entry.isIntersecting;
-        });
-    }, { threshold: 0.1 });
-    visObserver.observe(section);
-
-    function updateAndDraw(time) {
+    function updateAndDraw() {
         if (!isVisible) {
-            animationId = requestAnimationFrame(updateAndDraw);
+            animationId = null;
             return;
         }
 
@@ -1142,7 +1217,7 @@ function initWarpTrail() {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const positions = getNodePositions();
+        const positions = cachedPositions;
 
         // Spawn new particles
         if (particles.length < 30 && Math.random() > 0.85) {
@@ -1222,9 +1297,25 @@ function initWarpTrail() {
         animationId = requestAnimationFrame(updateAndDraw);
     }
 
+    // Visibility check using IntersectionObserver: start/stop RAF only when #journey is visible
+    const visObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            isVisible = entry.isIntersecting;
+            if (isVisible) {
+                resizeCanvas();
+                if (!animationId) {
+                    animationId = requestAnimationFrame(updateAndDraw);
+                }
+            } else if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        });
+    }, { threshold: 0.1 });
+    visObserver.observe(section);
+
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-    animationId = requestAnimationFrame(updateAndDraw);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1255,6 +1346,7 @@ function initSpaceLoader() {
 
     let telemetryTarget = '';
     function updateTelemetry(pct) {
+        if (!telemetryEl) return;
         const stage = telemetryStages.find(s => pct <= s.limit);
         if (stage && stage.text !== telemetryTarget) {
             telemetryTarget = stage.text;
@@ -1293,7 +1385,9 @@ function initSpaceLoader() {
         
         // Print progress
         const displayVal = Math.floor(currentPercent);
-        percentEl.textContent = displayVal.toString().padStart(2, '0') + '%';
+        if (percentEl) {
+            percentEl.textContent = displayVal.toString().padStart(2, '0') + '%';
+        }
         updateTelemetry(displayVal);
         
         // Dynamic bar filling
@@ -1376,11 +1470,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const msgEl = document.getElementById('cf-message');
     const statusEl = document.getElementById('cfStatus');
     const btn = document.getElementById('cfSubmit');
+    if (!nameEl || !emailEl || !msgEl || !btn) return;
     const btnLabel = btn.querySelector('.transmit-label');
 
     const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
     function setStatus(msg, kind) {
+        if (!statusEl) return;
         statusEl.textContent = msg;
         statusEl.className = 'form-status' + (kind ? ' ' + kind : '');
     }
@@ -1415,7 +1511,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         btn.disabled = true;
-        btnLabel.textContent = 'Transmitting…';
+        if (btnLabel) btnLabel.textContent = 'Transmitting…';
         setStatus('// Establishing uplink…', '');
 
         try {
@@ -1614,11 +1710,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const showCellInfo = () => {
                 const readableDate = formatReadoutDate(day.date);
+                const safeCount = Number(day.count) || 0;
                 if (readoutEl) {
-                    const label = day.count === 0
+                    const label = safeCount === 0
                         ? `0 CONTRIBUTIONS ON ${readableDate.toUpperCase()}`
-                        : `${day.count} CONTRIBUTION${day.count > 1 ? 'S' : ''} ON ${readableDate.toUpperCase()}`;
-                    readoutEl.innerHTML = `<span class="readout-pulse"></span><span class="readout-text" style="color:${day.count > 0 ? 'var(--gh-accent)' : 'rgba(240,246,252,0.75)'};">${label}</span>`;
+                        : `${safeCount} CONTRIBUTION${safeCount > 1 ? 'S' : ''} ON ${readableDate.toUpperCase()}`;
+                    readoutEl.textContent = '';
+                    const pulseSpan = document.createElement('span');
+                    pulseSpan.className = 'readout-pulse';
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'readout-text';
+                    textSpan.style.color = safeCount > 0 ? 'var(--gh-accent)' : 'rgba(240,246,252,0.75)';
+                    textSpan.textContent = label;
+                    readoutEl.appendChild(pulseSpan);
+                    readoutEl.appendChild(textSpan);
                 }
 
                 if (floatingTooltip) {
@@ -1630,9 +1735,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     const clampedLeft = Math.max(90, Math.min(hudRect.width - 90, leftPx));
                     floatingTooltip.style.left = `${clampedLeft}px`;
                     floatingTooltip.style.top = `${topPx}px`;
-                    floatingTooltip.innerHTML = day.count === 0
-                        ? `No contributions on ${readableDate}`
-                        : `<strong>${day.count} contribution${day.count > 1 ? 's' : ''}</strong> on ${readableDate}`;
+                    floatingTooltip.textContent = '';
+                    if (safeCount === 0) {
+                        floatingTooltip.textContent = `No contributions on ${readableDate}`;
+                    } else {
+                        const strongEl = document.createElement('strong');
+                        strongEl.textContent = `${safeCount} contribution${safeCount > 1 ? 's' : ''}`;
+                        floatingTooltip.appendChild(strongEl);
+                        floatingTooltip.appendChild(document.createTextNode(` on ${readableDate}`));
+                    }
                     floatingTooltip.classList.add('visible');
                 }
             };
@@ -1793,8 +1904,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         reposEl.textContent = userData.public_repos;
                     }
                     const avatarImg = document.getElementById('ghAvatar');
-                    if (userData.avatar_url && avatarImg) {
-                        avatarImg.src = userData.avatar_url;
+                    if (typeof userData.avatar_url === 'string' && avatarImg) {
+                        try {
+                            const parsedUrl = new URL(userData.avatar_url);
+                            if (parsedUrl.protocol === 'https:' && (parsedUrl.hostname === 'avatars.githubusercontent.com' || parsedUrl.hostname.endsWith('.githubusercontent.com'))) {
+                                avatarImg.src = parsedUrl.href;
+                            }
+                        } catch (_) {
+                            // Ignore malformed avatar URL
+                        }
                     }
                 }
             }
