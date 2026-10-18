@@ -275,24 +275,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     ctx.beginPath();
                     ctx.arc(x, y, size * 2.8, 0, Math.PI * 2);
                     ctx.fill();
-                    brightStars.push({ x, y });
-                }
-            }
-
-            // Subtle faint constellation links between nearby bright stars
-            ctx.strokeStyle = 'rgba(0, 240, 255, 0.045)';
-            ctx.lineWidth = 0.6;
-            for (let i = 0; i < brightStars.length; i++) {
-                for (let j = i + 1; j < brightStars.length; j++) {
-                    const dx = brightStars[i].x - brightStars[j].x;
-                    const dy = brightStars[i].y - brightStars[j].y;
-                    const dist = Math.hypot(dx, dy);
-                    if (dist < 135) {
-                        ctx.beginPath();
-                        ctx.moveTo(brightStars[i].x, brightStars[i].y);
-                        ctx.lineTo(brightStars[j].x, brightStars[j].y);
-                        ctx.stroke();
-                    }
                 }
             }
         }
@@ -1034,10 +1016,22 @@ function initWarpTrail() {
         };
     }
 
+    // Visibility check using IntersectionObserver
+    const visObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            isVisible = entry.isIntersecting;
+        });
+    }, { threshold: 0.1 });
+    visObserver.observe(section);
+
     function updateAndDraw(time) {
         if (!isVisible) {
             animationId = requestAnimationFrame(updateAndDraw);
             return;
+        }
+
+        if (canvas.width !== section.offsetWidth || canvas.height !== section.offsetHeight) {
+            resizeCanvas();
         }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1121,16 +1115,6 @@ function initWarpTrail() {
 
         animationId = requestAnimationFrame(updateAndDraw);
     }
-
-    // Visibility observer to pause when offscreen
-    const visObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            isVisible = entry.isIntersecting;
-            if (isVisible) resizeCanvas();
-        });
-    }, { threshold: 0.1 });
-
-    visObserver.observe(section);
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
