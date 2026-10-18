@@ -1473,48 +1473,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const GITHUB_USER = 'Bilalyzr';
 
-    // Real snapshot of @Bilalyzr's active contribution dates for instant / offline rendering
+    // Verified baseline snapshot of @Bilalyzr's active contribution dates for instant / offline rendering
     const FALLBACK_ACTIVE_MAP = {
-        '2025-12-08': [5, 1],
-        '2026-02-13': [1, 1], '2026-02-20': [4, 1],
-        '2026-03-05': [1, 1], '2026-03-10': [4, 1],
-        '2026-04-05': [1, 1], '2026-04-14': [1, 1], '2026-04-19': [2, 1], '2026-04-25': [3, 1],
-        '2026-05-06': [1, 1], '2026-05-07': [7, 2], '2026-05-08': [1, 1], '2026-05-09': [1, 1],
-        '2026-05-19': [17, 3], '2026-05-20': [4, 1], '2026-05-24': [1, 1], '2026-05-25': [5, 1],
-        '2026-06-13': [2, 1], '2026-06-14': [2, 1], '2026-06-20': [3, 1], '2026-06-21': [3, 1],
+        '2025-12-08': [5, 4],
+        '2026-01-17': [1, 1],
+        '2026-02-13': [2, 1], '2026-02-20': [4, 2], '2026-02-28': [3, 1],
+        '2026-03-01': [2, 1], '2026-03-02': [1, 1], '2026-03-04': [1, 1], '2026-03-05': [2, 1], '2026-03-10': [4, 2],
+        '2026-04-05': [1, 1], '2026-04-14': [9, 3], '2026-04-19': [2, 1], '2026-04-25': [3, 1],
+        '2026-05-03': [2, 1], '2026-05-06': [1, 1], '2026-05-07': [7, 2], '2026-05-08': [1, 1], '2026-05-09': [1, 1], '2026-05-10': [1, 1],
+        '2026-05-19': [19, 4], '2026-05-20': [4, 2], '2026-05-24': [1, 1], '2026-05-25': [7, 2], '2026-05-26': [2, 1],
+        '2026-06-11': [2, 1], '2026-06-13': [2, 1], '2026-06-14': [2, 1], '2026-06-20': [3, 1], '2026-06-21': [3, 1],
         '2026-06-24': [3, 1], '2026-06-26': [1, 1], '2026-06-27': [1, 1], '2026-06-29': [2, 1],
-        '2026-07-04': [1, 1], '2026-07-05': [4, 1], '2026-07-11': [1, 1], '2026-07-15': [3, 1],
-        '2026-07-16': [2, 1], '2026-07-17': [4, 1], '2026-07-20': [1, 1], '2026-07-21': [5, 1],
+        '2026-07-04': [1, 1], '2026-07-05': [4, 2], '2026-07-11': [1, 1], '2026-07-13': [1, 1], '2026-07-15': [3, 1],
+        '2026-07-16': [2, 1], '2026-07-17': [4, 2], '2026-07-20': [1, 1], '2026-07-21': [5, 2],
         '2026-07-23': [1, 1], '2026-07-24': [1, 1], '2026-07-25': [3, 1],
-        '2026-08-03': [6, 1], '2026-08-04': [1, 1], '2026-08-05': [7, 2], '2026-08-06': [1, 1],
-        '2026-08-07': [1, 1], '2026-08-12': [2, 1], '2026-08-13': [1, 1], '2026-08-14': [10, 2],
-        '2026-08-15': [3, 1], '2026-08-20': [6, 1], '2026-08-21': [9, 2], '2026-08-22': [2, 1],
-        '2026-08-25': [9, 2], '2026-08-31': [4, 1],
-        '2026-09-01': [4, 1], '2026-09-03': [2, 1], '2026-09-04': [1, 1], '2026-09-05': [9, 2],
-        '2026-09-06': [16, 3], '2026-09-08': [8, 2], '2026-09-09': [1, 1], '2026-09-10': [12, 2],
-        '2026-09-12': [11, 2], '2026-09-13': [1, 1], '2026-09-14': [2, 1], '2026-09-16': [2, 1],
-        '2026-09-21': [3, 1], '2026-09-22': [19, 3], '2026-09-23': [4, 1], '2026-09-24': [2, 1],
-        '2026-09-25': [9, 2], '2026-09-26': [5, 1], '2026-09-27': [3, 1], '2026-09-28': [3, 1],
-        '2026-09-29': [4, 1], '2026-09-30': [2, 1],
-        '2026-10-03': [26, 4], '2026-10-05': [5, 1], '2026-10-06': [13, 2], '2026-10-07': [3, 1],
-        '2026-10-08': [1, 1], '2026-10-09': [3, 1], '2026-10-10': [6, 1], '2026-10-11': [14, 3],
-        '2026-10-13': [1, 1], '2026-10-14': [2, 1], '2026-10-16': [6, 1], '2026-10-17': [5, 1]
+        '2026-08-03': [6, 2], '2026-08-04': [1, 1], '2026-08-05': [7, 2], '2026-08-06': [1, 1],
+        '2026-08-07': [1, 1], '2026-08-12': [2, 1], '2026-08-13': [1, 1], '2026-08-14': [10, 3],
+        '2026-08-15': [3, 1], '2026-08-20': [6, 2], '2026-08-21': [9, 3], '2026-08-22': [2, 1],
+        '2026-08-25': [19, 4], '2026-08-31': [4, 2],
+        '2026-09-01': [4, 2], '2026-09-03': [2, 1], '2026-09-04': [1, 1], '2026-09-05': [9, 3],
+        '2026-09-06': [16, 4], '2026-09-08': [8, 3], '2026-09-09': [1, 1], '2026-09-10': [12, 4],
+        '2026-09-12': [11, 4], '2026-09-13': [1, 1], '2026-09-14': [2, 1], '2026-09-16': [2, 1], '2026-09-17': [1, 1],
+        '2026-09-21': [3, 1], '2026-09-22': [19, 4], '2026-09-23': [4, 2], '2026-09-24': [2, 1],
+        '2026-09-25': [9, 3], '2026-09-26': [5, 2], '2026-09-27': [3, 1], '2026-09-28': [3, 1],
+        '2026-09-29': [4, 2], '2026-09-30': [2, 1],
+        '2026-10-03': [26, 4], '2026-10-05': [5, 2], '2026-10-06': [13, 4], '2026-10-07': [3, 1],
+        '2026-10-08': [1, 1], '2026-10-09': [3, 1], '2026-10-10': [6, 2], '2026-10-11': [14, 4],
+        '2026-10-13': [1, 1], '2026-10-14': [2, 1], '2026-10-16': [6, 2], '2026-10-17': [9, 3],
+        '2026-10-18': [3, 1]
     };
 
-    function buildFallbackContributions() {
+    function countToLevel(count) {
+        if (!count || count <= 0) return 0;
+        if (count <= 3) return 1;
+        if (count <= 7) return 2;
+        if (count <= 13) return 3;
+        return 4;
+    }
+
+    // Build a dynamic rolling 52-week window ending today (aligned to Sunday start for accurate Mon/Wed/Fri rows)
+    function buildRollingWindow(dayMap) {
+        const now = new Date();
+        const todayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+        const startUTC = new Date(todayUTC);
+        startUTC.setUTCDate(startUTC.getUTCDate() - 364);
+        // Align start date back to Sunday (0) so grid-auto-flow: column maps Row 0=Sun, Row 1=Mon, Row 3=Wed, Row 5=Fri
+        startUTC.setUTCDate(startUTC.getUTCDate() - startUTC.getUTCDay());
+
         const list = [];
-        const start = new Date('2025-10-12T00:00:00Z');
-        const end = new Date('2026-10-17T00:00:00Z');
-        for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+        for (let d = new Date(startUTC); d <= todayUTC; d.setUTCDate(d.getUTCDate() + 1)) {
             const iso = d.toISOString().slice(0, 10);
-            const hit = FALLBACK_ACTIVE_MAP[iso];
-            list.push({
-                date: iso,
-                count: hit ? hit[0] : 0,
-                level: hit ? hit[1] : 0
-            });
+            const entry = dayMap[iso];
+            const count = entry ? entry.count : 0;
+            const level = entry && typeof entry.level === 'number' ? entry.level : countToLevel(count);
+            list.push({ date: iso, count, level });
         }
         return list;
+    }
+
+    function buildFallbackContributions() {
+        const map = {};
+        Object.keys(FALLBACK_ACTIVE_MAP).forEach(date => {
+            const [count, level] = FALLBACK_ACTIVE_MAP[date];
+            map[date] = { count, level };
+        });
+        return buildRollingWindow(map);
     }
 
     const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -1542,7 +1565,7 @@ document.addEventListener('DOMContentLoaded', () => {
         heatmapGrid.innerHTML = '';
         if (monthsRow) monthsRow.innerHTML = '';
 
-        let total = typeof totalOverride === 'number' ? totalOverride : 0;
+        let computedSum = 0;
         let peakCount = 0;
         let peakDate = '';
         let activeDays = 0;
@@ -1557,7 +1580,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let lastMarkerWeek = -10;
 
         contributions.forEach((day, idx) => {
-            if (typeof totalOverride !== 'number') total += day.count;
+            computedSum += day.count;
             if (day.count > 0) {
                 activeDays++;
                 currentStreak++;
@@ -1584,7 +1607,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const cell = document.createElement('div');
-            const lvl = Math.min(4, Math.max(0, day.level || 0));
+            const lvl = Math.min(4, Math.max(0, day.level || countToLevel(day.count)));
             cell.className = `gh-cell lvl-${lvl}`;
             cell.dataset.date = day.date;
             cell.dataset.count = day.count;
@@ -1636,7 +1659,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        if (totalEl) totalEl.textContent = total.toLocaleString();
+        const finalTotal = typeof totalOverride === 'number'
+            ? Math.max(totalOverride, computedSum)
+            : computedSum;
+
+        if (totalEl) totalEl.textContent = finalTotal.toLocaleString();
         if (peakEl) peakEl.textContent = peakCount;
         if (peakDateSubEl && peakDate) peakDateSubEl.textContent = formatReadoutDate(peakDate);
         if (activeDaysEl) activeDaysEl.textContent = activeDays;
@@ -1649,30 +1676,115 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 1. Render immediately with verified snapshot so there is zero blank state
-    renderContributions(buildFallbackContributions(), 372);
+    // 1. Render immediately with verified baseline snapshot so there is zero blank state
+    renderContributions(buildFallbackContributions());
 
-    // 2. Fetch live GitHub telemetry in background
-    let hasFetchedLive = false;
-    async function fetchLiveGitHubTelemetry() {
-        if (hasFetchedLive) return;
-        hasFetchedLive = true;
+    // 2. Fetch live GitHub telemetry automatically (merges multi-year calendar API + real-time GitHub commit/event streams)
+    let isFetchingLive = false;
+    let lastFetchTime = 0;
+
+    async function fetchLiveGitHubTelemetry(forceRefresh = false) {
+        const nowMs = Date.now();
+        if (isFetchingLive) return;
+        if (!forceRefresh && lastFetchTime > 0 && (nowMs - lastFetchTime) < 45000) return;
+        isFetchingLive = true;
 
         try {
-            const [contribRes, userRes] = await Promise.allSettled([
-                fetch(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`),
-                fetch(`https://api.github.com/users/${GITHUB_USER}`)
+            // Seed dayMap with verified baseline so offline/partial responses never lose known history
+            const dayMap = {};
+            Object.keys(FALLBACK_ACTIVE_MAP).forEach(date => {
+                const [count, level] = FALLBACK_ACTIVE_MAP[date];
+                dayMap[date] = { count, level };
+            });
+
+            // Cutoff date for recent real-time commit search (last 14 days)
+            const recentDateObj = new Date(nowMs - 14 * 86400000);
+            const recentSinceIso = recentDateObj.toISOString().slice(0, 10);
+
+            const [allContribRes, lastContribRes, userRes, commitsRes, eventsRes] = await Promise.allSettled([
+                fetch(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=all`, { cache: 'no-store' }),
+                fetch(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`, { cache: 'no-store' }),
+                fetch(`https://api.github.com/users/${GITHUB_USER}`, { cache: 'no-store' }),
+                fetch(`https://api.github.com/search/commits?q=author:${GITHUB_USER}+committer-date:>=${recentSinceIso}&per_page=100&sort=committer-date&order=desc`, {
+                    cache: 'no-store',
+                    headers: { 'Accept': 'application/vnd.github.cloak-preview+json' }
+                }),
+                fetch(`https://api.github.com/users/${GITHUB_USER}/events/public?per_page=100`, { cache: 'no-store' })
             ]);
 
-            if (contribRes.status === 'fulfilled' && contribRes.value.ok) {
-                const contribData = await contribRes.value.json();
-                if (contribData && Array.isArray(contribData.contributions)) {
-                    const lastYrTotal = contribData.total && typeof contribData.total.lastYear === 'number'
-                        ? contribData.total.lastYear
-                        : undefined;
-                    renderContributions(contribData.contributions, lastYrTotal);
+            const mergeCalendarList = (list) => {
+                if (!Array.isArray(list)) return;
+                list.forEach(item => {
+                    if (!item || !item.date) return;
+                    const c = Number(item.count) || 0;
+                    const l = typeof item.level === 'number' ? item.level : countToLevel(c);
+                    const prev = dayMap[item.date];
+                    if (!prev || c >= prev.count) {
+                        dayMap[item.date] = { count: c, level: l || countToLevel(c) };
+                    }
+                });
+            };
+
+            if (lastContribRes.status === 'fulfilled' && lastContribRes.value.ok) {
+                const data = await lastContribRes.value.json();
+                if (data && Array.isArray(data.contributions)) {
+                    mergeCalendarList(data.contributions);
                 }
             }
+
+            if (allContribRes.status === 'fulfilled' && allContribRes.value.ok) {
+                const data = await allContribRes.value.json();
+                if (data && Array.isArray(data.contributions)) {
+                    mergeCalendarList(data.contributions);
+                }
+            }
+
+            // Overlay real-time commits from GitHub Search API (bypasses any proxy CDN cache delay for today's pushes)
+            const realtimeDayCounts = {};
+            if (commitsRes.status === 'fulfilled' && commitsRes.value.ok) {
+                const commitsData = await commitsRes.value.json();
+                if (commitsData && Array.isArray(commitsData.items)) {
+                    commitsData.items.forEach(item => {
+                        const rawDate = item?.commit?.committer?.date || item?.commit?.author?.date;
+                        if (rawDate) {
+                            const isoDay = new Date(rawDate).toISOString().slice(0, 10);
+                            realtimeDayCounts[isoDay] = (realtimeDayCounts[isoDay] || 0) + 1;
+                        }
+                    });
+                }
+            }
+
+            // Also count real-time public events (PRs, issues, repo creations, pushes) per day
+            const eventDayCounts = {};
+            if (eventsRes.status === 'fulfilled' && eventsRes.value.ok) {
+                const eventsData = await eventsRes.value.json();
+                if (Array.isArray(eventsData)) {
+                    eventsData.forEach(ev => {
+                        if (!ev || !ev.created_at) return;
+                        if (['PushEvent', 'CreateEvent', 'PullRequestEvent', 'IssuesEvent'].includes(ev.type)) {
+                            const isoDay = new Date(ev.created_at).toISOString().slice(0, 10);
+                            const weight = ev.type === 'PushEvent'
+                                ? Math.max(1, Number(ev.payload?.distinct_size) || Number(ev.payload?.size) || 1)
+                                : 1;
+                            eventDayCounts[isoDay] = (eventDayCounts[isoDay] || 0) + weight;
+                        }
+                    });
+                }
+            }
+
+            Object.keys({ ...realtimeDayCounts, ...eventDayCounts }).forEach(isoDay => {
+                const liveCount = Math.max(realtimeDayCounts[isoDay] || 0, eventDayCounts[isoDay] || 0);
+                const existing = dayMap[isoDay]?.count || 0;
+                if (liveCount > existing) {
+                    dayMap[isoDay] = {
+                        count: liveCount,
+                        level: countToLevel(liveCount)
+                    };
+                }
+            });
+
+            const rollingList = buildRollingWindow(dayMap);
+            renderContributions(rollingList);
 
             if (userRes.status === 'fulfilled' && userRes.value.ok) {
                 const userData = await userRes.value.json();
@@ -1686,10 +1798,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
+
+            lastFetchTime = Date.now();
         } catch (err) {
-            // Snapshot is already rendered, fail silently
+            // Baseline snapshot is already rendered
+        } finally {
+            isFetchingLive = false;
         }
     }
+
+    // Automatically fetch live GitHub telemetry on page load and refresh every 2 minutes
+    fetchLiveGitHubTelemetry(true);
+    setInterval(() => fetchLiveGitHubTelemetry(true), 120000);
 
     // --- Hover & Touch / Click State Machine ---
     let isPinned = false;
@@ -1701,7 +1821,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ghHud.classList.add('active');
         ghCard.classList.add('hud-open');
         ghCard.setAttribute('aria-expanded', 'true');
-        fetchLiveGitHubTelemetry();
+        fetchLiveGitHubTelemetry(false);
     }
 
     function closeHud(force = false) {
