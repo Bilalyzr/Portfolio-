@@ -291,14 +291,94 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. SKILLS: Interaction ---
 
     const skillsData = {
-        react: { title: "React.js", icon: "fab fa-react", color: "#61dafb", tools: "React.js, Next.js, Redux, React Router", level: "Advanced", percent: "85%", desc: "SPAs, interactive UIs, and PWAs." },
-        html: { title: "HTML5", icon: "fab fa-html5", color: "#e34f26", tools: "Semantic HTML5, Accessibility, Canvas", level: "Expert", percent: "95%", desc: "Semantic structure, accessibility, and SEO optimization." },
-        css: { title: "CSS3", icon: "fab fa-css3-alt", color: "#2965f1", tools: "Flexbox, CSS Grid, Responsive Design, Animations", level: "Advanced", percent: "90%", desc: "Responsive design, modern layouts, and animations." },
-        js: { title: "JavaScript", icon: "fab fa-js", color: "#f7df1e", tools: "ES6+, Async/Await, DOM, REST APIs", level: "Advanced", percent: "85%", desc: "Interactive logic, DOM manipulation, and async workflows." },
-        node: { title: "Node.js", icon: "fab fa-node-js", color: "#6cc24a", tools: "Express.js, FastAPI, REST APIs, GraphQL", level: "Intermediate", percent: "75%", desc: "Server-side architecture and scalable REST/GraphQL APIs." },
-        python: { title: "Python", icon: "fab fa-python", color: "#3776ab", tools: "FastAPI, Scikit-learn, Pandas, NumPy, XGBoost", level: "Intermediate", percent: "80%", desc: "Machine learning models, AI security, and backend services." },
-        sql: { title: "Databases & SQL", icon: "fas fa-database", color: "#bd00ff", tools: "PostgreSQL, MySQL, MongoDB, Supabase", level: "Intermediate", percent: "80%", desc: "Data modeling, schema design, and query optimization." },
-        git: { title: "Git & DevOps", icon: "fab fa-git-alt", color: "#f05032", tools: "Git, GitHub, Docker, VS Code, CI/CD", level: "Advanced", percent: "88%", desc: "Version control, containerization, and CI/CD deployment." }
+        react: {
+            title: "React.js",
+            planet: "SECTOR // EARTH",
+            planetTex: "assets/images/planets/earth.jpg",
+            icon: "fab fa-react",
+            color: "#61dafb",
+            tools: "React.js, Next.js, Redux, React Router",
+            level: "Advanced",
+            percent: "85%",
+            desc: "Building dynamic single-page applications, interactive UIs, and progressive web architectures."
+        },
+        html: {
+            title: "HTML5",
+            planet: "SECTOR // MARS",
+            planetTex: "assets/images/planets/mars.jpg",
+            icon: "fab fa-html5",
+            color: "#ff784f",
+            tools: "Semantic HTML5, Accessibility, Canvas",
+            level: "Expert",
+            percent: "95%",
+            desc: "Crafting semantic document architecture, ARIA accessibility standards, and SEO optimization."
+        },
+        css: {
+            title: "CSS3",
+            planet: "SECTOR // NEPTUNE",
+            planetTex: "assets/images/planets/neptune.jpg",
+            icon: "fab fa-css3-alt",
+            color: "#60a5fa",
+            tools: "Flexbox, CSS Grid, Responsive Design, 3D CSS",
+            level: "Advanced",
+            percent: "90%",
+            desc: "Engineering responsive fluid layouts, 3D transforms, and hardware-accelerated animations."
+        },
+        js: {
+            title: "JavaScript",
+            planet: "SECTOR // VENUS",
+            planetTex: "assets/images/planets/venus.jpg",
+            icon: "fab fa-js",
+            color: "#f7df1e",
+            tools: "ES6+, Async/Await, DOM, REST APIs",
+            level: "Advanced",
+            percent: "85%",
+            desc: "Developing interactive client logic, high-performance DOM manipulation, and async workflows."
+        },
+        node: {
+            title: "Node.js",
+            planet: "SECTOR // MERCURY",
+            planetTex: "assets/images/planets/mercury.jpg",
+            icon: "fab fa-node-js",
+            color: "#8de963",
+            tools: "Express.js, FastAPI, REST APIs, GraphQL",
+            level: "Intermediate",
+            percent: "75%",
+            desc: "Designing server-side architectures, microservices, and scalable REST & GraphQL APIs."
+        },
+        python: {
+            title: "Python",
+            planet: "SECTOR // JUPITER",
+            planetTex: "assets/images/planets/jupiter.jpg",
+            icon: "fab fa-python",
+            color: "#ffd43b",
+            tools: "FastAPI, Scikit-learn, Pandas, NumPy, XGBoost",
+            level: "Intermediate",
+            percent: "80%",
+            desc: "Training machine learning classification models, AI security firewalls, and backend services."
+        },
+        sql: {
+            title: "Databases & SQL",
+            planet: "SECTOR // SATURN",
+            planetTex: "assets/images/planets/saturn.jpg",
+            icon: "fas fa-database",
+            color: "#e9d5ff",
+            tools: "PostgreSQL, MySQL, MongoDB, Supabase",
+            level: "Intermediate",
+            percent: "80%",
+            desc: "Relational & NoSQL data modeling, normalized schema design, and query optimization."
+        },
+        git: {
+            title: "Git & DevOps",
+            planet: "SECTOR // URANUS",
+            planetTex: "assets/images/planets/uranus.jpg",
+            icon: "fab fa-git-alt",
+            color: "#ff7b61",
+            tools: "Git, GitHub, Docker, VS Code, CI/CD",
+            level: "Advanced",
+            percent: "88%",
+            desc: "Managing distributed version control, Docker containerization, and automated CI/CD pipelines."
+        }
     };
 
     const skillCard = document.getElementById('skill-info-card');
@@ -307,11 +387,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Expose openSkill to global scope for HTML onclick
     window.openSkill = function (key) {
         const data = skillsData[key];
-        if (!data) return;
-        document.getElementById('skill-icon').className = `${data.icon} tech-icon-large`;
-        document.getElementById('skill-icon').style.color = data.color;
+        if (!data || !skillCard) return;
+
+        skillCard.style.setProperty('--sk-accent', data.color);
+
+        const iconEl = document.getElementById('skill-icon');
+        if (iconEl) {
+            iconEl.className = `${data.icon} tech-icon-large`;
+            iconEl.style.color = data.color;
+        }
+
+        const planetMiniEl = document.getElementById('skill-planet-mini');
+        if (planetMiniEl && data.planetTex) {
+            planetMiniEl.style.backgroundImage = `url('${data.planetTex}')`;
+        }
+
+        const planetNameEl = document.getElementById('skill-planet-name');
+        if (planetNameEl) {
+            planetNameEl.innerText = data.planet || 'SECTOR // ORBIT';
+        }
+
         document.getElementById('skill-title').innerText = data.title;
-        document.getElementById('skill-tools').innerText = data.tools;
+
+        const toolsContainer = document.getElementById('skill-tools');
+        if (toolsContainer) {
+            toolsContainer.innerHTML = data.tools
+                .split(',')
+                .map(t => `<span class="sk-tool-pill">${t.trim()}</span>`)
+                .join('');
+        }
+
         document.getElementById('skill-level').innerText = data.level;
         document.getElementById('skill-percent').innerText = data.percent;
         document.getElementById('skill-desc').innerText = data.desc;
@@ -326,10 +431,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Animate Progress Bar after card is visible
         setTimeout(() => {
             skillProgress.style.width = data.percent;
-        }, 300);
+        }, 260);
     };
 
     window.closeSkillCard = function () {
+        if (!skillCard) return;
         skillCard.classList.remove('open');
         if (universeContainer) universeContainer.classList.remove('paused-orbit');
     };

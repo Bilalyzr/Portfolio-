@@ -8,7 +8,7 @@
     <!-- Favicon -->
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-    <link rel="stylesheet" href="style.css?v=29">
+    <link rel="stylesheet" href="style.css?v=32">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -501,25 +501,52 @@
                         <i class="fas fa-laptop-code"></i>
                     </div>
 
-                    <div class="skill-info-card" id="skill-info-card">
-                        <div class="close-btn" onclick="closeSkillCard()"><i class="fas fa-times"></i></div>
+                    <div class="skill-info-card" id="skill-info-card" role="dialog" aria-labelledby="skill-title">
+                        <div class="sk-card-grid" aria-hidden="true"></div>
+                        <span class="sk-hud-corner tl" aria-hidden="true"></span>
+                        <span class="sk-hud-corner tr" aria-hidden="true"></span>
+                        <span class="sk-hud-corner bl" aria-hidden="true"></span>
+                        <span class="sk-hud-corner br" aria-hidden="true"></span>
 
-                        <i id="skill-icon" class="fab fa-react tech-icon-large"></i>
-                        <h3 id="skill-title" style="font-family:'Montserrat'; margin:10px 0; color:white;">
-                            React</h3>
+                        <!-- Telemetry Top Bar -->
+                        <div class="sk-card-topbar">
+                            <div class="sk-topbar-left">
+                                <span class="sk-planet-mini" id="skill-planet-mini"></span>
+                                <span class="sk-sector-code" id="skill-planet-name">SECTOR // EARTH</span>
+                            </div>
+                            <div class="sk-topbar-right">
+                                <span class="sk-live-badge"><span class="sk-live-dot"></span>LOCKED</span>
+                                <button type="button" class="close-btn" onclick="closeSkillCard()" aria-label="Close Telemetry Dossier">
+                                    <span>ESC</span>
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Core Hero Emblem & Title Header -->
+                        <div class="sk-card-header">
+                            <div class="sk-icon-orb">
+                                <i id="skill-icon" class="fab fa-react tech-icon-large"></i>
+                            </div>
+                            <div class="sk-header-meta">
+                                <span class="sk-dossier-tag">TECH TELEMETRY // DOSSIER</span>
+                                <h3 id="skill-title">React.js</h3>
+                            </div>
+                        </div>
 
                         <div class="skill-card-details">
                             <div class="detail-row">
-                                <span class="detail-label">Tools Used:</span>
-                                <span id="skill-tools" style="color:white;">...</span>
+                                <span class="detail-label"><i class="fas fa-microchip"></i>PAYLOAD &amp; TOOLS //</span>
+                                <div class="sk-tools-pills" id="skill-tools"></div>
                             </div>
 
                             <div class="detail-row">
-                                <span class="detail-label">Experience Level:</span>
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom:5px;">
-                                    <span id="skill-level" style="font-size: 0.8rem;">...</span>
-                                    <span id="skill-percent" style="font-size: 0.8rem;">...</span>
+                                <div class="sk-proficiency-head">
+                                    <span class="detail-label" style="margin-bottom:0;"><i class="fas fa-tachometer-alt"></i>PROFICIENCY //</span>
+                                    <div class="sk-proficiency-badges">
+                                        <span id="skill-level" class="sk-level-badge">Advanced</span>
+                                        <span id="skill-percent" class="sk-percent-val">85%</span>
+                                    </div>
                                 </div>
                                 <div class="progress-container">
                                     <div class="progress-bar" id="skill-progress"></div>
@@ -527,13 +554,18 @@
                             </div>
 
                             <div class="detail-row">
-                                <span class="detail-label">Capabilities:</span>
-                                <span id="skill-desc" style="color:#dbe4ff;">...</span>
+                                <span class="detail-label"><i class="fas fa-satellite"></i>OPERATIONAL CAPABILITIES //</span>
+                                <p id="skill-desc" class="sk-desc-box">...</p>
                             </div>
                         </div>
 
-                        <a href="#projects" class="skill-cta-btn" onclick="closeSkillCard()">View
-                            Projects</a>
+                        <div class="sk-card-footer">
+                            <a href="#projects" class="skill-cta-btn" onclick="closeSkillCard()">
+                                <i class="fas fa-rocket"></i>
+                                <span>VIEW MISSIONS</span>
+                                <i class="fas fa-chevron-right sk-btn-arrow"></i>
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Track 1: Horizontal -->
