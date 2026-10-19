@@ -2335,14 +2335,14 @@ model-viewer {
     justify-content: center;
     align-items: center;
     perspective: none;
-    transform: scale(0.8);
+    transform: scale3d(0.82, 0.82, 0.82);
     transform-style: preserve-3d;
 }
 
-/* Scale down 3D system on shorter screens to fit frame */
+/* Scale down 3D system slightly on shorter screens while keeping planets large & clear */
 @media (max-height: 800px) and (min-width: 900px) {
     #skills .universe-container {
-        transform: scale(0.6);
+        transform: scale3d(0.75, 0.75, 0.75);
     }
 }
 
@@ -2355,38 +2355,38 @@ model-viewer {
     /* Base center, specific rotations in subclasses */
     transform: translate(-50%, -50%);
     pointer-events: none;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
 }
 
 #skills .ring-1 {
     width: 700px;
     height: 700px;
     /* Main Planet Path */
-    transform: translate(-50%, -50%) rotateX(75deg);
-    border-color: rgba(255, 255, 255, 0.8);
+    transform: translate(-50%, -50%) rotateX(64deg);
+    border-color: rgba(255, 255, 255, 0.75);
 }
 
 #skills .ring-2 {
     width: 700px;
     height: 700px;
     /* Cross Orbit 1 */
-    transform: translate(-50%, -50%) rotateZ(60deg) rotateX(75deg);
-    border-color: rgba(255, 255, 255, 0.6);
+    transform: translate(-50%, -50%) rotateZ(60deg) rotateX(64deg);
+    border-color: rgba(255, 255, 255, 0.55);
 }
 
 #skills .ring-3 {
     width: 700px;
     height: 700px;
     /* Cross Orbit 2 */
-    transform: translate(-50%, -50%) rotateZ(-60deg) rotateX(75deg);
-    border-color: rgba(255, 255, 255, 0.6);
+    transform: translate(-50%, -50%) rotateZ(-60deg) rotateX(64deg);
+    border-color: rgba(255, 255, 255, 0.55);
 }
 
 #skills .central-sun-logo {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) translateZ(0);
+    transform: translate(-50%, -50%) translateZ(360px);
     margin: 0 !important;
     width: 80px;
     height: 80px;
@@ -2479,7 +2479,7 @@ model-viewer {
     position: relative;
     overflow: hidden;
     opacity: 0;
-    transform: translateZ(380px) scale(0.72);
+    transform: translateZ(720px) scale(0.72);
     transition:
         opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1),
         transform 0.48s cubic-bezier(0.16, 1, 0.3, 1),
@@ -2490,8 +2490,8 @@ model-viewer {
 
 #skills .skill-info-card.open {
     opacity: 1;
-    /* Sits cleanly in front of the 350px 3D orbital radius in orthographic space */
-    transform: translateZ(380px) scale(1);
+    /* Sits cleanly in front of the 3D orbital system in orthographic space */
+    transform: translateZ(720px) scale(1.12);
     pointer-events: all;
     z-index: 1000;
 }
@@ -2935,15 +2935,15 @@ model-viewer {
 }
 
 #skills .track-1 {
-    transform: translate(-50%, -50%) rotateX(75deg);
+    transform: translate(-50%, -50%) translateZ(360px) rotateX(64deg);
 }
 
 #skills .track-2 {
-    transform: translate(-50%, -50%) rotateZ(60deg) rotateX(75deg);
+    transform: translate(-50%, -50%) translateZ(360px) rotateZ(60deg) rotateX(64deg);
 }
 
 #skills .track-3 {
-    transform: translate(-50%, -50%) rotateZ(-60deg) rotateX(75deg);
+    transform: translate(-50%, -50%) translateZ(360px) rotateZ(-60deg) rotateX(64deg);
 }
 
 #skills .planet-spinner {
@@ -2956,9 +2956,11 @@ model-viewer {
     animation: orbitSpin 40s linear infinite;
 }
 
-/* Pause Skills Orbit Animation when card is open */
+/* Pause Skills Orbit Animation when card is open or when hovering any planet */
 #skills .paused-orbit .planet-spinner,
-#skills .paused-orbit .planet {
+#skills .paused-orbit .planet,
+#skills .universe-container:has(.planet:hover) .planet-spinner,
+#skills .universe-container:has(.planet:hover) .planet {
     animation-play-state: paused !important;
 }
 
@@ -2985,7 +2987,7 @@ model-viewer {
 }
 
 #skills .planet {
-    --sk-size: 74px;
+    --sk-size: 76px;
     position: absolute;
     top: 0;
     left: 0;
@@ -2998,18 +3000,19 @@ model-viewer {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.7rem;
-    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.75rem;
+    color: rgba(255, 255, 255, 0.95);
     cursor: pointer;
     pointer-events: auto;
-    transform-style: preserve-3d;
+    /* Use flat 2D stacking inside the billboarded planet so .sk-planet-surface, clouds,
+       and tech stack icon stack deterministically by z-index without 3D Z=0 depth-fighting */
+    transform-style: flat;
+    isolation: isolate;
     transition: filter 0.35s ease, box-shadow 0.35s ease;
     box-shadow:
-        inset -18px -14px 24px rgba(0, 0, 0, 0.92),
-        inset 8px 8px 14px rgba(255, 255, 255, 0.32),
-        inset -2px -2px 8px rgba(255, 255, 255, 0.2),
-        0 0 20px var(--sk-glow, rgba(255, 255, 255, 0.3));
-    border: 1px solid rgba(255, 255, 255, 0.25);
+        0 0 22px var(--sk-glow, rgba(255, 255, 255, 0.35)),
+        0 0 40px rgba(0, 0, 0, 0.8);
+    border: 1.5px solid rgba(255, 255, 255, 0.32);
 }
 
 /* Zenith Solar Specular Highlight on Skills Planets */
@@ -3039,18 +3042,19 @@ model-viewer {
     bottom: calc(100% + 12px);
     left: 50%;
     transform: translateX(-50%) translateY(6px) scale(0.9);
-    background: rgba(5, 10, 22, 0.92);
+    background: rgba(5, 10, 22, 0.95);
     border: 1px solid var(--sk-rim, var(--neon-cyan));
     color: #ffffff;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 0.62rem;
+    font-size: 0.64rem;
+    font-weight: 600;
     letter-spacing: 1.6px;
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 5px 11px;
+    border-radius: 5px;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8), 0 0 12px var(--sk-glow, rgba(0, 210, 255, 0.4));
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.85), 0 0 14px var(--sk-glow, rgba(0, 210, 255, 0.45));
     transition: opacity 0.25s ease, transform 0.25s ease;
     z-index: 30;
 }
@@ -3069,9 +3073,6 @@ model-viewer {
     overflow: hidden;
     z-index: 1;
     pointer-events: none;
-    box-shadow:
-        inset -18px -14px 22px rgba(0, 0, 0, 0.9),
-        inset 7px 7px 14px rgba(255, 255, 255, 0.28);
 }
 
 #skills .sk-planet-surface::before {
@@ -3086,41 +3087,58 @@ model-viewer {
     background-position: 0 center;
     filter: contrast(1.12) saturate(1.18);
     animation: planetAxialSpin 14s linear infinite;
+    z-index: 1;
 }
 
-/* Surface-Blended 3D Planetary Tech Icon (sits beneath 3D solar specular highlight) */
+/* 3D Spherical Terminator Shadow & Fresnel Rim Lighting OVER the Planet Texture */
+#skills .sk-planet-surface::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow:
+        inset -16px -14px 22px rgba(0, 0, 0, 0.88),
+        inset 6px 6px 14px rgba(255, 255, 255, 0.28),
+        inset -2px -2px 8px rgba(0, 0, 0, 0.6),
+        inset 0 0 8px var(--sk-rim, rgba(255, 255, 255, 0.35));
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Surface-Blended 3D Planetary Tech Icon (sits clearly over surface with high-contrast halo) */
 #skills .planet i {
     position: relative;
     z-index: 3;
-    font-size: 1.8rem;
-    color: rgba(255, 255, 255, 0.92);
+    font-size: 1.9rem;
+    color: #ffffff;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.95));
     text-shadow:
-        -1px -1px 1px rgba(255, 255, 255, 0.55),
-        1px 2px 5px rgba(0, 0, 0, 0.88),
-        0 0 10px rgba(0, 0, 0, 0.65),
-        0 0 16px var(--sk-glow, rgba(0, 210, 255, 0.5));
-    opacity: 0.9;
+        -1px -1px 1px rgba(255, 255, 255, 0.65),
+        1px 2px 6px rgba(0, 0, 0, 0.95),
+        0 0 12px rgba(0, 0, 0, 0.85),
+        0 0 18px var(--sk-rim, rgba(0, 210, 255, 0.75));
+    opacity: 0.96;
     transition: transform 0.3s ease, opacity 0.3s ease, text-shadow 0.3s ease;
 }
 
 #skills .planet:hover,
 #skills .planet:focus-visible {
     outline: none;
-    filter: brightness(1.12);
+    filter: brightness(1.16);
+    border-color: var(--sk-rim, #ffffff);
     box-shadow:
-        inset -16px -12px 22px rgba(0, 0, 0, 0.88),
-        inset 8px 8px 14px rgba(255, 255, 255, 0.4),
-        0 0 32px var(--sk-glow, rgba(0, 210, 255, 0.65));
+        0 0 34px var(--sk-glow, rgba(0, 210, 255, 0.78)),
+        0 0 14px var(--sk-rim, #ffffff);
 }
 
 #skills .planet:hover i,
 #skills .planet:focus-visible i {
     opacity: 1;
-    transform: scale(1.1);
+    transform: scale(1.14);
     color: #ffffff;
     text-shadow:
         0 0 14px #ffffff,
-        0 2px 6px rgba(0, 0, 0, 0.9),
+        0 2px 6px rgba(0, 0, 0, 0.95),
         0 0 24px var(--sk-rim, #00d2ff);
 }
 
@@ -3225,31 +3243,31 @@ model-viewer {
 
 @keyframes antiSpin1 {
     from {
-        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(0deg) rotateX(-75deg);
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(0deg) rotateX(-64deg);
     }
 
     to {
-        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(-360deg) rotateX(-75deg);
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(-360deg) rotateX(-64deg);
     }
 }
 
 @keyframes antiSpin2 {
     from {
-        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(0deg) rotateX(-75deg) rotateZ(-60deg);
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(0deg) rotateX(-64deg) rotateZ(-60deg);
     }
 
     to {
-        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(-360deg) rotateX(-75deg) rotateZ(-60deg);
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(-360deg) rotateX(-64deg) rotateZ(-60deg);
     }
 }
 
 @keyframes antiSpin3 {
     from {
-        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(0deg) rotateX(-75deg) rotateZ(60deg);
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(0deg) rotateX(-64deg) rotateZ(60deg);
     }
 
     to {
-        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(-360deg) rotateX(-75deg) rotateZ(60deg);
+        transform: rotateZ(calc(0deg - var(--start-angle))) rotateZ(-360deg) rotateX(-64deg) rotateZ(60deg);
     }
 }
 
@@ -7298,7 +7316,7 @@ model-viewer {
     }
 
     #skills .universe-container {
-        transform: scale(0.65);
+        transform: scale3d(0.65, 0.65, 0.65);
     }
 
     #about .grid-section {
@@ -7450,7 +7468,7 @@ model-viewer {
 
     /* Skills Scaling */
     #skills .universe-container {
-        transform: scale(0.45);
+        transform: scale3d(0.48, 0.48, 0.48);
         margin-top: -50px;
         /* Pull up to center */
     }
