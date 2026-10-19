@@ -8950,8 +8950,107 @@ section:not(#home)::before {
     }
 }
 
+/* --- 6. ORBITAL SECURITY SHIELD (Anti-Copy / Anti-Drag / Space HUD Alert) --- */
+body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 
+/* Keep contact details (email / links) selectable for recruiters */
+#contact .contact-card,
+#contact .card-value,
+input,
+textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
 
+img,
+svg,
+canvas,
+model-viewer,
+.planet-texture,
+.planet-sphere {
+    -webkit-user-drag: none;
+    user-drag: none;
+}
 
+.orbital-security-toast {
+    position: fixed;
+    bottom: 26px;
+    right: 26px;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, rgba(8, 15, 30, 0.96) 0%, rgba(4, 8, 18, 0.98) 100%);
+    border: 1px solid rgba(0, 210, 255, 0.5);
+    border-left: 3px solid var(--neon-cyan);
+    border-radius: 10px;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.78),
+        0 0 20px rgba(0, 210, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-family: 'Share Tech Mono', monospace;
+    color: #ffffff;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+    transition: opacity 0.26s ease, transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
+.orbital-security-toast.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
 
+.ost-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    background: rgba(0, 210, 255, 0.14);
+    border: 1px solid rgba(0, 210, 255, 0.38);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--neon-cyan);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.25);
+}
+
+.ost-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ost-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+}
+
+.ost-msg {
+    font-size: 0.68rem;
+    letter-spacing: 1.1px;
+    color: rgba(226, 236, 255, 0.88);
+}
+
+@media (max-width: 600px) {
+    .orbital-security-toast {
+        left: 16px;
+        right: 16px;
+        bottom: 18px;
+        padding: 10px 14px;
+    }
+}

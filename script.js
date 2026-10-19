@@ -2058,6 +2058,104 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// =========================================================================
+// 9. ORBITAL SECURITY SHIELD (Zero-Lag Anti-Inspect, Anti-Copy & HUD Alert)
+// =========================================================================
+(function initOrbitalSecurityShield() {
+    // 1. Prevent external sites from framing/cloning this portfolio inside an iframe
+    try {
+        if (window.top !== window.self) {
+            window.top.location = window.self.location;
+        }
+    } catch (_) {
+        // Cross-origin frame guard fallback
+    }
 
+    // 2. Console Copyright & Security Telemetry Notice
+    try {
+        console.log(
+            '%c DVLPR // ORBITAL SECURITY ACTIVE ',
+            'background:#050b16;color:#00ffff;font-family:monospace;font-size:14px;font-weight:bold;padding:6px 12px;border:1px solid #00d2ff;border-left:4px solid #00ffff;border-radius:4px;'
+        );
+        console.log(
+            '%cOriginal architecture & design © Mohammed Bilal (https://github.com/Bilalyzr). Unauthorized replication or redistribution of this portfolio is prohibited.',
+            'color:#b3c5ef;font-family:monospace;font-size:11px;'
+        );
+    } catch (_) {}
 
+    let toastEl = null;
+    let toastTimer = null;
 
+    function showSecurityToast(reason) {
+        if (!document.body) return;
+        if (!toastEl) {
+            toastEl = document.createElement('div');
+            toastEl.className = 'orbital-security-toast';
+            toastEl.setAttribute('role', 'status');
+            toastEl.setAttribute('aria-live', 'polite');
+            toastEl.innerHTML = `
+                <div class="ost-icon"><i class="fas fa-shield-halved"></i></div>
+                <div class="ost-body">
+                    <span class="ost-title">ORBITAL SECURITY // SHIELD ACTIVE</span>
+                    <span class="ost-msg"></span>
+                </div>
+            `;
+            document.body.appendChild(toastEl);
+        }
+
+        const msgNode = toastEl.querySelector('.ost-msg');
+        if (msgNode) {
+            msgNode.textContent = reason || 'Source & assets protected · © Mohammed Bilal';
+        }
+
+        toastEl.classList.add('active');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            if (toastEl) toastEl.classList.remove('active');
+        }, 2400);
+    }
+
+    // 3. Block Right-Click Context Menu (while keeping Contact links accessible for recruiters)
+    document.addEventListener('contextmenu', (e) => {
+        if (e.target && e.target.closest('#contact .contact-card')) {
+            return; // Allow recruiters to copy email or open social links in new tab
+        }
+        e.preventDefault();
+        showSecurityToast('Right-click disabled · © Mohammed Bilal');
+    });
+
+    // 4. Block Dragging of Images, Planets & 3D Assets
+    document.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+    });
+
+    // 5. Block DevTools, View-Source & Save-Page Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+        const key = (e.key || '').toUpperCase();
+        const ctrlOrCmd = e.ctrlKey || e.metaKey;
+
+        // F12
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            e.stopPropagation();
+            showSecurityToast('Inspection terminal locked · © Mohammed Bilal');
+            return false;
+        }
+
+        // Ctrl/Cmd + Shift + I / J / C (DevTools Inspector / Console / Element Picker)
+        if (ctrlOrCmd && e.shiftKey && (key === 'I' || key === 'J' || key === 'C')) {
+            e.preventDefault();
+            e.stopPropagation();
+            showSecurityToast('Inspection terminal locked · © Mohammed Bilal');
+            return false;
+        }
+
+        // Ctrl/Cmd + U (View Page Source) or Ctrl/Cmd + S (Save Webpage As)
+        if (ctrlOrCmd && !e.shiftKey && (key === 'U' || key === 'S')) {
+            e.preventDefault();
+            e.stopPropagation();
+            showSecurityToast('Source extraction blocked · © Mohammed Bilal');
+            return false;
+        }
+    }, true);
+})();
