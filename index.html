@@ -9,7 +9,7 @@
     <!-- Favicon -->
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-    <link rel="stylesheet" href="style.css?v=37">
+    <link rel="stylesheet" href="style.css?v=42">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -222,7 +222,7 @@
         <div class="scene-container">
             <div class="solar-system">
 
-                <!-- 7 Orbits -->
+                <!-- 8 Solar System Orbits -->
                 <div class="orbit orbit-1"></div>
                 <div class="orbit orbit-2"></div>
                 <div class="orbit orbit-3"></div>
@@ -230,6 +230,7 @@
                 <div class="orbit orbit-5"></div>
                 <div class="orbit orbit-6"></div>
                 <div class="orbit orbit-7"></div>
+                <div class="orbit orbit-8"></div>
 
                 <div class="sun-wrapper">
                     <div class="sun"></div>
@@ -242,7 +243,7 @@
                     </div>
                 </div>
 
-                <!-- Tracks & 3D Real Solar System Tech Planets -->
+                <!-- Tracks & 3D Real Solar System Tech Planets (In True Solar System Order: 1–8) -->
                 <!-- 1. Mercury (Node.js) — Scorched Cratered Iron World -->
                 <div class="track track-1">
                     <div class="p-wrapper p-1" style="--start-angle: 0deg;">
@@ -258,10 +259,25 @@
                     </div>
                 </div>
 
-                <!-- 2. Earth (React.js) — Blue Marble, Continents, Clouds & Lunar Moon -->
+                <!-- 2. Venus (JavaScript) — Golden Sulfuric Cloud World -->
                 <div class="track track-2">
-                    <div class="p-wrapper p-2" style="--start-angle: 120deg;">
-                        <div class="planet-body style-react planet-earth counter-rot-2" data-skill="react" data-planet-label="EARTH // REACT.JS" role="button" tabindex="0" aria-label="Earth - React.js Tech Planet">
+                    <div class="p-wrapper p-2" style="--start-angle: 135deg;">
+                        <div class="planet-body style-js planet-venus counter-rot-2" data-skill="js" data-planet-label="VENUS // JAVASCRIPT" role="button" tabindex="0" aria-label="Venus - JavaScript Tech Planet">
+                            <div class="planet-aura"></div>
+                            <div class="planet-sphere">
+                                <div class="planet-texture"></div>
+                                <div class="planet-emblem"><i class="fab fa-js"></i></div>
+                                <div class="planet-grid-overlay"></div>
+                                <div class="planet-shading"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Earth (React.js) — Blue Marble, Continents, Clouds & Lunar Moon -->
+                <div class="track track-3">
+                    <div class="p-wrapper p-3" style="--start-angle: 270deg;">
+                        <div class="planet-body style-react planet-earth counter-rot-3" data-skill="react" data-planet-label="EARTH // REACT.JS" role="button" tabindex="0" aria-label="Earth - React.js Tech Planet">
                             <div class="planet-aura"></div>
                             <div class="planet-sphere">
                                 <div class="planet-texture"></div>
@@ -277,10 +293,10 @@
                     </div>
                 </div>
 
-                <!-- 3. Mars (HTML5) — The Rusty Red Planet & Polar Ice Cap -->
-                <div class="track track-3">
-                    <div class="p-wrapper p-3" style="--start-angle: 240deg;">
-                        <div class="planet-body style-html planet-mars counter-rot-3" data-skill="html" data-planet-label="MARS // HTML5" role="button" tabindex="0" aria-label="Mars - HTML5 Tech Planet">
+                <!-- 4. Mars (HTML5) — The Rusty Red Planet & Polar Ice Cap -->
+                <div class="track track-4">
+                    <div class="p-wrapper p-4" style="--start-angle: 45deg;">
+                        <div class="planet-body style-html planet-mars counter-rot-4" data-skill="html" data-planet-label="MARS // HTML5" role="button" tabindex="0" aria-label="Mars - HTML5 Tech Planet">
                             <div class="planet-aura"></div>
                             <div class="planet-sphere">
                                 <div class="planet-texture"></div>
@@ -288,23 +304,6 @@
                                 <div class="planet-grid-overlay"></div>
                                 <div class="planet-shading"></div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. Saturn (Database / SQL) — Golden Gas Giant & Cassini Ring System -->
-                <div class="track track-4">
-                    <div class="p-wrapper p-4" style="--start-angle: 60deg;">
-                        <div class="planet-body style-db planet-saturn counter-rot-4" data-skill="sql" data-planet-label="SATURN // SQL & DB" role="button" tabindex="0" aria-label="Saturn - SQL Database Tech Planet">
-                            <div class="planet-aura"></div>
-                            <div class="planet-sphere">
-                                <div class="planet-texture"></div>
-                                <div class="planet-emblem"><i class="fas fa-database"></i></div>
-                                <div class="planet-grid-overlay"></div>
-                                <div class="planet-shading"></div>
-                            </div>
-                            <div class="planet-ring ring-saturn-major"></div>
-                            <div class="planet-ring ring-saturn-minor"></div>
                         </div>
                     </div>
                 </div>
@@ -324,14 +323,31 @@
                     </div>
                 </div>
 
-                <!-- 6. Uranus (CSS3) — Aquamarine Ice Giant -->
+                <!-- 6. Saturn (Database / SQL) — Golden Gas Giant & Cassini Ring System -->
                 <div class="track track-6">
-                    <div class="p-wrapper p-6" style="--start-angle: 300deg;">
-                        <div class="planet-body style-css planet-uranus counter-rot-6" data-skill="css" data-planet-label="URANUS // CSS3" role="button" tabindex="0" aria-label="Uranus - CSS3 Tech Planet">
+                    <div class="p-wrapper p-6" style="--start-angle: 315deg;">
+                        <div class="planet-body style-db planet-saturn counter-rot-6" data-skill="sql" data-planet-label="SATURN // SQL & DB" role="button" tabindex="0" aria-label="Saturn - SQL Database Tech Planet">
                             <div class="planet-aura"></div>
                             <div class="planet-sphere">
                                 <div class="planet-texture"></div>
-                                <div class="planet-emblem"><i class="fab fa-css3-alt"></i></div>
+                                <div class="planet-emblem"><i class="fas fa-database"></i></div>
+                                <div class="planet-grid-overlay"></div>
+                                <div class="planet-shading"></div>
+                            </div>
+                            <div class="planet-ring ring-saturn-major"></div>
+                            <div class="planet-ring ring-saturn-minor"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Uranus (Git) — Aquamarine Ice Giant -->
+                <div class="track track-7">
+                    <div class="p-wrapper p-7" style="--start-angle: 90deg;">
+                        <div class="planet-body style-css planet-uranus counter-rot-7" data-skill="git" data-planet-label="URANUS // GIT" role="button" tabindex="0" aria-label="Uranus - Git Tech Planet">
+                            <div class="planet-aura"></div>
+                            <div class="planet-sphere">
+                                <div class="planet-texture"></div>
+                                <div class="planet-emblem"><i class="fab fa-git-alt"></i></div>
                                 <div class="planet-grid-overlay"></div>
                                 <div class="planet-shading"></div>
                             </div>
@@ -339,14 +355,14 @@
                     </div>
                 </div>
 
-                <!-- 7. Neptune (Git) — Deep Cobalt Ice Giant & Cirrus Winds -->
-                <div class="track track-7">
-                    <div class="p-wrapper p-7" style="--start-angle: 45deg;">
-                        <div class="planet-body style-git planet-neptune counter-rot-7" data-skill="git" data-planet-label="NEPTUNE // GIT" role="button" tabindex="0" aria-label="Neptune - Git Tech Planet">
+                <!-- 8. Neptune (CSS3) — Deep Cobalt Ice Giant & Cirrus Winds -->
+                <div class="track track-8">
+                    <div class="p-wrapper p-8" style="--start-angle: 225deg;">
+                        <div class="planet-body style-git planet-neptune counter-rot-8" data-skill="css" data-planet-label="NEPTUNE // CSS3" role="button" tabindex="0" aria-label="Neptune - CSS3 Tech Planet">
                             <div class="planet-aura"></div>
                             <div class="planet-sphere">
                                 <div class="planet-texture"></div>
-                                <div class="planet-emblem"><i class="fab fa-git-alt"></i></div>
+                                <div class="planet-emblem"><i class="fab fa-css3-alt"></i></div>
                                 <div class="planet-grid-overlay"></div>
                                 <div class="planet-shading"></div>
                             </div>
@@ -1189,7 +1205,7 @@
         <div class="warp-flash"></div>
     </div>
 
-    <script src="script.js?v=19"></script>
+    <script src="script.js?v=21"></script>
 </body>
 
 </html>

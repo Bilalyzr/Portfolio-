@@ -29,35 +29,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('section');
     const scrollLinks = document.querySelectorAll('.scroll-nav li');
     const scrollNavBox = document.querySelector('.scroll-nav');
+    const scrollLabel = document.getElementById('scrollLabel');
 
     let lastScrollTop = 0;
     let isScrolling = false;
-    let sectionPositions = [];
+    let currentActiveIndex = 0;
+    let labelAtBottom = null;
 
-    // Cache section layout properties once to eliminate read reflow thrashes on scroll
-    function cacheSectionPositions() {
-        sectionPositions = Array.from(sections).map(section => ({
-            id: '#' + section.getAttribute('id'),
-            top: section.offsetTop,
-            height: section.clientHeight
-        }));
+    // Single persistent click listener on #scrollLabel (avoids rewriting DOM & losing clicks mid-scroll)
+    if (scrollLabel) {
+        scrollLabel.addEventListener('click', () => {
+            if (currentActiveIndex >= sections.length - 1) {
+                lenis.scrollTo('#home');
+            } else {
+                const nextSection = sections[currentActiveIndex + 1];
+                if (nextSection) {
+                    lenis.scrollTo(nextSection);
+                }
+            }
+        });
     }
 
-    // Initial cache & update on resize
-    cacheSectionPositions();
-    window.addEventListener('resize', cacheSectionPositions);
-
     function updateActiveScroll() {
-        let current = '';
         const st = window.pageYOffset || document.documentElement.scrollTop;
+        const triggerY = window.innerHeight * 0.38;
 
-        // Detect Scroll Direction for Trail Effect
-        if (st > lastScrollTop) {
+        // Detect Scroll Direction for Rocket Orientation & Thruster Trail
+        if (st <= 10) {
+            document.body.classList.add('scroll-down');
+            document.body.classList.remove('scroll-up');
+        } else if (st > lastScrollTop + 1) {
             if (!document.body.classList.contains('scroll-down')) {
                 document.body.classList.add('scroll-down');
                 document.body.classList.remove('scroll-up');
             }
-        } else if (st < lastScrollTop) {
+        } else if (st < lastScrollTop - 1) {
             if (!document.body.classList.contains('scroll-up')) {
                 document.body.classList.add('scroll-up');
                 document.body.classList.remove('scroll-down');
@@ -65,11 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         lastScrollTop = st <= 0 ? 0 : st;
 
-        // Read from cached memory instead of forcing browser layout reflow
-        for (let i = 0; i < sectionPositions.length; i++) {
-            const pos = sectionPositions[i];
-            if (pageYOffset >= (pos.top - pos.height / 3)) {
-                current = pos.id;
+        // Determine active section accurately using live viewport coordinates
+        let current = '#' + (sections[0] ? sections[0].getAttribute('id') : 'home');
+        for (let i = 0; i < sections.length; i++) {
+            const rect = sections[i].getBoundingClientRect();
+            if (rect.top <= triggerY) {
+                current = '#' + sections[i].getAttribute('id');
             }
         }
 
@@ -87,8 +94,16 @@ document.addEventListener('DOMContentLoaded', () => {
             mItem.classList.toggle('active', mItem.getAttribute('href') === current);
         });
 
-        // Add 'passedSection' class and update indicator position
+        // Add 'passedSection' class and update rocket indicator position
         if (activeIndex !== -1) {
+            currentActiveIndex = activeIndex;
+
+            // At final section (#contact), point rocket upward ready for return flight
+            if (activeIndex === sections.length - 1) {
+                document.body.classList.add('scroll-up');
+                document.body.classList.remove('scroll-down');
+            }
+
             scrollLinks.forEach((link, index) => {
                 if (index < activeIndex) {
                     link.classList.add('passedSection');
@@ -97,29 +112,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Move the Gold Indicator Line using cached offset
+            // Position the Rocket & Progress Line at the exact vertical midpoint of the active waypoint
             const activeLink = scrollLinks[activeIndex];
-            if (scrollNavBox) {
-                const topPos = activeLink.offsetTop;
-                scrollNavBox.style.setProperty('--active-pos', `${topPos}px`);
+            if (scrollNavBox && activeLink) {
+                const centerPos = activeLink.offsetTop + activeLink.offsetHeight / 2;
+                scrollNavBox.style.setProperty('--active-pos', `${centerPos}px`);
             }
 
-            // Dynamic Scroll Down / Back to Top Button
-            const scrollLabel = document.getElementById('scrollLabel');
-            if (scrollLabel) {
-                if (activeIndex === sections.length - 1) { // Last Section (Contact)
+            // Update Scroll Down / Back to Top label only when state changes
+            const isAtLast = activeIndex === sections.length - 1;
+            if (scrollLabel && labelAtBottom !== isAtLast) {
+                labelAtBottom = isAtLast;
+                if (isAtLast) {
                     scrollLabel.innerHTML = '<i class="fas fa-chevron-up"></i><span>Back To Top</span>';
-                    scrollLabel.onclick = () => {
-                        lenis.scrollTo('#home');
-                    };
                 } else {
                     scrollLabel.innerHTML = '<span>Scroll Down</span><i class="fas fa-chevron-down"></i>';
-                    scrollLabel.onclick = () => {
-                        const nextSection = sections[activeIndex + 1];
-                        if (nextSection) {
-                            lenis.scrollTo(nextSection);
-                        }
-                    };
                 }
             }
         }
@@ -133,6 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
             isScrolling = true;
         }
     }, { passive: true });
+
+    window.addEventListener('resize', () => {
+        window.requestAnimationFrame(updateActiveScroll);
+    });
 
     // Trigger once on load to set initial state
     updateActiveScroll();
@@ -195,6 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const pathColumn = document.querySelector('.path-column');
                     if (pathColumn) pathColumn.classList.add('visible');
                 }
+
+                observer.unobserve(entry.target);
             }
         });
     }, { threshold: 0.2 });
@@ -245,55 +258,78 @@ document.addEventListener('DOMContentLoaded', () => {
             'rgba(200,170,255,'
         ];
 
+        // Pre-generate normalized star positions once so browser zoom / resize never randomizes or flashes the starfield
+        const STAR_POOL = Array.from({ length: 240 }, () => {
+            const depth = Math.random();
+            return {
+                nx: Math.random(),
+                ny: Math.random(),
+                size: 0.5 + depth * 1.45,
+                alpha: 0.25 + depth * 0.58,
+                tint: STAR_TINTS[(Math.random() * STAR_TINTS.length) | 0]
+            };
+        });
+
         let lastStarW = 0;
         let lastStarH = 0;
+        let lastDPR = 0;
+        let starRafId = null;
 
         function draw() {
+            starRafId = null;
             const W = window.innerWidth;
             const H = window.innerHeight;
+            const DPR = Math.min(window.devicePixelRatio || 1, 2);
             lastStarW = W;
             lastStarH = H;
-            const DPR = Math.min(window.devicePixelRatio || 1, 2);
+            lastDPR = DPR;
+
             canvas.width = W * DPR;
             canvas.height = H * DPR;
-            canvas.style.width = W + 'px';
-            canvas.style.height = H + 'px';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
             ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
             ctx.clearRect(0, 0, W, H);
 
             const count = Math.min(240, Math.max(90, Math.round((W * H) / 8500)));
 
             for (let i = 0; i < count; i++) {
-                const depth = Math.random();
-                const size = 0.5 + depth * 1.45;
-                const alpha = 0.25 + depth * 0.58;
-                const x = Math.random() * W;
-                const y = Math.random() * H;
-                const tint = STAR_TINTS[(Math.random() * STAR_TINTS.length) | 0];
+                const s = STAR_POOL[i];
+                const x = s.nx * W;
+                const y = s.ny * H;
 
-                ctx.fillStyle = tint + alpha + ')';
+                ctx.fillStyle = s.tint + s.alpha + ')';
                 ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.arc(x, y, s.size, 0, Math.PI * 2);
                 ctx.fill();
 
-                if (size > 1.4) {
-                    ctx.fillStyle = tint + (alpha * 0.14) + ')';
+                if (s.size > 1.4) {
+                    ctx.fillStyle = s.tint + (s.alpha * 0.14) + ')';
                     ctx.beginPath();
-                    ctx.arc(x, y, size * 2.8, 0, Math.PI * 2);
+                    ctx.arc(x, y, s.size * 2.8, 0, Math.PI * 2);
                     ctx.fill();
                 }
             }
         }
 
         draw();
-        // Redraw only on genuine viewport width changes or major height changes (ignores mobile URL bar collapse)
+
         let resizeTimer;
         window.addEventListener('resize', () => {
-            if (Math.abs(window.innerWidth - lastStarW) < 2 && Math.abs(window.innerHeight - lastStarH) < 140) {
+            const currentDPR = Math.min(window.devicePixelRatio || 1, 2);
+            if (
+                Math.abs(window.innerWidth - lastStarW) < 2 &&
+                Math.abs(window.innerHeight - lastStarH) < 140 &&
+                Math.abs(currentDPR - lastDPR) < 0.05
+            ) {
                 return;
             }
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(draw, 150);
+            resizeTimer = setTimeout(() => {
+                if (!starRafId) {
+                    starRafId = requestAnimationFrame(draw);
+                }
+            }, 120);
         });
     })();
 
@@ -475,6 +511,11 @@ document.addEventListener('DOMContentLoaded', () => {
             window.closeSkillCard();
         }
     });
+
+    // Ensure Uranus & Jupiter have no ring elements even in cached sessions
+    document.querySelectorAll(
+        '.ring-jupiter-faint, .ring-uranus, .sk-uranus-ring, .sk-jupiter-ring, .planet-jupiter .planet-ring, .planet-uranus .planet-ring'
+    ).forEach((ringEl) => ringEl.remove());
 
     // Hero 3D Tech Planets: Click / Enter opens corresponding Skill Telemetry Dossier
     document.querySelectorAll('#home .planet-body[data-skill]').forEach((planetEl) => {
@@ -1145,8 +1186,12 @@ function initWarpTrail() {
     }
 
     function resizeCanvas() {
-        canvas.width = section.offsetWidth;
-        canvas.height = section.offsetHeight;
+        const newW = section.offsetWidth;
+        const newH = section.offsetHeight;
+        if (Math.abs(canvas.width - newW) > 2 || Math.abs(canvas.height - newH) > 2) {
+            canvas.width = newW;
+            canvas.height = newH;
+        }
         updateNodePositions();
     }
 

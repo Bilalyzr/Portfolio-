@@ -185,36 +185,17 @@ section {
 .scroll-tracker {
     position: fixed;
     top: 50%;
-    right: 15px;
+    right: 18px;
     transform: translateY(-50%);
     z-index: 1000;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
     font-family: 'JetBrains Mono', monospace;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.35);
     width: 80px; /* Solid, stable alignment grid */
-}
-
-/* Beautiful central track line */
-.scroll-tracker::before {
-    content: '';
-    position: absolute;
-    top: 20px;
-    bottom: 125px;
-    left: 50%;
-    width: 2px;
-    background: linear-gradient(to bottom, 
-        transparent, 
-        rgba(0, 210, 255, 0.25) 15%, 
-        rgba(0, 210, 255, 0.25) 85%, 
-        transparent
-    );
-    box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
-    transform: translateX(-50%);
-    z-index: 1;
-    pointer-events: none;
+    user-select: none;
 }
 
 .scroll-nav {
@@ -226,76 +207,106 @@ section {
     gap: 16px;
     width: 100%;
     padding: 10px 0;
+    /* Central orbital track line spanning from node 00 center (24px) to node 05 center (calc(100% - 24px)),
+       dynamically illuminated up to var(--active-pos, 24px) */
+    background-image: linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 24px,
+        var(--neon-cyan) 24px,
+        var(--neon-blue) var(--active-pos, 24px),
+        rgba(0, 210, 255, 0.2) var(--active-pos, 24px),
+        rgba(0, 210, 255, 0.2) calc(100% - 24px),
+        transparent calc(100% - 24px),
+        transparent 100%
+    );
+    background-size: 2px 100%;
+    background-position: center top;
+    background-repeat: no-repeat;
 }
 
-/* The rocket active indicator */
+/* The rocket active indicator — mathematically centered at var(--active-pos) */
 .scroll-nav::after {
     content: '\f135'; /* FontAwesome Rocket Icon */
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     position: absolute;
-    top: calc(var(--active-pos, 0px) + 11px); /* Perfectly centered on active dot */
+    top: var(--active-pos, 24px);
     left: 50%;
     font-size: 0.85rem;
+    line-height: 1;
     color: var(--neon-cyan);
-    transform: translate(-50%, -50%) rotate(-45deg);
-    transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s ease, color 0.3s;
-    filter: drop-shadow(0 0 6px var(--neon-cyan));
+    transform: translate(-50%, -50%) rotate(135deg); /* Default points down in travel direction */
+    transition:
+        top 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+        color 0.3s ease;
+    filter: drop-shadow(0 0 8px var(--neon-cyan));
     z-index: 10;
+    pointer-events: none;
 }
 
-/* Scroll Down State: Flip Rocket */
-body.scroll-down .scroll-nav::after {
-    transform: translate(-50%, -50%) rotate(135deg);
+/* Scroll Up / Bottom Section State: Flip Rocket Upward */
+body.scroll-up .scroll-nav::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-/* Rocket Smoke/Thruster Glow Effect */
+/* Rocket Thruster Exhaust Plume */
 .scroll-nav::before {
     content: '';
     position: absolute;
-    top: calc(var(--active-pos, 0px) + 11px);
+    top: var(--active-pos, 24px);
     left: 50%;
     width: 6px;
-    height: 25px;
-    background: linear-gradient(to bottom, var(--neon-cyan), transparent);
-    filter: blur(3px);
-    transform: translate(-50%, 8px);
-    opacity: 0.7;
-    transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s ease, opacity 0.3s;
-    animation: thrusterPulse 0.15s infinite alternate;
+    height: 24px;
+    background: linear-gradient(to bottom, var(--neon-cyan), rgba(0, 210, 255, 0.35) 55%, transparent);
+    filter: blur(2.5px);
+    /* Default (Rocket pointing down): exhaust trails ABOVE the rocket */
+    transform: translate(-50%, -31px) rotate(180deg);
+    opacity: 0.78;
+    transition:
+        top 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.3s ease;
+    animation: thrusterPulse 0.16s infinite alternate;
     z-index: 5;
+    pointer-events: none;
 }
 
-/* Scroll Down State: Smoke moves ABOVE rocket */
-body.scroll-down .scroll-nav::before {
-    transform: translate(-50%, -33px) rotate(180deg);
+/* Scroll Up State: Exhaust trails BELOW the rocket */
+body.scroll-up .scroll-nav::before {
+    transform: translate(-50%, 7px) rotate(0deg);
 }
 
 @keyframes thrusterPulse {
     from {
         height: 18px;
-        opacity: 0.8;
+        opacity: 0.85;
     }
     to {
-        height: 28px;
-        opacity: 0.4;
+        height: 27px;
+        opacity: 0.42;
     }
 }
 
 .scroll-nav li {
     font-size: 0.75rem;
+    line-height: 1.5;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition:
+        color 0.28s ease,
+        padding-right 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        text-shadow 0.28s ease;
     position: relative;
     width: 100%;
     text-align: right;
-    padding-right: 54px; /* Pushes numbers beautifully to the left of the track line */
+    padding-right: 54px; /* Pushes numbers cleanly to the left of the central track line */
     padding-top: 5px;
     padding-bottom: 5px;
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.32);
 }
 
-/* Beautiful celestial star dots on track */
+/* Celestial waypoint dots on the central track line */
 .scroll-nav li::after {
     content: '';
     position: absolute;
@@ -303,36 +314,40 @@ body.scroll-down .scroll-nav::before {
     left: 50%;
     width: 6px;
     height: 6px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 26, 48, 0.95);
+    border: 1.5px solid rgba(0, 210, 255, 0.35);
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 2;
-    box-shadow: 0 0 4px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 5px rgba(0, 210, 255, 0.18);
 }
 
-/* Page Label Tooltip on Hover */
+/* Sector Telemetry Tooltip on Hover */
 .scroll-nav li::before {
     content: attr(data-label);
     position: absolute;
-    right: 91px; /* Neatly spaced on the left side of the numbers */
+    right: 88px;
     top: 50%;
-    transform: translateY(-50%) translateX(-12px);
+    transform: translateY(-50%) translateX(8px);
     opacity: 0;
     pointer-events: none;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 600;
     color: var(--neon-cyan);
-    background: rgba(5, 7, 10, 0.95);
-    padding: 5px 10px;
-    border: 1px solid var(--glass-border);
-    border-radius: 4px;
+    background: rgba(5, 10, 20, 0.94);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 5px 11px;
+    border: 1px solid rgba(0, 210, 255, 0.42);
+    border-right: 2px solid var(--neon-cyan);
+    border-radius: 5px;
     white-space: nowrap;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    letter-spacing: 1.6px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65), 0 0 14px rgba(0, 210, 255, 0.2);
+    transition: all 0.26s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 100;
 }
 
@@ -341,29 +356,47 @@ body.scroll-down .scroll-nav::before {
     transform: translateY(-50%) translateX(0);
 }
 
+/* Keep li::after dot locked on the center track while nudging the number slightly left on hover */
 .scroll-nav li:hover {
     color: var(--neon-cyan);
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-    transform: scale(1.15);
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+    padding-right: 57px;
 }
 
+/* Passed / visited waypoints stay softly illuminated */
+.scroll-nav li.passedSection {
+    color: rgba(0, 224, 255, 0.68);
+}
+
+.scroll-nav li.passedSection::after {
+    background: var(--neon-cyan);
+    border-color: #ffffff;
+    box-shadow: 0 0 8px var(--neon-cyan);
+    width: 7px;
+    height: 7px;
+}
+
+/* Active waypoint — highlighted number & subtle orbital target ring framing the rocket */
 .scroll-nav li.active {
-    color: var(--text-main);
-    font-weight: 500;
+    color: #ffffff;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.75);
 }
 
 .scroll-nav li:hover::after {
     background: var(--neon-cyan);
-    box-shadow: 0 0 8px var(--neon-cyan);
-    width: 8px;
-    height: 8px;
+    border-color: #ffffff;
+    box-shadow: 0 0 10px var(--neon-cyan);
+    width: 9px;
+    height: 9px;
 }
 
 .scroll-nav li.active::after {
-    background: var(--neon-blue);
-    box-shadow: 0 0 12px var(--neon-blue);
-    width: 8px;
-    height: 8px;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(0, 210, 255, 0.18) 0%, rgba(0, 210, 255, 0.02) 70%);
+    border: 1px solid rgba(0, 255, 255, 0.45);
+    box-shadow: 0 0 12px rgba(0, 210, 255, 0.35), inset 0 0 6px rgba(0, 210, 255, 0.2);
 }
 
 .scroll-label {
@@ -372,23 +405,24 @@ body.scroll-down .scroll-nav::before {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     letter-spacing: 3px;
-    color: rgba(255, 255, 255, 0.5);
-    margin-top: 20px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 8px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
 .scroll-label:hover {
     color: var(--neon-cyan);
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.55);
 }
 
 .scroll-label i {
     animation: bounce 2s infinite;
     font-size: 0.8rem;
+    color: var(--neon-cyan);
 }
 
 @keyframes bounce {
@@ -403,9 +437,6 @@ body.scroll-down .scroll-nav::before {
     }
 }
 
-/* Hide Tracker on Mobile */
-/* Scroll tracker removed display:none */
-
 /* --- SCROLL ANIMATIONS: ZERO-G HOLOGRAPHIC REVEAL --- */
 .fade-up,
 .fade-left,
@@ -416,7 +447,7 @@ body.scroll-down .scroll-nav::before {
         transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
         /* "Drift to stop" easing */
         filter 1.0s ease-out;
-    will-change: opacity, transform, filter;
+    will-change: opacity, transform;
 }
 
 .fade-up {
@@ -451,6 +482,7 @@ body.scroll-down .scroll-nav::before {
     opacity: 1;
     transform: none;
     filter: none;
+    will-change: auto;
 }
 
 /* Toned-down scroll animations on mobile to prevent jarring zoom effect */
@@ -507,7 +539,7 @@ section .container {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(2.5);
+    transform: translate(-50%, -50%) scale(0.9);
     width: 100vh;
     height: 100vh;
     max-width: 1000px;
@@ -672,43 +704,50 @@ section .container {
 }
 
 #home .orbit-2 {
-    width: 410px;
-    height: 410px;
+    width: 400px;
+    height: 400px;
+    border-color: rgba(245, 190, 65, 0.5);
+    box-shadow: 0 0 8px rgba(245, 190, 65, 0.24);
+}
+
+#home .orbit-3 {
+    width: 480px;
+    height: 480px;
     border-color: rgba(70, 175, 255, 0.52);
     box-shadow: 0 0 8px rgba(70, 175, 255, 0.25);
 }
 
-#home .orbit-3 {
-    width: 500px;
-    height: 500px;
+#home .orbit-4 {
+    width: 560px;
+    height: 560px;
     border-color: rgba(232, 106, 66, 0.5);
     box-shadow: 0 0 8px rgba(232, 106, 66, 0.25);
 }
 
-#home .orbit-4 {
-    width: 590px;
-    height: 590px;
-    border-color: rgba(238, 198, 118, 0.52);
-    box-shadow: 0 0 8px rgba(238, 198, 118, 0.25);
-}
-
 #home .orbit-5 {
-    width: 680px;
-    height: 680px;
+    width: 640px;
+    height: 640px;
     border-color: rgba(224, 160, 108, 0.5);
     box-shadow: 0 0 8px rgba(224, 160, 108, 0.24);
 }
 
 #home .orbit-6 {
-    width: 770px;
-    height: 770px;
+    width: 720px;
+    height: 720px;
+    border-color: rgba(238, 198, 118, 0.52);
+    box-shadow: 0 0 8px rgba(238, 198, 118, 0.25);
+}
+
+#home .orbit-7 {
+    width: 800px;
+    height: 800px;
     border-color: rgba(118, 228, 240, 0.5);
     box-shadow: 0 0 8px rgba(118, 228, 240, 0.24);
 }
 
-#home .orbit-7 {
-    width: 860px;
-    height: 860px;
+#home .orbit-8 {
+    width: 880px;
+    height: 880px;
     border-color: rgba(75, 130, 255, 0.5);
     box-shadow: 0 0 8px rgba(75, 130, 255, 0.24);
 }
@@ -721,7 +760,7 @@ section .container {
     transform: translate(-50%, -50%);
     border-radius: 50%;
     transform-style: preserve-3d;
-    will-change: transform;
+    pointer-events: none;
 }
 
 #home .track-1 {
@@ -731,39 +770,45 @@ section .container {
 }
 
 #home .track-2 {
-    width: 410px;
-    height: 410px;
-    animation: rotate 18s linear infinite reverse;
+    width: 400px;
+    height: 400px;
+    animation: rotate 17s linear infinite reverse;
 }
 
 #home .track-3 {
-    width: 500px;
-    height: 500px;
-    animation: rotate 24s linear infinite;
+    width: 480px;
+    height: 480px;
+    animation: rotate 22s linear infinite;
 }
 
 #home .track-4 {
-    width: 590px;
-    height: 590px;
-    animation: rotate 30s linear infinite reverse;
+    width: 560px;
+    height: 560px;
+    animation: rotate 27s linear infinite reverse;
 }
 
 #home .track-5 {
-    width: 680px;
-    height: 680px;
-    animation: rotate 36s linear infinite;
+    width: 640px;
+    height: 640px;
+    animation: rotate 32s linear infinite;
 }
 
 #home .track-6 {
-    width: 770px;
-    height: 770px;
-    animation: rotate 42s linear infinite reverse;
+    width: 720px;
+    height: 720px;
+    animation: rotate 38s linear infinite reverse;
 }
 
 #home .track-7 {
-    width: 860px;
-    height: 860px;
-    animation: rotate 48s linear infinite;
+    width: 800px;
+    height: 800px;
+    animation: rotate 44s linear infinite;
+}
+
+#home .track-8 {
+    width: 880px;
+    height: 880px;
+    animation: rotate 50s linear infinite reverse;
 }
 
 @keyframes rotate {
@@ -785,33 +830,37 @@ section .container {
     transform-style: preserve-3d;
 }
 
-/* Planet Offsets (Radius) */
+/* Planet Offsets (Exact Midpoint Radius of each 2px Orbit Border Stroke) */
 #home .p-1 {
-    transform: rotateZ(0deg) translate(160px);
+    transform: rotateZ(var(--start-angle, 0deg)) translate(159px);
 }
 
 #home .p-2 {
-    transform: rotateZ(120deg) translate(205px);
+    transform: rotateZ(var(--start-angle, 135deg)) translate(199px);
 }
 
 #home .p-3 {
-    transform: rotateZ(240deg) translate(250px);
+    transform: rotateZ(var(--start-angle, 270deg)) translate(239px);
 }
 
 #home .p-4 {
-    transform: rotateZ(60deg) translate(295px);
+    transform: rotateZ(var(--start-angle, 45deg)) translate(279px);
 }
 
 #home .p-5 {
-    transform: rotateZ(180deg) translate(340px);
+    transform: rotateZ(var(--start-angle, 180deg)) translate(319px);
 }
 
 #home .p-6 {
-    transform: rotateZ(300deg) translate(385px);
+    transform: rotateZ(var(--start-angle, 315deg)) translate(359px);
 }
 
 #home .p-7 {
-    transform: rotateZ(45deg) translate(430px);
+    transform: rotateZ(var(--start-angle, 90deg)) translate(399px);
+}
+
+#home .p-8 {
+    transform: rotateZ(var(--start-angle, 225deg)) translate(439px);
 }
 
 /* =========================================================
@@ -830,17 +879,19 @@ section .container {
     --p-accent: #00ffff;
     --spin-speed: 14s;
 
+    position: absolute;
+    top: 0;
+    left: 0;
     width: var(--p-size);
     height: var(--p-size);
     margin: calc(var(--p-size) * -0.5) 0 0 calc(var(--p-size) * -0.5);
+    transform-origin: 50% 50%;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     color: #fff;
-    position: relative;
     transform-style: preserve-3d;
-    will-change: transform;
     cursor: pointer;
     pointer-events: auto;
     outline: none;
@@ -1028,6 +1079,22 @@ section .container {
     transform: translate(-50%, -50%) rotateZ(-24deg) rotateX(74deg);
 }
 
+/* Explicitly ensure Uranus & Jupiter never render any ring */
+#home .ring-jupiter-faint,
+#home .ring-uranus,
+#home .planet-jupiter .planet-ring,
+#home .planet-uranus .planet-ring,
+#home .style-python .planet-ring,
+#home .style-css .planet-ring,
+#skills .sk-uranus-ring,
+#skills .sk-jupiter-ring,
+#skills .skill-uranus .sk-uranus-ring,
+#skills .skill-jupiter .sk-jupiter-ring {
+    display: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
 /* Earth Atmospheric Cloud Layer & Orbiting Lunar Moon */
 #home .planet-clouds {
     position: absolute;
@@ -1099,7 +1166,7 @@ section .container {
 }
 
 /* =========================================================
-   REAL SOLAR SYSTEM PLANETS — 7 HERO WORLDS (#home)
+   REAL SOLAR SYSTEM PLANETS — 8 HERO WORLDS (#home)
    Uses real NASA equirectangular textures in assets/images/planets/
    ========================================================= */
 
@@ -1119,7 +1186,23 @@ section .container {
     background-image: url('assets/images/planets/mercury.jpg');
 }
 
-/* 2. EARTH (React.js) — Real Blue Marble 2K Earth Texture */
+/* 2. VENUS (JavaScript) — Real Magellan Radar & Cloud Venus Texture */
+#home .style-js {
+    --p-size: 62px;
+    --p-core: #ffe999;
+    --p-mid: #e69d25;
+    --p-dark: #472404;
+    --p-glow: rgba(245, 176, 65, 0.78);
+    --p-rim: rgba(255, 232, 163, 0.88);
+    --p-accent: #f7df1e;
+    --p-icon-color: #f7df1e;
+    --spin-speed: 20s;
+}
+#home .style-js .planet-texture {
+    background-image: url('assets/images/planets/venus.jpg');
+}
+
+/* 3. EARTH (React.js) — Real Blue Marble 2K Earth Texture */
 #home .style-react {
     --p-size: 66px;
     --p-core: #63c5ff;
@@ -1135,7 +1218,7 @@ section .container {
     background-image: url('assets/images/planets/earth.jpg');
 }
 
-/* 3. MARS (HTML5) — Real Viking / MGS Mars Surface Texture */
+/* 4. MARS (HTML5) — Real Viking / MGS Mars Surface Texture */
 #home .style-html {
     --p-size: 60px;
     --p-core: #ff9e6d;
@@ -1149,22 +1232,6 @@ section .container {
 }
 #home .style-html .planet-texture {
     background-image: url('assets/images/planets/mars.jpg');
-}
-
-/* 4. SATURN (Database / SQL) — Real Cassini Saturn Texture + Rings */
-#home .style-db {
-    --p-size: 66px;
-    --p-core: #fff0c2;
-    --p-mid: #d6a656;
-    --p-dark: #3d280a;
-    --p-glow: rgba(238, 198, 118, 0.75);
-    --p-rim: rgba(255, 236, 179, 0.85);
-    --p-accent: #c084fc;
-    --p-icon-color: #e9d5ff;
-    --spin-speed: 12s;
-}
-#home .style-db .planet-texture {
-    background-image: url('assets/images/planets/saturn.jpg');
 }
 
 /* 5. JUPITER (Python) — Real Cassini Jupiter Texture & Great Red Spot */
@@ -1183,7 +1250,23 @@ section .container {
     background-image: url('assets/images/planets/jupiter.jpg');
 }
 
-/* 6. URANUS (CSS3) — Real Voyager Uranus Texture & Tilted Ring */
+/* 6. SATURN (Database / SQL) — Real Cassini Saturn Texture + Rings */
+#home .style-db {
+    --p-size: 66px;
+    --p-core: #fff0c2;
+    --p-mid: #d6a656;
+    --p-dark: #3d280a;
+    --p-glow: rgba(238, 198, 118, 0.75);
+    --p-rim: rgba(255, 236, 179, 0.85);
+    --p-accent: #c084fc;
+    --p-icon-color: #e9d5ff;
+    --spin-speed: 12s;
+}
+#home .style-db .planet-texture {
+    background-image: url('assets/images/planets/saturn.jpg');
+}
+
+/* 7. URANUS (Git) — Real Voyager Uranus Texture */
 #home .style-css {
     --p-size: 62px;
     --p-core: #d4fbff;
@@ -1199,7 +1282,7 @@ section .container {
     background-image: url('assets/images/planets/uranus.jpg');
 }
 
-/* 7. NEPTUNE (Git) — Real Voyager 2 Neptune Texture */
+/* 8. NEPTUNE (CSS3) — Real Voyager 2 Neptune Texture */
 #home .style-git {
     --p-size: 60px;
     --p-core: #8bb8ff;
@@ -1226,27 +1309,31 @@ section .container {
 }
 
 #home .counter-rot-2 {
-    animation: heroAntiSpinCCW 18s linear infinite;
+    animation: heroAntiSpinCCW 17s linear infinite;
 }
 
 #home .counter-rot-3 {
-    animation: heroAntiSpinCW 24s linear infinite;
+    animation: heroAntiSpinCW 22s linear infinite;
 }
 
 #home .counter-rot-4 {
-    animation: heroAntiSpinCCW 30s linear infinite;
+    animation: heroAntiSpinCCW 27s linear infinite;
 }
 
 #home .counter-rot-5 {
-    animation: heroAntiSpinCW 36s linear infinite;
+    animation: heroAntiSpinCW 32s linear infinite;
 }
 
 #home .counter-rot-6 {
-    animation: heroAntiSpinCCW 42s linear infinite;
+    animation: heroAntiSpinCCW 38s linear infinite;
 }
 
 #home .counter-rot-7 {
-    animation: heroAntiSpinCW 48s linear infinite;
+    animation: heroAntiSpinCW 44s linear infinite;
+}
+
+#home .counter-rot-8 {
+    animation: heroAntiSpinCCW 50s linear infinite;
 }
 
 @keyframes heroAntiSpinCW {
@@ -2860,6 +2947,8 @@ model-viewer {
 }
 
 #skills .planet-spinner {
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     position: absolute;
@@ -2891,8 +2980,8 @@ model-viewer {
     width: 0;
     height: 0;
     transform-style: preserve-3d;
-    /* Static static position */
-    transform: rotateZ(var(--start-angle, 0deg)) translate(350px);
+    /* Exact midpoint radius of 700px orbit-ring with 2px border stroke */
+    transform: rotateZ(var(--start-angle, 0deg)) translate(349px);
 }
 
 #skills .planet {
@@ -2904,6 +2993,7 @@ model-viewer {
     height: var(--sk-size);
     margin-top: calc(var(--sk-size) * -0.5);
     margin-left: calc(var(--sk-size) * -0.5);
+    transform-origin: 50% 50%;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -3205,7 +3295,7 @@ model-viewer {
     background-image: url('assets/images/planets/saturn.jpg');
 }
 
-/* 5. URANUS (Git & DevOps) — Real Voyager Uranus Texture + Tilted Ring */
+/* 5. URANUS (Git & DevOps) — Real Voyager Uranus Texture */
 #skills .p-git {
     --sk-glow: rgba(103, 232, 249, 0.72);
     --sk-rim: #ff7b61;
@@ -4579,7 +4669,7 @@ model-viewer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotateX(70deg);
-    animation: moonOrbitSpin 12s linear infinite;
+    animation: journeyMoonOrbitSpin 12s linear infinite;
     pointer-events: none;
     z-index: 4;
 }
@@ -4589,6 +4679,7 @@ model-viewer {
     position: absolute;
     top: -3.5px;
     left: 50%;
+    margin-left: -3px;
     width: 6px;
     height: 6px;
     background: #d8b4fe;
@@ -4596,7 +4687,7 @@ model-viewer {
     box-shadow: 0 0 10px var(--glow-purple);
 }
 
-@keyframes moonOrbitSpin {
+@keyframes journeyMoonOrbitSpin {
     from { transform: translate(-50%, -50%) rotateX(70deg) rotateZ(0deg); }
     to { transform: translate(-50%, -50%) rotateX(70deg) rotateZ(360deg); }
 }
@@ -6541,9 +6632,10 @@ model-viewer {
 
 .earth-moon-node {
     position: absolute;
-    top: -18px;
+    top: -17px;
     left: 50%;
     transform: translateX(-50%);
+    transform-origin: 50% 17px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -7783,13 +7875,6 @@ model-viewer {
     }
 }
 
-/* --- FIX FOR MOBILE ZOOM FLICKERING IN 3D SECTIONS --- */
-#home .scene-container,
-#skills .universe-container {
-    will-change: transform;
-    /* Forces the browser to composite the entire 3D scene as a single hardware-accelerated layer, preventing iOS WebKit re-rasterization flickering on zoom or scroll */
-}
-
 /* =====================================================
    PORTFOLIO GALAXY PILL — Hero CTA Button
    Matched to Portfolio Palette: #05070a, rgba(10,20,40), #00d2ff, #00ffff, #b3c5ef
@@ -8267,17 +8352,17 @@ model-viewer {
     transform-style: preserve-3d;
 }
 
-.orbit-1 {
+#space-loader .orbit-1 {
     width: 140px;
     height: 140px;
 }
 
-.orbit-2 {
+#space-loader .orbit-2 {
     width: 220px;
     height: 220px;
 }
 
-.orbit-3 {
+#space-loader .orbit-3 {
     width: 300px;
     height: 300px;
 }
@@ -8285,6 +8370,8 @@ model-viewer {
 /* Orbit rotation tracks */
 .loader-track {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
@@ -8493,9 +8580,9 @@ model-viewer {
         margin-bottom: 20px;
     }
     .loader-sun { width: 44px; height: 44px; }
-    .orbit-1 { width: 110px; height: 110px; }
-    .orbit-2 { width: 170px; height: 170px; }
-    .orbit-3 { width: 230px; height: 230px; }
+    #space-loader .orbit-1 { width: 110px; height: 110px; }
+    #space-loader .orbit-2 { width: 170px; height: 170px; }
+    #space-loader .orbit-3 { width: 230px; height: 230px; }
     .loader-planet {
         width: 20px;
         height: 20px;
