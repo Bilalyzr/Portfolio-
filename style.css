@@ -450,7 +450,7 @@ body.scroll-down .scroll-nav::before {
 .zoom-in.visible {
     opacity: 1;
     transform: none;
-    filter: blur(0);
+    filter: none;
 }
 
 /* Toned-down scroll animations on mobile to prevent jarring zoom effect */
@@ -1026,27 +1026,6 @@ section .container {
     border: 4px solid rgba(248, 224, 168, 0.62);
     box-shadow: 0 0 8px rgba(238, 198, 118, 0.35);
     transform: translate(-50%, -50%) rotateZ(-24deg) rotateX(74deg);
-}
-
-/* Jupiter Faint Gossamer Dust Ring */
-#home .ring-jupiter-faint {
-    width: 172%;
-    height: 172%;
-    border: 2px solid rgba(218, 168, 120, 0.28);
-    box-shadow: 0 0 8px rgba(218, 168, 120, 0.18);
-    transform: translate(-50%, -50%) rotateZ(-12deg) rotateX(76deg);
-}
-
-/* Uranus High-Inclination Tilted Ice Ring */
-#home .ring-uranus {
-    width: 185%;
-    height: 185%;
-    border: 2.5px solid rgba(168, 242, 255, 0.62);
-    border-left-color: rgba(168, 242, 255, 0.25);
-    box-shadow:
-        0 0 0 3px rgba(110, 220, 245, 0.18),
-        0 0 12px rgba(120, 235, 255, 0.4);
-    transform: translate(-50%, -50%) rotateZ(68deg) rotateX(73deg);
 }
 
 /* Earth Atmospheric Cloud Layer & Orbiting Lunar Moon */
@@ -2185,8 +2164,8 @@ model-viewer {
 .skills-right {
     flex: 1;
     color: white;
-    padding: 20px 80px 20px 20px;
-    max-width: 600px;
+    padding: 20px 40px 20px 20px;
+    max-width: 650px;
 }
 
 .quote-box {
@@ -2206,7 +2185,9 @@ model-viewer {
 .skills-heading {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
-    font-size: 3rem;
+    font-size: clamp(2.1rem, 3vw, 3rem);
+    line-height: 1.2;
+    white-space: nowrap;
     margin-bottom: 20px;
     color: white;
 }
@@ -2239,12 +2220,19 @@ model-viewer {
 
     .skills-right {
         width: 100%;
+        max-width: 100%;
         text-align: center;
         padding: 0 20px 20px 20px;
     }
 
+    .quote-box {
+        display: inline-block;
+        text-align: left;
+    }
+
     .skills-heading {
         font-size: 2.2rem;
+        white-space: normal;
     }
 
     .quote-text {
@@ -3100,7 +3088,7 @@ model-viewer {
         inset -3px -3px 5px rgba(0, 0, 0, 0.85);
 }
 
-/* Saturn & Uranus Rings in #skills */
+/* Saturn Rings in #skills */
 #skills .sk-saturn-ring-major {
     position: absolute;
     top: 50%;
@@ -3128,21 +3116,6 @@ model-viewer {
     border-radius: 50%;
     border: 3.5px solid rgba(248, 224, 168, 0.6);
     transform: translate(-50%, -50%) rotateZ(-22deg) rotateX(73deg);
-    pointer-events: none;
-    z-index: 5;
-}
-
-#skills .sk-uranus-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 170%;
-    height: 170%;
-    border-radius: 50%;
-    border: 2.5px solid rgba(168, 242, 255, 0.62);
-    border-left-color: rgba(168, 242, 255, 0.22);
-    box-shadow: 0 0 10px rgba(120, 235, 255, 0.4);
-    transform: translate(-50%, -50%) rotateZ(65deg) rotateX(72deg);
     pointer-events: none;
     z-index: 5;
 }
@@ -7542,34 +7515,115 @@ model-viewer {
 
 /* --- TOP HERO NAVIGATION --- */
 
-/* --- INTERACTIVE TEXT ANIMATION --- */
+/* --- INTERACTIVE TEXT ANIMATION (EXACT DVLPR.PRO RUBBERBAND) --- */
+:root {
+    --animate-duration: 1s;
+    --animate-delay: 0.2s;
+    --animate-repeat: 1;
+}
+
+@-webkit-keyframes rubberBand {
+    0% {
+        -webkit-transform: scaleX(1);
+        transform: scaleX(1);
+    }
+    30% {
+        -webkit-transform: scale3d(1.25, 0.75, 1);
+        transform: scale3d(1.25, 0.75, 1);
+    }
+    40% {
+        -webkit-transform: scale3d(0.75, 1.25, 1);
+        transform: scale3d(0.75, 1.25, 1);
+    }
+    50% {
+        -webkit-transform: scale3d(1.15, 0.85, 1);
+        transform: scale3d(1.15, 0.85, 1);
+    }
+    65% {
+        -webkit-transform: scale3d(0.95, 1.05, 1);
+        transform: scale3d(0.95, 1.05, 1);
+    }
+    75% {
+        -webkit-transform: scale3d(1.05, 0.95, 1);
+        transform: scale3d(1.05, 0.95, 1);
+    }
+    to {
+        -webkit-transform: scaleX(1);
+        transform: scaleX(1);
+    }
+}
+
+@keyframes rubberBand {
+    0% {
+        -webkit-transform: scaleX(1);
+        transform: scaleX(1);
+    }
+    30% {
+        -webkit-transform: scale3d(1.25, 0.75, 1);
+        transform: scale3d(1.25, 0.75, 1);
+    }
+    40% {
+        -webkit-transform: scale3d(0.75, 1.25, 1);
+        transform: scale3d(0.75, 1.25, 1);
+    }
+    50% {
+        -webkit-transform: scale3d(1.15, 0.85, 1);
+        transform: scale3d(1.15, 0.85, 1);
+    }
+    65% {
+        -webkit-transform: scale3d(0.95, 1.05, 1);
+        transform: scale3d(0.95, 1.05, 1);
+    }
+    75% {
+        -webkit-transform: scale3d(1.05, 0.95, 1);
+        transform: scale3d(1.05, 0.95, 1);
+    }
+    to {
+        -webkit-transform: scaleX(1);
+        transform: scaleX(1);
+    }
+}
+
+.animate__rubberBand,
+.rubberBand {
+    -webkit-animation-name: rubberBand;
+    animation-name: rubberBand;
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+}
+
+.interactive-word {
+    display: inline-block;
+    white-space: nowrap;
+}
+
 .interactive-letter {
     display: inline-block;
-    transition: color 0.1s ease;
+    transition: all 0.3s ease-out;
     cursor: default;
     position: relative;
     z-index: 10;
 }
 
-.interactive-letter.active {
-    color: var(--neon-blue);
-    text-shadow: 0 0 10px var(--neon-blue);
-    animation: jump 0.4s ease;
-    /* Run once */
+.interactive-letter.space {
+    padding-right: 15px;
 }
 
-@keyframes jump {
-    0% {
-        transform: translateY(0);
-    }
+.interactive-letter:hover,
+.interactive-letter.rubberBand,
+.interactive-letter.active {
+    -webkit-animation-name: rubberBand;
+    animation-name: rubberBand;
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
 
-    50% {
-        transform: translateY(-8px);
-    }
-
-    100% {
-        transform: translateY(0);
-    }
+.interactive-letter:hover {
+    color: var(--neon-cyan) !important;
+    -webkit-text-fill-color: var(--neon-cyan) !important;
+    text-shadow: 0 0 12px rgba(0, 210, 255, 0.75), 0 0 24px rgba(0, 255, 255, 0.35);
 }
 
 /* --- WARP SPEED TRANSITION --- */

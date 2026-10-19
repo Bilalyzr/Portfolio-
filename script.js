@@ -6,7 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 0. LENIS SMOOTH SCROLL INIT ---
     const lenis = new Lenis({
         duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        mouseMultiplier: 1,
         smoothTouch: false,
         touchMultiplier: 2,
         infinite: false,
@@ -18,19 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     requestAnimationFrame(raf);
+    // Expose lenis globally if needed
     window.lenis = lenis;
 
-    // --- 1. GLOBAL: Scroll Animations & Navigation ---
-
-    // Smooth Scroll for Nav Links handled by scroll-nav click listeners below
-
-    // Scroll Spy (Active Scroll Indicator) - Cached for performance to avoid reflow thrashing
+    // --- 1. GLOBAL: Scroll Spy & Smooth Scroll ---
     const sections = document.querySelectorAll('section');
     const scrollLinks = document.querySelectorAll('.scroll-nav li');
     const scrollNavBox = document.querySelector('.scroll-nav');
 
     let lastScrollTop = 0;
-    let currentActiveIndex = -1;
+    let isScrolling = false;
     let sectionPositions = [];
 
     // Cache section layout properties once to eliminate read reflow thrashes on scroll
@@ -41,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
             height: section.clientHeight
         }));
     }
-    
-    // Initial caching and refresh on resize
+
+    // Initial cache & update on resize
     cacheSectionPositions();
     window.addEventListener('resize', cacheSectionPositions);
 
@@ -50,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let current = '';
         const st = window.pageYOffset || document.documentElement.scrollTop;
 
-        // Determine Scroll Direction with class check to avoid layout thrashing
+        // Detect Scroll Direction for Trail Effect
         if (st > lastScrollTop) {
             if (!document.body.classList.contains('scroll-down')) {
                 document.body.classList.add('scroll-down');
@@ -64,87 +65,92 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         lastScrollTop = st <= 0 ? 0 : st;
 
-        // Determine active section using our high-performance cached layout array
-        const windowScrollY = window.pageYOffset || document.documentElement.scrollTop;
+        // Read from cached memory instead of forcing browser layout reflow
         for (let i = 0; i < sectionPositions.length; i++) {
             const pos = sectionPositions[i];
-            if (windowScrollY >= (pos.top - pos.height / 3)) {
+            if (pageYOffset >= (pos.top - pos.height / 3)) {
                 current = pos.id;
             }
         }
 
-        // Find the active index
-        let activeIndex = 0;
-        for (let i = 0; i < scrollLinks.length; i++) {
-            if (scrollLinks[i].dataset.target === current) {
-                activeIndex = i;
-                break;
+        let activeIndex = -1;
+        scrollLinks.forEach((link, index) => {
+            link.classList.remove('active');
+            if (link.dataset.target === current) {
+                link.classList.add('active');
+                activeIndex = index;
             }
-        }
+        });
 
-        // Only trigger DOM writes and layout property reads if active index changes
-        if (activeIndex !== currentActiveIndex) {
-            currentActiveIndex = activeIndex;
+        // Sync Mobile Orbital Navigation Deck active indicator
+        document.querySelectorAll('.mobile-nav-links .mnav-item').forEach((mItem) => {
+            mItem.classList.toggle('active', mItem.getAttribute('href') === current);
+        });
 
+        // Add 'passedSection' class and update indicator position
+        if (activeIndex !== -1) {
             scrollLinks.forEach((link, index) => {
-                if (index === activeIndex) {
-                    link.classList.add('active');
+                if (index < activeIndex) {
+                    link.classList.add('passedSection');
                 } else {
-                    link.classList.remove('active');
+                    link.classList.remove('passedSection');
                 }
             });
 
-            // Sync active sector highlight inside Mobile Orbital Command Deck
-            document.querySelectorAll('.mobile-nav-links .mnav-item').forEach((mItem, index) => {
-                mItem.classList.toggle('active', index === activeIndex);
-            });
-
+            // Move the Gold Indicator Line using cached offset
             const activeLink = scrollLinks[activeIndex];
-            if (activeLink && scrollNavBox) {
-                // Update CSS variable only when active section switches
-                scrollNavBox.style.setProperty('--active-pos', `${activeLink.offsetTop}px`);
+            if (scrollNavBox) {
+                const topPos = activeLink.offsetTop;
+                scrollNavBox.style.setProperty('--active-pos', `${topPos}px`);
             }
 
-            // Toggle Scroll Label based on position
+            // Dynamic Scroll Down / Back to Top Button
             const scrollLabel = document.getElementById('scrollLabel');
             if (scrollLabel) {
-                if (current === '#contact') {
+                if (activeIndex === sections.length - 1) { // Last Section (Contact)
                     scrollLabel.innerHTML = '<i class="fas fa-chevron-up"></i><span>Back To Top</span>';
-                    scrollLabel.onclick = () => window.lenis.scrollTo(0);
+                    scrollLabel.onclick = () => {
+                        lenis.scrollTo('#home');
+                    };
                 } else {
                     scrollLabel.innerHTML = '<span>Scroll Down</span><i class="fas fa-chevron-down"></i>';
                     scrollLabel.onclick = () => {
-                        const nextIndex = activeIndex + 1;
-                        if (nextIndex < sections.length) {
-                            window.lenis.scrollTo(sections[nextIndex]);
+                        const nextSection = sections[activeIndex + 1];
+                        if (nextSection) {
+                            lenis.scrollTo(nextSection);
                         }
                     };
                 }
             }
         }
+
+        isScrolling = false;
     }
 
-    window.addEventListener('scroll', updateActiveScroll);
-    updateActiveScroll(); // Initial check
+    window.addEventListener('scroll', () => {
+        if (!isScrolling) {
+            window.requestAnimationFrame(updateActiveScroll);
+            isScrolling = true;
+        }
+    }, { passive: true });
 
-    // --- UPDATED: Warp Speed Page Transition ---
-    const warpContainer = document.getElementById('warp-transition');
-    let warpTeleportTimer = null;
-    let warpEndTimer = null;
+    // Trigger once on load to set initial state
+    updateActiveScroll();
 
-    // Select all navigation links (Sidebar + Top Contact + CTA Buttons + Skill CTA)
-    const allNavLinks = document.querySelectorAll('.scroll-nav li, .nav-contact-btn, .cta-btn, .space-button, .skill-cta-btn, .mobile-nav-links a');
+    // Select all navigation links (Sidebar + Brand Logo + Top Contact + CTA Buttons + Skill CTA + Mobile Nav)
+    const allNavLinks = document.querySelectorAll('.scroll-nav li, .brand-logo, .nav-contact-btn, .cta-btn, .space-button, .skill-cta-btn, .mobile-nav-links a');
+    const warpOverlay = document.getElementById('warp-transition');
 
     allNavLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            // Get target ID (handle both data-target and href)
+            // Get target from data-target (sidebar) or href (standard links)
             const targetId = link.dataset.target || link.getAttribute('href');
 
-            // Only run transition if target is a valid ID on this page
+            // Only intercept internal hash links
             if (targetId && targetId.startsWith('#') && document.querySelector(targetId)) {
-                e.preventDefault(); // Stop default instant scroll
+                e.preventDefault();
 
-                // Bug #6 fix: Close mobile nav if it's open before starting warp
+                // Close mobile menu if open
                 const mobileNav = document.getElementById('mobileNav');
                 const mobileTrigger = document.getElementById('mobileMenuTrigger');
                 if (mobileNav && mobileNav.classList.contains('active')) {
@@ -155,42 +161,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // Honor reduced-motion preference: skip fullscreen warp flash
-                if (REDUCE_MOTION) {
-                    if (window.lenis) {
-                        window.lenis.scrollTo(targetId, { immediate: true });
-                    } else {
-                        document.querySelector(targetId).scrollIntoView({ behavior: 'auto', block: 'start' });
-                    }
-                    return;
+                // Trigger Warp Speed Effect (skip if user prefers reduced motion)
+                if (warpOverlay && !REDUCE_MOTION) {
+                    warpOverlay.classList.add('active');
+
+                    // Wait for warp buildup, then teleport (scroll)
+                    setTimeout(() => {
+                        lenis.scrollTo(targetId, { immediate: true }); // Instant jump masked by flash
+                    }, 400);
+
+                    // Clean up overlay after animation finishes
+                    setTimeout(() => {
+                        warpOverlay.classList.remove('active');
+                    }, 1200);
+                } else {
+                    // Fallback / reduced-motion smooth scroll
+                    lenis.scrollTo(targetId, { immediate: REDUCE_MOTION });
                 }
-
-                clearTimeout(warpTeleportTimer);
-                clearTimeout(warpEndTimer);
-
-                // 1. Start Warp Effect
-                if (warpContainer) {
-                    warpContainer.classList.add('active');
-                }
-
-                // 2. Teleport (Scroll) to section during the flash (at 800ms)
-                warpTeleportTimer = setTimeout(() => {
-                    if (window.lenis) {
-                        window.lenis.scrollTo(targetId, { immediate: true });
-                    } else {
-                        document.querySelector(targetId).scrollIntoView({
-                            behavior: 'auto', // INSTANT jump while screen is white
-                            block: 'start'
-                        });
-                    }
-                }, 800);
-
-                // 3. End Warp Effect
-                warpEndTimer = setTimeout(() => {
-                    if (warpContainer) {
-                        warpContainer.classList.remove('active');
-                    }
-                }, 1300);
             }
         });
     });
@@ -951,49 +938,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Stars + shooting stars now handled by #globalStarfield canvas
 
-    // --- 7. INTERACTIVE HEADINGS (Giggle Effect) ---
-    const interactiveTargets = document.querySelectorAll('.hero-role, .section-title, .skills-heading');
+    // --- 7. INTERACTIVE HEADINGS (EXACT DVLPR.PRO RUBBERBAND FONT INTERACTION) ---
+    function bindDvlprInteractiveHeading(el) {
+        if (!el || el.dataset.dvlprSplit === 'true') return;
+        el.dataset.dvlprSplit = 'true';
 
-    interactiveTargets.forEach(el => {
         const nodes = Array.from(el.childNodes);
-        el.innerHTML = ''; // Clear content to Javascript re-render
+        el.innerHTML = '';
 
         nodes.forEach(node => {
             if (node.nodeType === 3) { // Text Node
-                const text = node.textContent;
-                for (let char of text) {
-                    if (char.trim().length === 0) {
-                        el.appendChild(document.createTextNode(char)); // Preserve spaces/newlines
+                const tokens = node.textContent.split(/(\s+)/);
+                tokens.forEach(token => {
+                    if (!token) return;
+                    if (/^\s+$/.test(token)) {
+                        el.appendChild(document.createTextNode(' '));
                     } else {
-                        const span = document.createElement('span');
-                        span.className = 'interactive-letter';
-                        span.innerText = char;
-                        el.appendChild(span);
+                        const wordWrap = document.createElement('span');
+                        wordWrap.className = 'interactive-word';
+                        for (const char of token) {
+                            const span = document.createElement('span');
+                            span.className = 'interactive-letter';
+                            span.textContent = char;
+                            span.addEventListener('mouseenter', () => {
+                                span.classList.remove('rubberBand');
+                                void span.offsetWidth; // Force reflow so rubberBand restarts cleanly on rapid re-hover
+                                span.classList.add('rubberBand');
+                            });
+                            span.addEventListener('animationend', () => {
+                                span.classList.remove('rubberBand');
+                            });
+                            wordWrap.appendChild(span);
+                        }
+                        el.appendChild(wordWrap);
                     }
-                }
+                });
             } else {
-                el.appendChild(node.cloneNode(true)); // Preserve <br> and other tags
+                el.appendChild(node.cloneNode(true)); // Preserve <br> and other elements
             }
         });
+    }
 
-        // Add proper listener for interaction
-        const letters = el.querySelectorAll('.interactive-letter');
-
-        letters.forEach(letter => {
-            letter.addEventListener('mouseenter', () => {
-                // Clear state from all other letters in this group
-                letters.forEach(l => l.classList.remove('active'));
-                // Activate current
-                letter.classList.add('active');
-            });
-            // Removed individual mouseleave to keep color active until next letter
-        });
-
-        // Clear all when leaving the entire heading area
-        el.addEventListener('mouseleave', () => {
-            letters.forEach(letter => letter.classList.remove('active'));
-        });
-    });
+    const interactiveTargets = document.querySelectorAll('.hero-role, .section-title, .skills-heading, #about .profile-card h3');
+    interactiveTargets.forEach(bindDvlprInteractiveHeading);
 
 });
 
