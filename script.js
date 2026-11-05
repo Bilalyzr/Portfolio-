@@ -817,15 +817,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="sc-brief" id="brief-${p.id}">${p.brief}</div>
                     <div class="sc-footer">
                         <div class="sc-icons">${iconsHtml}</div>
+                        ${p.preview_url ? `
                         <div class="sc-actions">
-                            ${p.preview_url ? `
                             <a href="${p.preview_url}" target="_blank" rel="noopener noreferrer" class="sc-btn">
                                 <i class="fas fa-satellite-dish"></i> MISSION PREVIEW
-                            </a>` : `
-                            <a href="https://github.com/Bilalyzr" target="_blank" rel="noopener noreferrer" class="sc-btn sc-btn-secondary">
-                                <i class="fab fa-github"></i> SOURCE ARCHIVE
-                            </a>`}
-                        </div>
+                            </a>
+                        </div>` : ''}
                     </div>
                 </div>
             `;
