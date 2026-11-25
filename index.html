@@ -486,14 +486,19 @@
 
                 <div class="info-card holograph-card zoom-in">
                     <div class="info-card-grid"></div>
-                    <div class="icon-box"><i class="fas fa-brain"></i></div>
-                    <div class="card-title">Areas of Interest</div>
+                    <div class="icon-box"><img src="assets/images/sasha_infinity_neon_logo.png" alt="Sasha Infinity Neon Logo" style="width: 34px; height: 34px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.75));"></div>
+                    <div class="card-title">Internships &amp; Projects</div>
                     <div class="card-content">
-                        <ul class="bullet-list">
-                            <li>Artificial Intelligence</li>
-                            <li>Software Development</li>
-                            <li>Web Development</li>
-                            <li>Data Analysis</li>
+                        <p style="color:var(--neon-cyan); font-weight:600; font-size:0.86rem; margin-bottom:10px; letter-spacing:0.3px;">
+                            Web Developer Intern · <a href="https://sashainfinity.com/" target="_blank" rel="noopener noreferrer" style="color:var(--neon-cyan); text-decoration:underline; text-underline-offset:3px;">Sasha Infinity</a> <span style="color:#b3c5ef; font-weight:400;">(Jun 2025 – Present)</span>
+                        </p>
+                        <ul class="bullet-list" style="padding-left: 0;">
+                            <li><a href="https://sashainfinity.com/" target="_blank" rel="noopener noreferrer" style="color:var(--neon-cyan); font-weight:700; text-decoration:underline; text-underline-offset:3px;">Sasha Infinity</a><span style="color:white; font-weight:700;">:</span> <span
+                                    style="color:#b3c5ef;">Technology learning platform offering expert-led courses in full-stack dev, AI, and cloud.</span></li>
+                            <li><a href="https://sileos.sashainfinity.com/" target="_blank" rel="noopener noreferrer" style="color:var(--neon-cyan); font-weight:700; text-decoration:underline; text-underline-offset:3px;">Sileos</a><span style="color:white; font-weight:700;">:</span> <span
+                                    style="color:#b3c5ef;">Knowledge architecture platform delivering interactive labs and structured tech courses.</span></li>
+                            <li><a href="https://learn.sashainfinity.com/" target="_blank" rel="noopener noreferrer" style="color:var(--neon-cyan); font-weight:700; text-decoration:underline; text-underline-offset:3px;">Learn With Sasha</a><span style="color:white; font-weight:700;">:</span> <span
+                                    style="color:#b3c5ef;">AI math tutor personalizing lessons to student interests with conversational step-by-step solving.</span></li>
                         </ul>
                     </div>
                 </div>
@@ -670,11 +675,11 @@
 
     </section>
 
-    <!-- 4. PROJECTS SECTION — Missions Log (3D Planetary Orbit Map + Wide Mission Console) -->
+    <!-- 4. PROJECTS SECTION — Missions Log (Wide 3D Galactic Showcase Carousel) -->
     <section id="projects" class="galaxy-missions-section">
 
-        <!-- Holographic Grid Background -->
-        <div class="holo-grid-plane"></div>
+        <!-- Ambient Deep-Space Nebula Glow -->
+        <div class="missions-nebula-glow" aria-hidden="true"></div>
 
         <div class="container fade-up">
             <h2 class="section-title" style="text-align:center;">Missions Log</h2>
@@ -702,47 +707,23 @@
                 </div>
             </div>
 
-            <!-- 3D Planetary Orbit Map + Wide Mission Console Split Deck -->
-            <div class="galaxy-mission-deck">
-
-                <!-- LEFT: Interactive 3D Planetary Orbit Map -->
-                <div class="orbital-starmap-panel">
-                    <div class="starmap-stage" id="starmapStage">
-                        <!-- Concentric Orbital Rings -->
-                        <div class="starmap-ring ring-outer"></div>
-                        <div class="starmap-ring ring-mid"></div>
-                        <div class="starmap-ring ring-inner"></div>
-                        <div class="starmap-radar-sweep"></div>
-
-                        <!-- Dynamic SVG Laser Link from Core to Active Planet -->
-                        <svg class="starmap-laser-svg" viewBox="0 0 400 400" preserveAspectRatio="none" aria-hidden="true">
-                            <line id="starmapLaserLine" x1="200" y1="200" x2="200" y2="60" />
-                        </svg>
-
-                        <!-- Central Active Planet Core -->
-                        <div class="starmap-core" id="starmapCore">
-                            <div class="starmap-core-halo"></div>
-                            <div class="starmap-core-sphere" id="starmapCoreSphere"></div>
-                            <span class="starmap-core-code" id="starmapCoreCode">ALPHA-01</span>
-                        </div>
-
-                        <!-- Orbiting Mission Planet Nodes (Injected via JS) -->
-                        <div class="starmap-nodes" id="starmapNodes"></div>
-                    </div>
-
-                    <!-- Orbital Step Controls below Star Map -->
-                    <div class="stack-nav">
-                        <div class="nav-arrow" id="prevBtn" role="button" tabindex="0" aria-label="Previous mission"><i class="fas fa-chevron-left"></i></div>
-                        <div class="nav-dots" id="navDots"></div>
-                        <div class="nav-arrow" id="nextBtn" role="button" tabindex="0" aria-label="Next mission"><i class="fas fa-chevron-right"></i></div>
-                    </div>
+            <!-- Wide 3D Galactic Showcase Carousel -->
+            <div class="galaxy-carousel-shell">
+                <div class="galaxy-carousel-stage" id="stackContainer" role="region" aria-label="Mission Projects Carousel">
+                    <!-- Mission Carousel Cards Injected via JS -->
                 </div>
 
-                <!-- RIGHT: Wide Holographic Mission Console -->
-                <div class="mission-console-wrapper" id="stackContainer">
-                    <!-- Injected via JS -->
+                <!-- Carousel Step & Telemetry Controls -->
+                <div class="stack-nav">
+                    <button type="button" class="nav-arrow" id="prevBtn" aria-label="Previous mission">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="nav-dots" id="navDots"></div>
+                    <span class="carousel-counter" id="missionCounter" aria-live="polite">01 / 10</span>
+                    <button type="button" class="nav-arrow" id="nextBtn" aria-label="Next mission">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
-
             </div>
 
         </div>
