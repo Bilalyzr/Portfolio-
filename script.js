@@ -773,76 +773,175 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        function sanitizeHttpsUrl(rawUrl) {
+            if (typeof rawUrl !== 'string' || !rawUrl.trim()) return '';
+            try {
+                const parsed = new URL(rawUrl, window.location.origin);
+                return parsed.protocol === 'https:' ? parsed.href : '';
+            } catch (_) {
+                return '';
+            }
+        }
+
         renderedFilter = currentFilter;
-        stackContainer.innerHTML = '';
-        dotsContainer.innerHTML = '';
+        stackContainer.textContent = '';
+        dotsContainer.textContent = '';
         cardElements = [];
 
         filtered.forEach((p, i) => {
-            const iconsHtml = p.icon.map(ic => `<i class="${ic}"></i>`).join(' ');
-            const toolPillsHtml = p.tools
-                .split(',')
-                .map(t => `<span class="sc-tech-pill">${t.trim()}</span>`)
-                .join('');
-
             const card = document.createElement('article');
             card.className = 'mission-carousel-card';
             card.style.setProperty('--card-accent', p.accent || '#00e0ff');
 
-            card.innerHTML = `
-                <div class="mc-hud-grid" aria-hidden="true"></div>
-                <span class="mc-corner tl" aria-hidden="true"></span>
-                <span class="mc-corner tr" aria-hidden="true"></span>
-                <span class="mc-corner bl" aria-hidden="true"></span>
-                <span class="mc-corner br" aria-hidden="true"></span>
+            const hudGrid = document.createElement('div');
+            hudGrid.className = 'mc-hud-grid';
+            hudGrid.setAttribute('aria-hidden', 'true');
+            card.appendChild(hudGrid);
 
-                <div class="mc-split-layout">
-                    <div class="mc-viewport" style="--mc-img: url('${p.img}');">
-                        <div class="scanlines" aria-hidden="true"></div>
-                        <img src="${p.img}" alt="${p.name}" loading="lazy">
-                        <div class="mc-viewport-vignette" aria-hidden="true"></div>
-                        <span class="mc-hud-corner tl" aria-hidden="true"></span>
-                        <span class="mc-hud-corner tr" aria-hidden="true"></span>
-                        <span class="mc-hud-corner bl" aria-hidden="true"></span>
-                        <span class="mc-hud-corner br" aria-hidden="true"></span>
-                        <div class="mc-sector-chip">
-                            <span class="sc-planet-orb" style="background-image: url('${p.planetTex}');"></span>
-                            <span>${p.codename}</span>
-                        </div>
-                    </div>
+            ['tl', 'tr', 'bl', 'br'].forEach(pos => {
+                const corner = document.createElement('span');
+                corner.className = `mc-corner ${pos}`;
+                corner.setAttribute('aria-hidden', 'true');
+                card.appendChild(corner);
+            });
 
-                    <div class="mc-dossier">
-                        <div class="mc-topbar">
-                            <span class="mc-sector">${p.sector}</span>
-                            <div class="mc-topbar-right">
-                                <span class="sc-class">${p.missionClass}</span>
-                                <span class="sc-status ${p.status === 'in progress' ? 'in-progress' : 'complete'}">
-                                    <span class="sc-status-dot"></span>${p.status.toUpperCase()}
-                                </span>
-                            </div>
-                        </div>
+            const split = document.createElement('div');
+            split.className = 'mc-split-layout';
 
-                        <h3 class="mc-title">${p.name}</h3>
+            // Left Viewport
+            const viewport = document.createElement('div');
+            viewport.className = 'mc-viewport';
+            viewport.style.setProperty('--mc-img', `url('${p.img}')`);
 
-                        <div class="mc-payload-row">
-                            <span class="mc-payload-label">PAYLOAD //</span>
-                            <div class="sc-tech-pills">${toolPillsHtml}</div>
-                        </div>
+            const scanlines = document.createElement('div');
+            scanlines.className = 'scanlines';
+            scanlines.setAttribute('aria-hidden', 'true');
+            viewport.appendChild(scanlines);
 
-                        <p class="sc-brief">${p.brief}</p>
+            const imgEl = document.createElement('img');
+            imgEl.src = p.img;
+            imgEl.alt = p.name;
+            imgEl.loading = 'lazy';
+            viewport.appendChild(imgEl);
 
-                        <div class="sc-footer">
-                            <div class="sc-icons" aria-hidden="true">${iconsHtml}</div>
-                            ${p.preview_url ? `
-                            <div class="sc-actions">
-                                <a href="${p.preview_url}" target="_blank" rel="noopener noreferrer" class="sc-btn">
-                                    <i class="fas fa-satellite-dish"></i> MISSION PREVIEW
-                                </a>
-                            </div>` : `<span class="mc-archived-tag"><i class="fas fa-shield-halved"></i> INTERNAL MISSION LOG</span>`}
-                        </div>
-                    </div>
-                </div>
-            `;
+            const vignette = document.createElement('div');
+            vignette.className = 'mc-viewport-vignette';
+            vignette.setAttribute('aria-hidden', 'true');
+            viewport.appendChild(vignette);
+
+            ['tl', 'tr', 'bl', 'br'].forEach(pos => {
+                const corner = document.createElement('span');
+                corner.className = `mc-hud-corner ${pos}`;
+                corner.setAttribute('aria-hidden', 'true');
+                viewport.appendChild(corner);
+            });
+
+            const sectorChip = document.createElement('div');
+            sectorChip.className = 'mc-sector-chip';
+            const planetOrb = document.createElement('span');
+            planetOrb.className = 'sc-planet-orb';
+            planetOrb.style.backgroundImage = `url('${p.planetTex}')`;
+            const codeSpan = document.createElement('span');
+            codeSpan.textContent = p.codename;
+            sectorChip.appendChild(planetOrb);
+            sectorChip.appendChild(codeSpan);
+            viewport.appendChild(sectorChip);
+
+            // Right Dossier
+            const dossier = document.createElement('div');
+            dossier.className = 'mc-dossier';
+
+            const topbar = document.createElement('div');
+            topbar.className = 'mc-topbar';
+            const sectorLabel = document.createElement('span');
+            sectorLabel.className = 'mc-sector';
+            sectorLabel.textContent = p.sector;
+            const topbarRight = document.createElement('div');
+            topbarRight.className = 'mc-topbar-right';
+            const classSpan = document.createElement('span');
+            classSpan.className = 'sc-class';
+            classSpan.textContent = p.missionClass;
+            const statusSpan = document.createElement('span');
+            statusSpan.className = `sc-status ${p.status === 'in progress' ? 'in-progress' : 'complete'}`;
+            const statusDot = document.createElement('span');
+            statusDot.className = 'sc-status-dot';
+            statusSpan.appendChild(statusDot);
+            statusSpan.appendChild(document.createTextNode(p.status.toUpperCase()));
+            topbarRight.appendChild(classSpan);
+            topbarRight.appendChild(statusSpan);
+            topbar.appendChild(sectorLabel);
+            topbar.appendChild(topbarRight);
+
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'mc-title';
+            titleEl.textContent = p.name;
+
+            const payloadRow = document.createElement('div');
+            payloadRow.className = 'mc-payload-row';
+            const payloadLabel = document.createElement('span');
+            payloadLabel.className = 'mc-payload-label';
+            payloadLabel.textContent = 'PAYLOAD //';
+            const pillsWrap = document.createElement('div');
+            pillsWrap.className = 'sc-tech-pills';
+            p.tools.split(',').forEach(t => {
+                const pill = document.createElement('span');
+                pill.className = 'sc-tech-pill';
+                pill.textContent = t.trim();
+                pillsWrap.appendChild(pill);
+            });
+            payloadRow.appendChild(payloadLabel);
+            payloadRow.appendChild(pillsWrap);
+
+            const briefEl = document.createElement('p');
+            briefEl.className = 'sc-brief';
+            briefEl.textContent = p.brief;
+
+            const footer = document.createElement('div');
+            footer.className = 'sc-footer';
+            const iconsWrap = document.createElement('div');
+            iconsWrap.className = 'sc-icons';
+            iconsWrap.setAttribute('aria-hidden', 'true');
+            p.icon.forEach(ic => {
+                const iconNode = document.createElement('i');
+                iconNode.className = ic;
+                iconsWrap.appendChild(iconNode);
+            });
+            footer.appendChild(iconsWrap);
+
+            const safePreviewUrl = sanitizeHttpsUrl(p.preview_url);
+            if (safePreviewUrl) {
+                const actionsWrap = document.createElement('div');
+                actionsWrap.className = 'sc-actions';
+                const link = document.createElement('a');
+                link.href = safePreviewUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.className = 'sc-btn';
+                const dishIcon = document.createElement('i');
+                dishIcon.className = 'fas fa-satellite-dish';
+                link.appendChild(dishIcon);
+                link.appendChild(document.createTextNode(' MISSION PREVIEW'));
+                actionsWrap.appendChild(link);
+                footer.appendChild(actionsWrap);
+            } else {
+                const archived = document.createElement('span');
+                archived.className = 'mc-archived-tag';
+                const shieldIcon = document.createElement('i');
+                shieldIcon.className = 'fas fa-shield-halved';
+                archived.appendChild(shieldIcon);
+                archived.appendChild(document.createTextNode(' INTERNAL MISSION LOG'));
+                footer.appendChild(archived);
+            }
+
+            dossier.appendChild(topbar);
+            dossier.appendChild(titleEl);
+            dossier.appendChild(payloadRow);
+            dossier.appendChild(briefEl);
+            dossier.appendChild(footer);
+
+            split.appendChild(viewport);
+            split.appendChild(dossier);
+            card.appendChild(split);
 
             // Clicking a flanking card rotates it into center focus
             card.addEventListener('click', (e) => {
@@ -1029,6 +1128,616 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const interactiveTargets = document.querySelectorAll('.hero-role, .section-title, .skills-heading, #about .profile-card h3');
     interactiveTargets.forEach(bindDvlprInteractiveHeading);
+
+    // --- 7B. ORBITAL AI ASSISTANT (ASTRA // GROUNDED BILAL TELEMETRY) ---
+    (function initOrbitalAiChatbot() {
+        const launcher = document.getElementById('aiChatLauncher');
+        const backdrop = document.getElementById('aiChatBackdrop');
+        const panel = document.getElementById('aiChatPanel');
+        const closeBtn = document.getElementById('aiChatClose');
+        const clearBtn = document.getElementById('aiChatClear');
+        const messagesEl = document.getElementById('aiChatMessages');
+        const form = document.getElementById('aiChatForm');
+        const input = document.getElementById('aiChatInput');
+        const quickPromptsEl = document.getElementById('aiQuickPrompts');
+
+        if (!launcher || !panel || !messagesEl || !form || !input) return;
+
+        // Optional external serverless LLM proxy URL (leave empty to use built-in grounded knowledge engine)
+        const AI_ENDPOINT = '';
+
+        const BILAL_DATA = {
+            name: 'Mohammed Bilal A',
+            role: 'Software Developer',
+            location: 'Salem, Tamil Nadu, India (11.6643° N, 78.1460° E)',
+            email: 'althafbilal1968@gmail.com',
+            phone: '+91 96550 86486',
+            github: 'https://github.com/Bilalyzr',
+            linkedin: 'https://www.linkedin.com/in/mohammed-bilal-a-5b5656254',
+            instagram: 'https://www.instagram.com/_.bxnny_4?igsh=dndpNm1zdHIxMTE0',
+            resumeUrl: 'assets/Mohammed_Bilal_A_Resume.pdf',
+            summary: 'Software Developer with hands-on experience in full-stack web development (React.js, Node.js, Python, WordPress), API integration, database design, Docker deployment, e-learning platforms, and AI/ML-driven applications.',
+            internship: {
+                role: 'Web Developer Intern',
+                company: 'Sasha Infinity',
+                period: 'Jun 2025 – Present',
+                url: 'https://sashainfinity.com/',
+                responsibilities: [
+                    'Analyzed business requirements and SaaS product models to support product evaluation, implementation, and responsive web development.',
+                    'Designed and developed fully responsive websites for Sasha Infinity and Sileos across desktop, tablet, and mobile devices.',
+                    'Contributed to Learn With Sasha (AI-powered personalized learning platform) while managing company web platforms, monitoring performance, and shipping enhancements.'
+                ],
+                highlights: [
+                    'Sasha Infinity (sashainfinity.com) — Technology learning platform offering expert-led courses in full-stack dev, AI, and cloud.',
+                    'Sileos (sileos.sashainfinity.com) — Knowledge architecture platform delivering interactive labs and structured tech courses (React, TypeScript, Vite, PostCSS, Tailwind CSS).',
+                    'Learn With Sasha (learn.sashainfinity.com) — AI math tutor personalizing lessons to student interests with conversational step-by-step solving (React, TypeScript, Vite, Tailwind CSS, Node.js).'
+                ]
+            },
+            education: [
+                'MCA (Master of Computer Applications) — Sona College of Technology · CGPA: 8.3/10 · Expected 2027 (Active)',
+                'BCA (Bachelor of Computer Applications) — Sona College of Arts & Science · CGPA: 7.9/10 · Graduated May 2025',
+                "HSC (Computer Applications) — St. John's Matric. Hr. Sec. School (2022)",
+                "SSLC — St. John's Matric. Hr. Sec. School (2020)"
+            ],
+            hackathons: [
+                'Winner — SIF Pitch Fest 2026',
+                'Runner-up — Zen Code 26',
+                'Finalist — SDG Hackathon 2026',
+                'Internal Round Qualifier — Smart India Hackathon (SIH) 2025',
+                'Top 500 — Niral Thiruvizha 3.0',
+                'Participant — SIH 2024 & 2022'
+            ],
+            certifications: [
+                'NPTEL Java (Elite + Gold)',
+                'Full-Stack Web Development Bootcamp',
+                'Cybersecurity & Ethical Hacking',
+                'Ignite Bootcamp — Venture Idea Development',
+                'UiPath RPA Citizen Developer Foundation',
+                'Power BI Workshop',
+                'Cloud and Virtualization'
+            ],
+            extraSkills: {
+                typescript: 'TypeScript — Used with React, Vite, and Tailwind CSS in Sileos and Learn With Sasha.',
+                tailwind: 'Tailwind CSS & tailwindcss-animate — Used for responsive UI styling in Sileos and Learn With Sasha.',
+                vite: 'Vite & PostCSS — Used as the frontend build toolchain for Sileos and Learn With Sasha.',
+                docker: 'Docker — Used for containerized deployment in THOZHIRPORUL and Dual-Layer AI Firewall.',
+                xgboost: 'XGBoost — Used for prompt-injection ML classification in Dual-Layer AI Firewall.',
+                opencv: 'OpenCV & MediaPipe — Used for real-time hand-gesture cursor control (ALPHA-01).',
+                wordpress: 'WordPress & Tutor LMS — Used for e-learning delivery and performance optimization at Sasha Infinity.',
+                figma: 'Figma — Used for UI/UX design on AISCCT Conference, SAST Organization, and Nexora.',
+                java: 'Java — Certified via NPTEL Java (Elite + Gold).',
+                c: 'C Programming — Listed under core technical languages on his resume.',
+                'power bi': 'Power BI — Certified via Power BI Workshop for data visualization and analytics.',
+                uipath: 'UiPath RPA — Certified via UiPath RPA Citizen Developer Foundation.'
+            },
+            languages: [
+                'Urdu (Native)',
+                'English (Professional Working Proficiency)',
+                'Tamil (Fluent)',
+                'Hindi (Conversational)'
+            ]
+        };
+
+        function scrollToSection(selector) {
+            const target = document.querySelector(selector);
+            if (!target) return;
+            if (window.lenis) {
+                window.lenis.scrollTo(target);
+            } else {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function focusProjectInCarousel(projectId) {
+            const allBtn = document.querySelector('.freq-btn');
+            if (currentFilter !== 'all' && allBtn) {
+                window.filterProjects('all', allBtn);
+            }
+            const list = getFiltered('all');
+            const idx = list.findIndex(item => item.id === projectId);
+            if (idx !== -1) {
+                activeStackIndex = idx;
+                updateCarouselPositions();
+            }
+            scrollToSection('#projects');
+        }
+
+        function appendMessage(sender, payload) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `ai-msg ${sender}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'ai-msg-bubble';
+
+            if (typeof payload === 'string') {
+                bubble.textContent = payload;
+            } else {
+                if (payload.text) {
+                    const p = document.createElement('p');
+                    p.style.margin = '0';
+                    p.textContent = payload.text;
+                    bubble.appendChild(p);
+                }
+
+                if (Array.isArray(payload.bullets) && payload.bullets.length) {
+                    const ul = document.createElement('ul');
+                    ul.className = 'ai-msg-list';
+                    payload.bullets.forEach(item => {
+                        const li = document.createElement('li');
+                        if (typeof item === 'object' && item.label) {
+                            const strong = document.createElement('strong');
+                            strong.textContent = `${item.label}: `;
+                            li.appendChild(strong);
+                            li.appendChild(document.createTextNode(item.value || ''));
+                        } else {
+                            li.textContent = String(item);
+                        }
+                        ul.appendChild(li);
+                    });
+                    bubble.appendChild(ul);
+                }
+
+                if (Array.isArray(payload.actions) && payload.actions.length) {
+                    const actionsRow = document.createElement('div');
+                    actionsRow.className = 'ai-msg-actions';
+                    payload.actions.forEach(act => {
+                        if (act.href) {
+                            const a = document.createElement('a');
+                            a.className = 'ai-action-chip';
+                            a.href = act.href;
+                            if (act.download) {
+                                a.setAttribute('download', act.download);
+                            } else if (act.href.startsWith('http')) {
+                                a.target = '_blank';
+                                a.rel = 'noopener noreferrer';
+                            }
+                            a.textContent = act.label;
+                            actionsRow.appendChild(a);
+                        } else {
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'ai-action-chip';
+                            btn.textContent = act.label;
+                            btn.addEventListener('click', () => {
+                                if (act.projectId) {
+                                    setChatOpen(false);
+                                    focusProjectInCarousel(act.projectId);
+                                } else if (act.section) {
+                                    setChatOpen(false);
+                                    scrollToSection(act.section);
+                                } else if (act.prompt) {
+                                    handleUserQuery(act.prompt);
+                                }
+                            });
+                            actionsRow.appendChild(btn);
+                        }
+                    });
+                    bubble.appendChild(actionsRow);
+                }
+            }
+
+            wrapper.appendChild(bubble);
+            messagesEl.appendChild(wrapper);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+            return wrapper;
+        }
+
+        function showTypingIndicator() {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'ai-msg bot';
+            const bubble = document.createElement('div');
+            bubble.className = 'ai-msg-bubble';
+            bubble.innerHTML = '<div class="ai-typing-dots" aria-label="Thinking"><span></span><span></span><span></span></div>';
+            wrapper.appendChild(bubble);
+            messagesEl.appendChild(wrapper);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+            return wrapper;
+        }
+
+        function matchSpecificProject(q) {
+            const aliases = [
+                { id: 1, keys: ['hand gesture', 'gesture', 'mouse control', 'opencv', 'mediapipe', 'alpha-01'] },
+                { id: 2, keys: ['fraud', 'credit card', 'beta-02'] },
+                { id: 3, keys: ['sashainfinity', 'tutor lms', 'gamma-03', 'wordpress'] },
+                { id: 4, keys: ['aiscct', 'conference', 'delta-04'] },
+                { id: 5, keys: ['sast', 'echo-05'] },
+                { id: 6, keys: ['nexora', 'niral', 'foxtrot-06'] },
+                { id: 7, keys: ['thozhirporul', 'industrial', 'gis', 'golf-07'] },
+                { id: 8, keys: ['firewall', 'llm', 'prompt injection', 'prompt-injection', 'xgboost', 'hotel-08'] },
+                { id: 9, keys: ['sileos', 'knowledge architecture', 'india-09'] },
+                { id: 10, keys: ['learn with sasha', 'learnwithsasha', 'math tutor', 'juliet-10'] }
+            ];
+
+            for (const entry of aliases) {
+                if (entry.keys.some(k => q.includes(k))) {
+                    const p = projects.find(proj => proj.id === entry.id);
+                    if (p) return p;
+                }
+            }
+            return null;
+        }
+
+        function answerPortfolioQuestion(rawQuery) {
+            const q = rawQuery.toLowerCase().trim();
+
+            // 1. Greetings & Help
+            if (/^(hi|hello|hey|yo|hola|namaste|salam|good\s+(morning|afternoon|evening))\b/.test(q) && q.length < 30) {
+                return {
+                    text: `Hello! I'm ASTRA, ${BILAL_DATA.name}'s portfolio assistant. Ask me anything about his internship, 10 projects, tech stack, education, hackathons, certifications, or contact info.`,
+                    actions: [
+                        { label: 'Internship & Projects', prompt: 'Tell me about his internship at Sasha Infinity' },
+                        { label: 'Top Skills', prompt: 'What are his skills?' }
+                    ]
+                };
+            }
+
+            if (/^(\?|help|commands|menu|what can you (do|ask)|topics)\b/.test(q)) {
+                return {
+                    text: `Available telemetry topics for ${BILAL_DATA.name}:`,
+                    bullets: [
+                        { label: 'Profile', value: 'Bio, location, languages, and hiring availability' },
+                        { label: 'Internship', value: 'Web Developer Intern at Sasha Infinity (Sasha Infinity, Sileos, Learn With Sasha)' },
+                        { label: 'Projects', value: 'All 10 missions (filter by AI/ML, React, Python, Web, or any tech like Docker/FastAPI)' },
+                        { label: 'Skills & Certs', value: 'Tech stack proficiencies, NPTEL Java, UiPath RPA, Power BI, Cloud' },
+                        { label: 'Education & Awards', value: 'MCA/BCA CGPA, SIF Pitch Fest Winner, Zen Code 26 Runner-up, SDG & SIH' }
+                    ]
+                };
+            }
+
+            // 2. Specific Project Match (only if not asking broadly about internship or all projects)
+            const matchedProject = matchSpecificProject(q);
+            if (matchedProject && !q.includes('internship') && !q.includes('all project')) {
+                const actions = [{ label: `View ${matchedProject.codename} in Carousel`, projectId: matchedProject.id }];
+                if (matchedProject.preview_url) {
+                    actions.push({ label: 'Open Live Site', href: matchedProject.preview_url });
+                }
+                return {
+                    text: `${matchedProject.name} (${matchedProject.codename} · ${matchedProject.missionClass})`,
+                    bullets: [
+                        { label: 'Summary', value: matchedProject.brief },
+                        { label: 'Tech Stack', value: matchedProject.tools },
+                        { label: 'Categories', value: matchedProject.category.join(', ').toUpperCase() }
+                    ],
+                    actions
+                };
+            }
+
+            // 3. Internship & Experience
+            if (/\b(intern|internship|experience|work\s+history|company|sasha\s*infinity|job)\b/.test(q)) {
+                return {
+                    text: `Bilal works as a ${BILAL_DATA.internship.role} at ${BILAL_DATA.internship.company} (${BILAL_DATA.internship.period}):`,
+                    bullets: [
+                        ...BILAL_DATA.internship.responsibilities.map((r, i) => ({ label: `Role ${i + 1}`, value: r })),
+                        ...BILAL_DATA.internship.highlights.map(h => ({ label: 'Platform', value: h }))
+                    ],
+                    actions: [
+                        { label: 'About Section', section: '#about' },
+                        { label: 'Sashainfinity', projectId: 3 },
+                        { label: 'Sileos', projectId: 9 },
+                        { label: 'Learn With Sasha', projectId: 10 }
+                    ]
+                };
+            }
+
+            // 4. Live / Deployed Projects
+            if (/\b(live|demo|deployed|links|urls|websites)\b/.test(q) && /\b(project|projects|site|sites|link|links|demo)\b/.test(q)) {
+                const liveList = projects.filter(p => Boolean(p.preview_url));
+                return {
+                    text: `${liveList.length} of Bilal's missions have live deployed previews:`,
+                    bullets: liveList.map(p => ({ label: p.name, value: p.preview_url })),
+                    actions: [{ label: 'Explore Missions Log', section: '#projects' }]
+                };
+            }
+
+            // 5. Category or Tech-Filtered Projects
+            if (/\b(project|projects|mission|missions|built|build|portfolio|app|apps)\b/.test(q)) {
+                let list = projects;
+                let heading = `Bilal has ${projects.length} featured missions across AI/ML, Full-Stack React, Python, and Web development:`;
+
+                const techTerms = ['react', 'python', 'typescript', 'tailwind', 'vite', 'node', 'express', 'fastapi', 'docker', 'postgres', 'postgresql', 'xgboost', 'scikit', 'opencv', 'mediapipe', 'wordpress', 'figma'];
+                const matchedTech = techTerms.find(t => new RegExp(`\\b${t}\\b`, 'i').test(q));
+
+                if (/\b(ai|ml|machine learning|llm|computer vision)\b/.test(q)) {
+                    list = projects.filter(p => p.category.includes('ai'));
+                    heading = `Here are Bilal's ${list.length} AI & Machine Learning missions:`;
+                } else if (matchedTech) {
+                    list = projects.filter(p =>
+                        p.tools.toLowerCase().includes(matchedTech) ||
+                        p.category.includes(matchedTech)
+                    );
+                    heading = `Missions using ${matchedTech.toUpperCase()} (${list.length}):`;
+                } else if (/\bweb\b/.test(q)) {
+                    list = projects.filter(p => p.category.includes('web'));
+                    heading = `Here are Bilal's ${list.length} Web platform projects:`;
+                }
+
+                return {
+                    text: heading,
+                    bullets: list.map(p => ({ label: p.codename, value: `${p.name} (${p.tools})` })),
+                    actions: [{ label: 'Explore Missions Log', section: '#projects' }]
+                };
+            }
+
+            // 6. Specific Extra Skill (TypeScript, Tailwind, Docker, XGBoost, Java, C, Power BI, UiPath, etc.)
+            const extraKey = Object.keys(BILAL_DATA.extraSkills).find(k => new RegExp(`\\b${k}\\b`, 'i').test(q));
+            if (extraKey && !/\b(all|skills|tech stack)\b/.test(q)) {
+                return {
+                    text: BILAL_DATA.extraSkills[extraKey],
+                    actions: [
+                        { label: 'Inspect Skills System', section: '#skills' },
+                        { label: 'Explore Missions', section: '#projects' }
+                    ]
+                };
+            }
+
+            // 7. Specific Core Planetary Skill Check
+            const skillKeyMap = {
+                react: 'react',
+                next: 'react',
+                redux: 'react',
+                html: 'html',
+                css: 'css',
+                javascript: 'js',
+                node: 'node',
+                express: 'node',
+                fastapi: 'node',
+                graphql: 'node',
+                python: 'python',
+                pandas: 'python',
+                numpy: 'python',
+                sql: 'sql',
+                postgres: 'sql',
+                postgresql: 'sql',
+                mysql: 'sql',
+                mongodb: 'sql',
+                supabase: 'sql',
+                database: 'sql',
+                git: 'git',
+                github: 'git',
+                devops: 'git'
+            };
+
+            const matchedSkillKey = Object.keys(skillKeyMap).find(k => new RegExp(`\\b${k}\\b`, 'i').test(q));
+            if (matchedSkillKey && !/\b(all|skills|tech stack)\b/.test(q)) {
+                const s = skillsData[skillKeyMap[matchedSkillKey]];
+                if (s) {
+                    const related = projects.filter(p =>
+                        p.tools.toLowerCase().includes(matchedSkillKey) ||
+                        p.category.includes(skillKeyMap[matchedSkillKey])
+                    );
+                    return {
+                        text: `${s.title} (${s.level} · ${s.percent}) — ${s.desc}`,
+                        bullets: [
+                            { label: 'Tools & Frameworks', value: s.tools },
+                            related.length ? { label: 'Used In', value: related.map(r => r.name).join(', ') } : null
+                        ].filter(Boolean),
+                        actions: [{ label: 'Open Skills System', section: '#skills' }]
+                    };
+                }
+            }
+
+            // 8. General Skills & Tech Stack
+            if (/\b(skill|skills|tech|stack|technologies|tools|framework|programming|coding)\b/.test(q)) {
+                return {
+                    text: 'Bilal specializes in full-stack web engineering, APIs, databases, and AI/ML integrations:',
+                    bullets: [
+                        { label: 'Languages', value: 'Python, C, JavaScript, TypeScript, SQL, Java (NPTEL Elite + Gold)' },
+                        { label: 'Frontend', value: 'React.js, Next.js, Tailwind CSS, Vite, HTML5, CSS3' },
+                        { label: 'Backend & APIs', value: 'Node.js, Express.js, FastAPI, REST APIs, GraphQL' },
+                        { label: 'Databases', value: 'PostgreSQL, MySQL, MongoDB, Supabase' },
+                        { label: 'AI / ML', value: 'Scikit-learn, XGBoost, Pandas, NumPy, OpenCV, MediaPipe' },
+                        { label: 'DevOps & Platforms', value: 'Git, GitHub, Docker, CI/CD, WordPress, Tutor LMS, Figma, Power BI' }
+                    ],
+                    actions: [{ label: 'Inspect Planetary Skills', section: '#skills' }]
+                };
+            }
+
+            // 9. Education & Academic Trajectory
+            if (/\b(educat|degree|college|university|mca|bca|hsc|sslc|cgpa|gpa|grade|school|sona|study|graduat)\b/.test(q)) {
+                return {
+                    text: "Here is Mohammed Bilal's academic trajectory:",
+                    bullets: BILAL_DATA.education,
+                    actions: [{ label: 'View Stellar Trajectory', section: '#journey' }]
+                };
+            }
+
+            // 10. Hackathons & Achievements
+            if (/\b(hackathon|award|achiev|win|winner|prize|sih|pitch|zen code|sdg|niral|competition)\b/.test(q)) {
+                return {
+                    text: "Mohammed Bilal's hackathon expeditions and competition highlights:",
+                    bullets: BILAL_DATA.hackathons,
+                    actions: [{ label: 'View About Dossier', section: '#about' }]
+                };
+            }
+
+            // 11. Certifications
+            if (/\b(certif|certificate|nptel|rpa|bootcamp|course)\b/.test(q)) {
+                return {
+                    text: 'Verified certifications listed on his resume:',
+                    bullets: BILAL_DATA.certifications,
+                    actions: [{ label: 'Download Resume PDF', href: BILAL_DATA.resumeUrl, download: 'Mohammed_Bilal_A_Resume.pdf' }]
+                };
+            }
+
+            // 12. Spoken Languages
+            if (/\b(language|languages|speak|fluent|urdu|tamil|hindi|english)\b/.test(q)) {
+                return {
+                    text: 'Languages Mohammed Bilal speaks:',
+                    bullets: BILAL_DATA.languages
+                };
+            }
+
+            // 13. Location
+            if (/\b(where|location|city|place|based|from|salem|tamil nadu|india)\b/.test(q)) {
+                return {
+                    text: `Mohammed Bilal is based in ${BILAL_DATA.location}.`,
+                    actions: [{ label: 'Mission Control Contact', section: '#contact' }]
+                };
+            }
+
+            // 14. Resume / CV
+            if (/\b(resume|cv|pdf|download)\b/.test(q)) {
+                return {
+                    text: "You can download Mohammed Bilal's latest resume PDF directly below.",
+                    actions: [
+                        { label: 'Download Resume PDF', href: BILAL_DATA.resumeUrl, download: 'Mohammed_Bilal_A_Resume.pdf' },
+                        { label: 'About Section', section: '#about' }
+                    ]
+                };
+            }
+
+            // 15. Contact / Hire / Availability
+            if (/\b(contact|email|mail|phone|call|number|hire|available|availability|role|opportunity|reach|linkedin|instagram|social)\b/.test(q)) {
+                return {
+                    text: 'Mohammed Bilal is open to software engineering, full-stack, and AI/ML opportunities. Reach him via:',
+                    bullets: [
+                        { label: 'Email', value: BILAL_DATA.email },
+                        { label: 'Phone', value: BILAL_DATA.phone },
+                        { label: 'Location', value: BILAL_DATA.location }
+                    ],
+                    actions: [
+                        { label: 'Email Bilal', href: `mailto:${BILAL_DATA.email}` },
+                        { label: 'LinkedIn', href: BILAL_DATA.linkedin },
+                        { label: 'GitHub', href: BILAL_DATA.github },
+                        { label: 'Go to Mission Control', section: '#contact' }
+                    ]
+                };
+            }
+
+            // 16. Who is Bilal / About / Profile
+            if (/\b(who|about|bilal|mohammed|intro|summary|profile|tell me|yourself|him)\b/.test(q)) {
+                return {
+                    text: `${BILAL_DATA.name} is a ${BILAL_DATA.role} based in ${BILAL_DATA.location}. ${BILAL_DATA.summary}`,
+                    bullets: [
+                        { label: 'Current Role', value: `${BILAL_DATA.internship.role} at ${BILAL_DATA.internship.company} (${BILAL_DATA.internship.period})` },
+                        { label: 'Education', value: 'Pursuing MCA at Sona College of Technology (CGPA: 8.3/10)' },
+                        { label: 'Highlights', value: 'SIF Pitch Fest 2026 Winner · Zen Code 26 Runner-up · SDG Hackathon 2026 Finalist' }
+                    ],
+                    actions: [
+                        { label: 'About Dossier', section: '#about' },
+                        { label: 'Download Resume', href: BILAL_DATA.resumeUrl, download: 'Mohammed_Bilal_A_Resume.pdf' }
+                    ]
+                };
+            }
+
+            // 17. Grounded Fallback (No hallucination)
+            return {
+                text: `I only answer questions grounded in ${BILAL_DATA.name}'s portfolio and resume. Try asking about his internship at Sasha Infinity, any of his 10 projects, tech stack, education, hackathons, certifications, or contact details!`,
+                actions: [
+                    { label: 'List All Projects', prompt: 'Show all projects' },
+                    { label: 'Tech Stack', prompt: 'What are his skills?' },
+                    { label: 'Contact Info', prompt: 'How can I contact Bilal?' }
+                ]
+            };
+        }
+
+        async function getAiReply(query) {
+            if (AI_ENDPOINT) {
+                try {
+                    const parsedEndpoint = new URL(AI_ENDPOINT, window.location.origin);
+                    if (parsedEndpoint.protocol === 'https:') {
+                        const res = await fetch(parsedEndpoint.href, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ question: query, profile: BILAL_DATA, projects })
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data && typeof data.reply === 'string') return { text: data.reply };
+                        }
+                    }
+                } catch (_) {
+                    // Fall back smoothly to local grounded engine
+                }
+            }
+            return answerPortfolioQuestion(query);
+        }
+
+        let isReplying = false;
+        function handleUserQuery(rawText) {
+            const query = rawText.trim();
+            if (!query || isReplying) return;
+
+            appendMessage('user', query);
+            input.value = '';
+            isReplying = true;
+
+            const typingNode = showTypingIndicator();
+            const delay = REDUCE_MOTION ? 60 : 320;
+
+            setTimeout(async () => {
+                const reply = await getAiReply(query);
+                typingNode.remove();
+                appendMessage('bot', reply);
+                isReplying = false;
+            }, delay);
+        }
+
+        function seedWelcomeMessage() {
+            messagesEl.innerHTML = '';
+            if (quickPromptsEl) quickPromptsEl.classList.remove('is-hidden');
+            appendMessage('bot', {
+                text: `Welcome aboard! I'm ASTRA, the AI assistant for ${BILAL_DATA.name}'s portfolio. Ask me about his experience, projects, tech stack, education, or how to get in touch.`,
+                actions: [
+                    { label: 'View Missions Log', section: '#projects' },
+                    { label: 'Download Resume', href: BILAL_DATA.resumeUrl, download: 'Mohammed_Bilal_A_Resume.pdf' }
+                ]
+            });
+        }
+
+        function setChatOpen(open) {
+            panel.classList.toggle('active', open);
+            if (backdrop) backdrop.classList.toggle('active', open);
+            launcher.classList.toggle('open', open);
+            launcher.setAttribute('aria-expanded', String(open));
+            panel.setAttribute('aria-hidden', String(!open));
+            if (backdrop) backdrop.setAttribute('aria-hidden', String(!open));
+            if (open) {
+                setTimeout(() => input.focus({ preventScroll: true }), 100);
+            }
+        }
+
+        launcher.addEventListener('click', () => {
+            setChatOpen(!panel.classList.contains('active'));
+        });
+
+        if (backdrop) {
+            backdrop.addEventListener('click', () => setChatOpen(false));
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => setChatOpen(false));
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => seedWelcomeMessage());
+        }
+
+        if (quickPromptsEl) {
+            quickPromptsEl.querySelectorAll('.ai-prompt-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const q = chip.getAttribute('data-prompt') || chip.textContent;
+                    handleUserQuery(q);
+                });
+            });
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleUserQuery(input.value);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                setChatOpen(!panel.classList.contains('active'));
+            } else if (e.key === 'Escape' && panel.classList.contains('active')) {
+                setChatOpen(false);
+            }
+        });
+
+        seedWelcomeMessage();
+    })();
 
 });
 
@@ -1461,130 +2170,6 @@ function initSpaceLoader() {
 
 // Run preloader immediately
 initSpaceLoader();
-
-
-// --- CONTACT: Transmission Console form handling ---
-document.addEventListener('DOMContentLoaded', () => {
-    const openTxBtn = document.getElementById('openTransmissionBtn');
-    const txConsole = document.getElementById('transmissionConsole');
-    const form = document.getElementById('contactForm');
-
-    if (openTxBtn && txConsole) {
-        openTxBtn.addEventListener('click', () => {
-            const isExpanded = txConsole.classList.contains('active');
-
-            if (!isExpanded) {
-                txConsole.classList.add('active');
-                openTxBtn.classList.add('active');
-                const btnText = openTxBtn.querySelector('.btn-text');
-                if (btnText) btnText.textContent = 'CLOSE TRANSMISSION';
-
-                setTimeout(() => {
-                    if (window.lenis) {
-                        window.lenis.scrollTo(txConsole, { offset: -30 });
-                    } else {
-                        txConsole.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
-                    const nameEl = document.getElementById('cf-name');
-                    if (nameEl) nameEl.focus({ preventScroll: true });
-                }, 150);
-            } else {
-                txConsole.classList.remove('active');
-                openTxBtn.classList.remove('active');
-                const btnText = openTxBtn.querySelector('.btn-text');
-                if (btnText) btnText.textContent = 'OPEN A TRANSMISSION';
-            }
-        });
-    }
-
-    if (!form) return;
-
-    // Destination inbox. To route through a backend later (e.g. Formspree),
-    // set this to your endpoint URL and the code below will POST instead of mailto.
-    const RECIPIENT = 'althafbilal1968@gmail.com';
-    const ENDPOINT = ''; // e.g. 'https://formspree.io/f/xxxxxxx'
-
-    const nameEl = document.getElementById('cf-name');
-    const emailEl = document.getElementById('cf-email');
-    const msgEl = document.getElementById('cf-message');
-    const statusEl = document.getElementById('cfStatus');
-    const btn = document.getElementById('cfSubmit');
-    if (!nameEl || !emailEl || !msgEl || !btn) return;
-    const btnLabel = btn.querySelector('.transmit-label');
-
-    const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-
-    function setStatus(msg, kind) {
-        if (!statusEl) return;
-        statusEl.textContent = msg;
-        statusEl.className = 'form-status' + (kind ? ' ' + kind : '');
-    }
-
-    function validate() {
-        let ok = true;
-        [[nameEl, nameEl.value.trim().length > 0],
-        [emailEl, isEmail(emailEl.value.trim())],
-        [msgEl, msgEl.value.trim().length > 0]].forEach(([el, valid]) => {
-            el.classList.toggle('invalid', !valid);
-            if (!valid) ok = false;
-        });
-        return ok;
-    }
-
-    // Clear the invalid state as the user corrects a field
-    [nameEl, emailEl, msgEl].forEach(el =>
-        el.addEventListener('input', () => el.classList.remove('invalid')));
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        if (!validate()) {
-            setStatus('// Signal blocked — check highlighted fields', 'err');
-            return;
-        }
-
-        const data = {
-            name: nameEl.value.trim(),
-            email: emailEl.value.trim(),
-            message: msgEl.value.trim()
-        };
-
-        btn.disabled = true;
-        if (btnLabel) btnLabel.textContent = 'Transmitting…';
-        setStatus('// Establishing uplink…', '');
-
-        try {
-            if (ENDPOINT) {
-                const res = await fetch(ENDPOINT, {
-                    method: 'POST',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                if (!res.ok) throw new Error('Bad response');
-            } else {
-                // Zero-backend fallback: open the visitor's mail client, pre-filled.
-                const subject = encodeURIComponent(`New transmission from ${data.name}`);
-                const body = encodeURIComponent(`${data.message}\n\n— ${data.name}\n${data.email}`);
-                window.location.href = `mailto:${RECIPIENT}?subject=${subject}&body=${body}`;
-            }
-
-            btn.classList.add('sent');
-            btnLabel.textContent = 'Signal Sent';
-            setStatus('✓ Transmission received. I\'ll respond within orbit.', 'ok');
-            form.reset();
-
-            setTimeout(() => {
-                btn.classList.remove('sent');
-                btn.disabled = false;
-                btnLabel.textContent = 'Transmit Message';
-            }, 4000);
-        } catch (err) {
-            btn.disabled = false;
-            btnLabel.textContent = 'Transmit Message';
-            setStatus('// Uplink failed — email althafbilal1968@gmail.com directly', 'err');
-        }
-    });
-});
 
 
 // --- 13. HOLOGRAPHIC GITHUB CONTRIBUTIONS HUD (@Bilalyzr) ---
@@ -2122,10 +2707,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 2400);
     }
 
-    // 3. Block Right-Click Context Menu (while keeping Contact links accessible for recruiters)
+    // 3. Block Right-Click Context Menu (while keeping Contact links & AI Chat selectable for recruiters)
     document.addEventListener('contextmenu', (e) => {
-        if (e.target && e.target.closest('#contact .contact-card')) {
-            return; // Allow recruiters to copy email or open social links in new tab
+        if (e.target && (e.target.closest('#contact .contact-card') || e.target.closest('#aiChatPanel'))) {
+            return; // Allow recruiters to copy email, AI replies, or open links in new tab
         }
         e.preventDefault();
         showSecurityToast('Right-click disabled · © Mohammed Bilal');
