@@ -584,14 +584,15 @@ document.addEventListener('DOMContentLoaded', () => {
             sector: "SECTOR γ-03 · TERRA STATION",
             planetTex: "assets/images/planets/earth.jpg",
             accent: "#38bdf8",
-            name: "Tutor LMS Platform | Sasha Infinity",
+            name: "Sashainfinity E-Learning platform",
             tools: "React.js, WordPress, Tutor LMS, AI Integration",
             category: ["web", "react"],
             missionClass: "ORBITAL",
             status: "complete",
             icon: ["fab fa-react", "fab fa-wordpress"],
             brief: "Developed and maintained a Tutor LMS-based e-learning platform supporting online course delivery, WordPress performance optimization, and AI tool integrations.",
-            img: "assets/images/tutor_lms.png"
+            img: "assets/images/tutor_lms.png",
+            preview_url: "https://sashainfinity.com/"
         },
         {
             id: 4,
@@ -671,17 +672,45 @@ document.addEventListener('DOMContentLoaded', () => {
             brief: "Developed an AI firewall that detects and blocks prompt-injection attacks on LLM applications using ML classification and behavioral analysis.",
             img: "assets/images/llm_firewall.png",
             preview_url: "https://dual-layer-firewalls.vercel.app/"
+        },
+        {
+            id: 9,
+            codename: "INDIA-09",
+            sector: "SECTOR ι-09 · KEPLER NEXUS",
+            planetTex: "assets/images/planets/earth.jpg",
+            accent: "#22d3ee",
+            name: "Sileos — Knowledge Architecture & Interactive Labs",
+            tools: "React.js, HTML5, CSS3, JavaScript",
+            category: ["react", "web"],
+            missionClass: "ORBITAL",
+            status: "complete",
+            icon: ["fab fa-react", "fab fa-html5", "fab fa-css3-alt", "fab fa-js"],
+            brief: "Built a responsive knowledge architecture web platform delivering interactive learning labs, structured courses, and seamless multi-device experiences.",
+            img: "assets/images/sileos.jpg",
+            preview_url: "https://sileos.sashainfinity.com/"
+        },
+        {
+            id: 10,
+            codename: "JULIET-10",
+            sector: "SECTOR κ-10 · LUNA SYNTH",
+            planetTex: "assets/images/planets/uranus.jpg",
+            accent: "#a855f7",
+            name: "Learn With Sasha — AI Personalized Math Tutor",
+            tools: "React.js, Three.js, Conversational AI, WebGL",
+            category: ["react", "ai"],
+            missionClass: "SYNTH",
+            status: "complete",
+            icon: ["fab fa-react", "fas fa-brain", "fas fa-cube", "fas fa-robot"],
+            brief: "Contributed to an AI-powered personalized math learning platform with a 3D interactive tutor that adapts lessons to student interests and solves problems step-by-step.",
+            img: "assets/images/learn_with_sasha.jpg",
+            preview_url: "https://learn.sashainfinity.com/"
         }
     ];
 
-    // --- 3D Planetary Orbit Map + Wide Mission Console ---
+    // --- Wide 3D Galactic Showcase Carousel ---
     const stackContainer = document.getElementById('stackContainer');
     const dotsContainer = document.getElementById('navDots');
-    const starmapNodesEl = document.getElementById('starmapNodes');
-    const starmapCoreSphere = document.getElementById('starmapCoreSphere');
-    const starmapCoreCode = document.getElementById('starmapCoreCode');
-    const starmapCore = document.getElementById('starmapCore');
-    const starmapLaserLine = document.getElementById('starmapLaserLine');
+    const missionCounterEl = document.getElementById('missionCounter');
     let activeStackIndex = 0;
 
     function getFiltered(category) {
@@ -689,197 +718,178 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let currentFilter = 'all';
-    let activeTypingDelayTimer = null;
-    let activeTypingCharTimer = null;
+    let renderedFilter = null;
+    let cardElements = [];
+
+    function getCarouselPosition(index, activeIndex, total) {
+        if (total <= 1) return 'center';
+        if (total === 2) return index === activeIndex ? 'center' : 'next';
+
+        const diff = (index - activeIndex + total) % total;
+        if (diff === 0) return 'center';
+        if (diff === 1) return 'next';
+        if (diff === total - 1) return 'prev';
+        return diff <= total / 2 ? 'hidden-right' : 'hidden-left';
+    }
+
+    function updateCarouselPositions() {
+        const filtered = getFiltered(currentFilter);
+        const total = filtered.length;
+        if (!total || !stackContainer || !dotsContainer) return;
+        if (activeStackIndex >= total) activeStackIndex = 0;
+
+        cardElements.forEach((card, i) => {
+            const pos = getCarouselPosition(i, activeStackIndex, total);
+            card.dataset.pos = pos;
+            card.setAttribute('aria-hidden', pos !== 'center' ? 'true' : 'false');
+
+            // Only allow focus on interactive buttons inside the active center card
+            card.querySelectorAll('a, button').forEach(ctrl => {
+                ctrl.tabIndex = pos === 'center' ? 0 : -1;
+            });
+        });
+
+        // Update nav dots
+        dotsContainer.querySelectorAll('.nav-dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === activeStackIndex);
+        });
+
+        // Update mission counter (e.g., 01 / 08)
+        if (missionCounterEl) {
+            const cur = String(activeStackIndex + 1).padStart(2, '0');
+            const tot = String(total).padStart(2, '0');
+            missionCounterEl.textContent = `${cur} / ${tot}`;
+        }
+    }
 
     function renderStack() {
         const filtered = getFiltered(currentFilter);
         if (!filtered.length || !stackContainer || !dotsContainer) return;
         if (activeStackIndex >= filtered.length) activeStackIndex = 0;
 
-        clearTimeout(activeTypingDelayTimer);
-        clearTimeout(activeTypingCharTimer);
+        // If same filter is already mounted, smoothly transition positions without rebuilding DOM
+        if (renderedFilter === currentFilter && cardElements.length === filtered.length) {
+            updateCarouselPositions();
+            return;
+        }
 
+        renderedFilter = currentFilter;
         stackContainer.innerHTML = '';
         dotsContainer.innerHTML = '';
-        if (starmapNodesEl) starmapNodesEl.innerHTML = '';
+        cardElements = [];
 
-        const activeProject = filtered[activeStackIndex];
-        const total = filtered.length;
-
-        // 1. Update Central 3D Planet Core on Star-Map
-        if (starmapCoreSphere && activeProject) {
-            starmapCoreSphere.style.backgroundImage = `url('${activeProject.planetTex}')`;
-        }
-        if (starmapCore && activeProject) {
-            starmapCore.style.setProperty('--core-accent', activeProject.accent || '#00e0ff');
-        }
-        if (starmapCoreCode && activeProject) {
-            starmapCoreCode.textContent = activeProject.codename;
-        }
-
-        // 2. Render Orbiting Mission Planet Nodes on the 3D Star-Map
         filtered.forEach((p, i) => {
-            const isActive = i === activeStackIndex;
-
-            // Distribute planets evenly around 360deg, alternating between outer (41% radius) and mid (30% radius) orbital rings
-            const angleDeg = -90 + (i * (360 / total));
-            const rad = (angleDeg * Math.PI) / 180;
-            const radiusPct = (total >= 5 && i % 2 === 1) ? 30 : 41;
-            const xPct = 50 + Math.cos(rad) * radiusPct;
-            const yPct = 50 + Math.sin(rad) * radiusPct;
-
-            if (isActive && starmapLaserLine) {
-                starmapLaserLine.setAttribute('x2', (xPct * 4).toFixed(1));
-                starmapLaserLine.setAttribute('y2', (yPct * 4).toFixed(1));
-                starmapLaserLine.style.stroke = p.accent || '#00e0ff';
-            }
-
-            if (starmapNodesEl) {
-                const nodeBtn = document.createElement('button');
-                nodeBtn.type = 'button';
-                nodeBtn.className = 'starmap-node' + (isActive ? ' active' : '');
-                nodeBtn.style.left = `${xPct}%`;
-                nodeBtn.style.top = `${yPct}%`;
-                nodeBtn.style.setProperty('--node-accent', p.accent || '#00e0ff');
-                nodeBtn.setAttribute('aria-label', `Select mission ${p.codename}: ${p.name}`);
-                nodeBtn.innerHTML = `
-                    <span class="sm-node-reticle"></span>
-                    <span class="sm-node-sphere" style="background-image: url('${p.planetTex}');"></span>
-                    <span class="sm-node-code">${p.codename}</span>
-                `;
-                nodeBtn.addEventListener('click', () => {
-                    if (activeStackIndex !== i) {
-                        activeStackIndex = i;
-                        renderStack();
-                    }
-                });
-                starmapNodesEl.appendChild(nodeBtn);
-            }
-
-            // Orbital Planet Nav Dot
-            const dot = document.createElement('div');
-            dot.className = 'nav-dot' + (isActive ? ' active' : '');
-            dot.style.setProperty('--dot-accent', p.accent || '#00e0ff');
-            dot.title = `${p.codename} — ${p.name}`;
-            dot.addEventListener('click', () => {
-                activeStackIndex = i;
-                renderStack();
-            });
-            dotsContainer.appendChild(dot);
-        });
-
-        // 3. Render Wide Holographic Mission Console for the Active Mission
-        if (activeProject) {
-            const p = activeProject;
             const iconsHtml = p.icon.map(ic => `<i class="${ic}"></i>`).join(' ');
             const toolPillsHtml = p.tools
                 .split(',')
                 .map(t => `<span class="sc-tech-pill">${t.trim()}</span>`)
                 .join('');
 
-            const consoleCard = document.createElement('div');
-            consoleCard.className = 'mission-console-card';
-            consoleCard.style.setProperty('--card-accent', p.accent || '#00e0ff');
+            const card = document.createElement('article');
+            card.className = 'mission-carousel-card';
+            card.style.setProperty('--card-accent', p.accent || '#00e0ff');
 
-            consoleCard.innerHTML = `
-                <div class="mc-topbar">
-                    <div class="mc-topbar-left">
-                        <span class="sc-planet-orb" style="background-image: url('${p.planetTex}');"></span>
-                        <span class="mc-codename">${p.codename}</span>
-                        <span class="mc-divider">//</span>
-                        <span class="mc-sector">${p.sector}</span>
-                    </div>
-                    <div class="mc-topbar-right">
-                        <span class="sc-class">${p.missionClass}</span>
-                        <span class="sc-status ${p.status === 'in progress' ? 'in-progress' : 'complete'}">
-                            <span class="sc-status-dot"></span>${p.status.toUpperCase()}
-                        </span>
-                    </div>
-                </div>
+            card.innerHTML = `
+                <div class="mc-hud-grid" aria-hidden="true"></div>
+                <span class="mc-corner tl" aria-hidden="true"></span>
+                <span class="mc-corner tr" aria-hidden="true"></span>
+                <span class="mc-corner bl" aria-hidden="true"></span>
+                <span class="mc-corner br" aria-hidden="true"></span>
 
-                <div class="mc-viewport" style="--mc-img: url('${p.img}');">
-                    <div class="scanlines"></div>
-                    <img src="${p.img}" alt="${p.name}">
-                    <div class="mc-viewport-vignette"></div>
-                    <span class="mc-hud-corner tl"></span>
-                    <span class="mc-hud-corner tr"></span>
-                    <span class="mc-hud-corner bl"></span>
-                    <span class="mc-hud-corner br"></span>
-                </div>
-
-                <div class="mc-body">
-                    <h3 class="mc-title">${p.name}</h3>
-                    <div class="mc-payload-row">
-                        <span class="mc-payload-label">PAYLOAD //</span>
-                        <div class="sc-tech-pills">${toolPillsHtml}</div>
+                <div class="mc-split-layout">
+                    <div class="mc-viewport" style="--mc-img: url('${p.img}');">
+                        <div class="scanlines" aria-hidden="true"></div>
+                        <img src="${p.img}" alt="${p.name}" loading="lazy">
+                        <div class="mc-viewport-vignette" aria-hidden="true"></div>
+                        <span class="mc-hud-corner tl" aria-hidden="true"></span>
+                        <span class="mc-hud-corner tr" aria-hidden="true"></span>
+                        <span class="mc-hud-corner bl" aria-hidden="true"></span>
+                        <span class="mc-hud-corner br" aria-hidden="true"></span>
+                        <div class="mc-sector-chip">
+                            <span class="sc-planet-orb" style="background-image: url('${p.planetTex}');"></span>
+                            <span>${p.codename}</span>
+                        </div>
                     </div>
-                    <div class="sc-brief" id="brief-${p.id}">${p.brief}</div>
-                    <div class="sc-footer">
-                        <div class="sc-icons">${iconsHtml}</div>
-                        ${p.preview_url ? `
-                        <div class="sc-actions">
-                            <a href="${p.preview_url}" target="_blank" rel="noopener noreferrer" class="sc-btn">
-                                <i class="fas fa-satellite-dish"></i> MISSION PREVIEW
-                            </a>
-                        </div>` : ''}
+
+                    <div class="mc-dossier">
+                        <div class="mc-topbar">
+                            <span class="mc-sector">${p.sector}</span>
+                            <div class="mc-topbar-right">
+                                <span class="sc-class">${p.missionClass}</span>
+                                <span class="sc-status ${p.status === 'in progress' ? 'in-progress' : 'complete'}">
+                                    <span class="sc-status-dot"></span>${p.status.toUpperCase()}
+                                </span>
+                            </div>
+                        </div>
+
+                        <h3 class="mc-title">${p.name}</h3>
+
+                        <div class="mc-payload-row">
+                            <span class="mc-payload-label">PAYLOAD //</span>
+                            <div class="sc-tech-pills">${toolPillsHtml}</div>
+                        </div>
+
+                        <p class="sc-brief">${p.brief}</p>
+
+                        <div class="sc-footer">
+                            <div class="sc-icons" aria-hidden="true">${iconsHtml}</div>
+                            ${p.preview_url ? `
+                            <div class="sc-actions">
+                                <a href="${p.preview_url}" target="_blank" rel="noopener noreferrer" class="sc-btn">
+                                    <i class="fas fa-satellite-dish"></i> MISSION PREVIEW
+                                </a>
+                            </div>` : `<span class="mc-archived-tag"><i class="fas fa-shield-halved"></i> INTERNAL MISSION LOG</span>`}
+                        </div>
                     </div>
                 </div>
             `;
 
-            stackContainer.appendChild(consoleCard);
+            // Clicking a flanking card rotates it into center focus
+            card.addEventListener('click', (e) => {
+                const pos = card.dataset.pos;
+                if (pos === 'prev' || pos === 'next') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    activeStackIndex = i;
+                    updateCarouselPositions();
+                }
+            });
 
-            // Terminal Typing Effect for active mission brief (skipped if user prefers reduced motion)
-            if (!REDUCE_MOTION) {
-                activeTypingDelayTimer = setTimeout(() => {
-                    const briefEl = consoleCard.querySelector('.sc-brief');
-                    if (briefEl) {
-                        const text = p.brief;
-                        briefEl.textContent = '';
-                        let charIndex = 0;
+            stackContainer.appendChild(card);
+            cardElements.push(card);
 
-                        function type() {
-                            if (!document.contains(briefEl)) return;
-                            if (charIndex < text.length) {
-                                briefEl.textContent += text.charAt(charIndex);
-                                charIndex++;
-                                activeTypingCharTimer = setTimeout(type, 14);
-                            }
-                        }
-                        type();
-                    }
-                }, 180);
-            }
-        }
+            // Indicator Dot
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'nav-dot';
+            dot.style.setProperty('--dot-accent', p.accent || '#00e0ff');
+            dot.title = `${p.codename} — ${p.name}`;
+            dot.setAttribute('aria-label', `Select mission ${p.codename}: ${p.name}`);
+            dot.addEventListener('click', () => {
+                activeStackIndex = i;
+                updateCarouselPositions();
+            });
+            dotsContainer.appendChild(dot);
+        });
+
+        updateCarouselPositions();
     }
 
     function stepMission(delta) {
         const f = getFiltered(currentFilter);
         if (!f.length) return;
         activeStackIndex = (activeStackIndex + delta + f.length) % f.length;
-        renderStack();
+        updateCarouselPositions();
     }
 
-    // Nav arrows (click + keyboard Enter/Space)
+    // Nav arrows
     const prevBtnEl = document.getElementById('prevBtn');
     const nextBtnEl = document.getElementById('nextBtn');
     if (prevBtnEl) {
         prevBtnEl.addEventListener('click', () => stepMission(-1));
-        prevBtnEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                stepMission(-1);
-            }
-        });
     }
     if (nextBtnEl) {
         nextBtnEl.addEventListener('click', () => stepMission(1));
-        nextBtnEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                stepMission(1);
-            }
-        });
     }
 
     // Keyboard Left/Right arrow navigation when Projects section is in view or focused
@@ -1043,7 +1053,7 @@ const enableAudio = () => {
     document.body.removeEventListener('keydown', enableAudio);
 
     if (ctx.state === 'suspended') {
-        ctx.resume().catch(() => {});
+        ctx.resume().catch(() => { });
     }
 
     const masterGain = ctx.createGain();
@@ -1359,7 +1369,7 @@ function initSpaceLoader() {
     const percentEl = loader.querySelector('.loader-percentage');
     const telemetryEl = loader.querySelector('.loader-telemetry');
     const barFillEl = loader.querySelector('.loader-bar-fill');
-    
+
     let currentPercent = 0;
     let isFullyLoaded = false;
 
@@ -1392,7 +1402,7 @@ function initSpaceLoader() {
     if (window.lenis) {
         window.lenis.stop();
     }
-    
+
     // Fallback if window already loaded
     if (document.readyState === 'complete') {
         isFullyLoaded = true;
@@ -1404,21 +1414,21 @@ function initSpaceLoader() {
 
     function animateProgress() {
         let increment = Math.floor(Math.random() * 3) + 1; // 1% to 3% increments
-        
+
         // Slow down near completion (90%) if assets are still loading
         if (currentPercent >= 88 && !isFullyLoaded) {
             increment = 0.3; // Crawl forward to allow load event
         }
 
         currentPercent = Math.min(100, currentPercent + increment);
-        
+
         // Print progress
         const displayVal = Math.floor(currentPercent);
         if (percentEl) {
             percentEl.textContent = displayVal.toString().padStart(2, '0') + '%';
         }
         updateTelemetry(displayVal);
-        
+
         // Dynamic bar filling
         if (barFillEl) {
             barFillEl.style.width = displayVal + '%';
@@ -1458,7 +1468,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const openTxBtn = document.getElementById('openTransmissionBtn');
     const txConsole = document.getElementById('transmissionConsole');
     const form = document.getElementById('contactForm');
-    
+
     if (openTxBtn && txConsole) {
         openTxBtn.addEventListener('click', () => {
             const isExpanded = txConsole.classList.contains('active');
@@ -1513,8 +1523,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function validate() {
         let ok = true;
         [[nameEl, nameEl.value.trim().length > 0],
-         [emailEl, isEmail(emailEl.value.trim())],
-         [msgEl, msgEl.value.trim().length > 0]].forEach(([el, valid]) => {
+        [emailEl, isEmail(emailEl.value.trim())],
+        [msgEl, msgEl.value.trim().length > 0]].forEach(([el, valid]) => {
             el.classList.toggle('invalid', !valid);
             if (!valid) ok = false;
         });
@@ -2078,7 +2088,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '%cOriginal architecture & design © Mohammed Bilal (https://github.com/Bilalyzr). Unauthorized replication or redistribution of this portfolio is prohibited.',
             'color:#b3c5ef;font-family:monospace;font-size:11px;'
         );
-    } catch (_) {}
+    } catch (_) { }
 
     let toastEl = null;
     let toastTimer = null;
